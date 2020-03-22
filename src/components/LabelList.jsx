@@ -48,13 +48,13 @@ export default function LabelList(props) {
         if(labelList.style.display === 'block') {
             controller.firstChild.style.display = 'none';
             controller.style.width = '38px';
-            img.src = require('../images/arrow-right.png');
+            img.src = require('../asset/images/arrow-right.png');
             labelList.style.display = 'none';
         }
         else {
             controller.firstChild.style.display = 'block';
             controller.style.width = '300px';
-            img.src = require('../images/arrow-left.png');
+            img.src = require('../asset/images/arrow-left.png');
             labelList.style.display = 'block';
         }
     };
@@ -86,7 +86,7 @@ export default function LabelList(props) {
             <div className="label-list-controller">
                 <span>Labels</span>
                 <button className="btn label-list-btn" onClick={labelListToggle} type="button">
-                    <img className="label-list-btn-img" src={require('../images/arrow-left.png')} alt="arrow-left"/>
+                    <img className="label-list-btn-img" src={require('../asset/images/arrow-left.png')} alt="arrow-left"/>
                 </button>
             </div>
             <ul className="label-list-root" style={{display:'block'}} onClick={selectLabel}>

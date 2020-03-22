@@ -14,7 +14,7 @@ export default function AnnotatorAnnotatingLabel(props) {
             <a href="AnnotatorHome" onClick={e => {
                 e.preventDefault();
                 props.onClick();
-            }}><img src={require('../images/arrow-left.png')} alt="home"/></a>
+            }}><img src={require('../asset/images/arrow-left.png')} alt="home"/></a>
 
             <div className="viewer-title">
                 {props.title}

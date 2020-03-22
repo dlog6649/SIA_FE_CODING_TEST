@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import './design.css';
 import AnnotatorHome from './components/AnnotatorHome';
 import AnnotatorAnnotatingLabel from './container/AnnotatorAnnotatingLabel';
 import store from './store';
+import './asset/css/design.css';
 
 
 
 function App() {
-  const [component, setComponent] = useState(<AnnotatorAnnotatingLabel/>);
+  const [component, setComponent] = useState(<AnnotatorHome/>);
 
   useEffect(() => {
     console.log('App useEffect');
