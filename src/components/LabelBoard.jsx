@@ -1,32 +1,43 @@
-import React, {useEffect} from 'react';
-import {initialize, finalize, setMode, getLabels, setSelectedLabelList} from '../label';
+import React, {useState, useEffect} from 'react';
+import * as label from '../label';
+// {initialize, finalize, setMode, getLabels, setSelectedLabelList}
+
+export let _props;
 
 export default function LabelBoard(props) {
+    const [mode, setMode] = useState(props.mode);
 
     useEffect(() => {
         console.log('LabelBoard useEffect');
 
-        document.addEventListener('mouseup', e => {
-            props.updateLabel(getLabels());
-        });
+        _props = props;
 
-        initialize();
+        label.initialize();
 
-        return () => finalize();
+        return () => label.finalize();
     },[]);
 
     useEffect(() => {
         console.log('mode changed: ', props.mode);
-        console.log(props);
-        setMode(props.mode);
 
-        setSelectedLabelList(props.selectedLabels);
+        // if(mode === props.mode) {
+        //     return;
+        // }
+        // setMode(props.mode);
+
+        label.setIds(props.selectedLabelIds);
+        label.setMode(props.mode);
+
     });
     
     return (
         <div className="label-board">
             <svg id="svg" width="100%" height="100%">
-                <image id="cardImage" href={props.url} x="0" y="0" alt="cardImage"/>
+                <g id="mainG" transform="translate(0 0) scale(1)">
+                    <image id="cardImage" href={props.url} alt="cardImage"/>
+                    {/* <image id="cardImage" href="https://via.placeholder.com/600/92c952" alt="cardImage"/> */}
+                </g>
+                
             </svg>
             {/* <input type="button" onClick={() => {
                 document.querySelector('#te').setAttribute('x', parseInt(document.querySelector('#te').getAttribute('x')) + 5);

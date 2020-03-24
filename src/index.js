@@ -1,25 +1,44 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import './asset/css/design.css';
 import * as serviceWorker from './serviceWorker';
-
+import { ConnectedRouter } from 'connected-react-router';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import rootReducer from './modules';
+import configureStore, { history } from './configureStore';
+import App from './App';
+import { Route, Switch } from 'react-router'
+import AnnotatorHome from './components/AnnotatorHome';
+import AnnotatorAnnotatingLabel from './container/AnnotatorAnnotatingLabel';
 
-import store from './store';
 
-
-// const devTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
-// const store = createStore(rootReducer, devTools);
+const store = configureStore(/* provide initial state if any */);
 
 ReactDOM.render(
-    <Provider store={store}>
-        <App />
-    </Provider>
+  <Provider store={store}>
+    <App history={history} />
+    {/* <ConnectedRouter history={history}>
+      <Switch>
+        <Route exact path="/" component={AnnotatorHome} />
+        <Route path="/view" component={AnnotatorAnnotatingLabel} />
+      </Switch>
+    </ConnectedRouter> */}
+  </Provider>
 , document.getElementById('root'));
+
+
+// const render = () => {
+//   
+// };
+
+// // Hot reloading
+// if (module.hot) {
+//   // Reload components
+//   module.hot.accept('./App', () => {
+//     render()
+//   })
+// }
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.register();

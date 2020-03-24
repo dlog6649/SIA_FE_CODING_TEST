@@ -1,9 +1,10 @@
 import LabelMode from '../components/LabelMode';
 import { connect } from 'react-redux';
+import { changeMode } from '../modules/annotator';
 
 const mapDispatchToProps = dispatch => {
     return {
-        onClick:_mode => dispatch({type:'MODE', mode:_mode})
+        changeMode: mode => dispatch(changeMode(mode))
     };
 }
 

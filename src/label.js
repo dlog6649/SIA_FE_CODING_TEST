@@ -1,17 +1,20 @@
+import { _props } from './components/LabelBoard';
+import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from './modules/annotator';
+
 const svgNS = 'http://www.w3.org/2000/svg';
-const LABEL_SELECT_MODE = 'LABEL_SELECT_MODE'
-const LABEL_CREATE_MODE = 'LABEL_CREATE_MODE'
 
 var mode = LABEL_SELECT_MODE;
 
 var isDrawing = false;
 var isDragging = false;
 var isPushingSpacebar = false;
+export var isPushingCtrl = false;
 
 
 var svg;
-var g;
+
 var rect;
+
 var startX;
 var startY;
 var oriX;
@@ -28,7 +31,13 @@ var oldHeight;
 
 var labels = [];
 
-var selectedLabelList = [];
+var ids = [];
+
+var curId;
+
+var curLabel;
+
+var curImgURL;
 
 var selectedLabels = [];
 
@@ -46,12 +55,40 @@ export const getLabels = () => {
   return labels;
 }
 
-export const setSelectedLabelList = (_selectedLabelList) => {
-  selectedLabels = _selectedLabelList;
+export const setIds = _ids => {
+  console.log('label.setIds');
+
+  deleteAnchors();
+
+  ids = _ids;
+
+  ids.forEach(id => {
+    //labels.forEach or  // 아마 이건.. 안될듯.
+    document.querySelectorAll('.label').forEach(label => {
+      if(id === label.dataset.id) {
+        createAnchors(label);
+      }
+    });
+  });
 }
 
 export const setMode = _mode => {
+  console.log('label.setMode');
+
+  if(mode === _mode) {
+    return;
+  }
+
   mode = _mode;
+
+  document.querySelectorAll('.label').forEach(node => {
+    mode === LABEL_SELECT_MODE ? node.firstChild.setAttribute('cursor', 'move') : node.firstChild.setAttribute('cursor', 'auto');
+  });
+
+  
+  curLabel = null;
+  deleteAnchors();
+  updateIds();
 }
 
 export const initialize = () => {
@@ -62,9 +99,11 @@ export const initialize = () => {
   document.addEventListener('mouseup', documentMouseupEvent);
 
   svg = document.querySelector('#svg');
-  svg.addEventListener('click', deleteAnchors);
   svg.addEventListener('mousedown', svgMousedownEvent);
   svg.addEventListener('mousemove', svgMousemoveEvent);
+
+  labels = _props.labels;
+  labels.length === 0 ? curId = 0 : curId = labels[labels.length - 1].id + 1;
 }
 
 export const finalize = () => {
@@ -81,53 +120,83 @@ const documentKeydownEvent = e => {
   if(e.keyCode === 32) {
     isPushingSpacebar = true;
   }
-  else if(e.keyCode === 46 || e.keyCode === 8) {
+  
+  if(e.keyCode === 46 || e.keyCode === 8) {
     let selectedLabels = document.querySelectorAll('.selected');
     selectedLabels.forEach(node => {
       svg.removeChild(node);
     });
-  };
+  }
+  
+  if(e.keyCode === 17) {
+    isPushingCtrl = true;
+  }
 }
 
 const documentKeyupEvent = e => {
   if(e.keyCode === 32) {
     isPushingSpacebar = false;
   }
+  if(e.keyCode === 17) {
+    isPushingCtrl = false;
+  }
 }
 
 const documentMouseupEvent = e => {
   console.log('document.onmouseup');
+
   
-  if(isDrawing && e.target.tagName === 'rect'){
-    let label = e.target;
+  if(isDrawing && mode === LABEL_CREATE_MODE){
+    //console.log('making');
+    let label = curLabel.firstChild;
 
     if(label.getAttribute('width') < 10 || label.getAttribute('height') < 10) {
       svg.removeChild(label.parentNode);
     }
     else {
-      createAnchors(label);
-      latestLabel = label.parentNode;
+      let transForm = label.parentNode.getAttribute('transform').split(' ');
+      let _x = Number(transForm[0].substring(10));
+      let _y = Number(transForm[1].split(')')[0]);
+      let width = Number(label.getAttribute('width'));
+      let height = Number(label.getAttribute('height'));
 
-      let newLabels = []
-      document.querySelectorAll('.label').forEach(node => {
+      let inputWrapper = document.createElementNS(svgNS, "foreignObject");
+      inputWrapper.setAttribute('x', width + 20);
+      inputWrapper.setAttribute('y', 0);
+      inputWrapper.setAttribute('width', '145');
+      inputWrapper.setAttribute('height', '30');
 
-        let transForm = node.getAttribute('transform').split(' ');
-        let _x = Number(transForm[0].substring(10));
-        let _y = Number(transForm[1].split(')')[0]);
-        let width = Number(node.firstChild.getAttribute('width'));
-        let height = Number(node.firstChild.getAttribute('height'));
-
-        let label = {};
-        label.class = node.dataset.class;
-        label.coordinate = [
-          {x:_x, y:_y}
-          ,{x:_x + width, y:_y}
-          ,{x:_x, y:_y + height}
-          ,{x:_x + width, y:_y + height}
-        ];
-        newLabels.push(label);
+      let input = document.createElement("input");
+      input.classList.add('label-input');
+      input.setAttribute('type', 'text');
+      input.setAttribute('placeholder', 'Input Class name');
+      input.addEventListener('mousedown', e => {
+        e.stopPropagation();
       });
-      labels = newLabels;
+      input.addEventListener('keydown', e => {
+        if(e.keyCode === 13) {
+          label.parentNode.dataset.name = e.target.value;
+          label.parentNode.removeChild(inputWrapper);
+          _props.createLabel(label.parentNode);
+        }
+      });
+
+      label.parentNode.dataset.id = curId++;
+
+      // coordinates
+      // 0 1
+      // 3 2
+      label.parentNode.dataset.xCoordinate0 = _x;
+      label.parentNode.dataset.yCoordinate0 = _y;
+      label.parentNode.dataset.xCoordinate1 = _x + width;
+      label.parentNode.dataset.yCoordinate1 = _y;
+      label.parentNode.dataset.xCoordinate2 = _x + width;
+      label.parentNode.dataset.yCoordinate2 = _y + height;
+      label.parentNode.dataset.xCoordinate3 = _x;
+      label.parentNode.dataset.yCoordinate3 = _y + height;
+
+      inputWrapper.appendChild(input);
+      label.parentNode.appendChild(inputWrapper);
     }
   }
   
@@ -136,21 +205,21 @@ const documentMouseupEvent = e => {
 }
 
 
-const svgMousedownEvent = (e) => {
+const svgMousedownEvent = e => {
   console.log('svg mousedown');
 
   if(isPushingSpacebar) {
     
   }
-  else {
+  else if(mode === LABEL_CREATE_MODE) {
     isDrawing = true;
     
     startX = e.offsetX;
     startY = e.offsetY;
 
-    g = document.createElementNS(svgNS, "g");
-    g.setAttribute('transform', 'translate('+startX+' '+startY+') rotate(0 0 0)');
-    g.classList.add('label');
+    curLabel = document.createElementNS(svgNS, "g");
+    curLabel.setAttribute('transform', 'translate('+startX+' '+startY+') rotate(0 0 0)');
+    curLabel.classList.add('label');
 
     rect = document.createElementNS(svgNS, "rect");
     rect.setAttribute('width', 0);
@@ -159,27 +228,29 @@ const svgMousedownEvent = (e) => {
     rect.setAttribute('fill-opacity', '0.2');
     rect.setAttribute('stroke', '#5c6dda');
     rect.setAttribute('stroke-width', 3);
-    rect.setAttribute('cursor', 'move');
-    rect.addEventListener('click', (e) => {
-      e.stopPropagation();
-      console.log('label click');
-    });
-    rect.addEventListener('mousedown', (e) => {
-      e.stopPropagation();
+    // rect.addEventListener('click', e => {
+    //   e.stopPropagation();
+    //   console.log('label click');
+    // });
+    rect.addEventListener('mousedown', e => {
       console.log('label mousedown');
+
+      if(mode === LABEL_CREATE_MODE) {
+        return;
+      }
 
       oriX = e.offsetX;
       oriY = e.offsetY;
-      console.log(oriX, oriY);
+      //console.log(oriX, oriY);
       selectedHandlerNo = 8;
 
-      selectedG = e.target.parentNode;
+      curLabel = selectedG = e.target.parentNode;
 
       let transForm = selectedG.getAttribute('transform').split(' ');
       startX = Number(transForm[0].substring(10));
       startY = Number(transForm[1].split(')')[0]);
 
-      selectedLabelList.push(selectedG);
+      selectedG.classList.add('selected');
 
       oldDegree = parseFloat(transForm[2].substring(7));
       oldRotX = Number(transForm[3]);
@@ -188,29 +259,27 @@ const svgMousedownEvent = (e) => {
       isDragging = true;
 
       // 이미 앵커가 있으면 리턴
-      if(e.target.nextSibling){
+      if(e.target.parentNode.childNodes.length > 2){
         return;
       }
-
-      createAnchors(e.target);
-
-      // 컨트롤키 누르고 클릭 시 다중선택
-      if(!e.ctrlKey) {
-        latestLabel = e.target.parentNode;
-        deleteAnchors(e.target);
+      else {
+        createAnchors(e.target.parentNode);
       }
-
     });
 
-    g.appendChild(rect);
-    svg.appendChild(g);
+    curLabel.appendChild(rect);
+    svg.appendChild(curLabel);
+  }
+  else if(mode === LABEL_SELECT_MODE) {
+    deleteAnchors();
+    updateIds();
   }
 }
 
 const svgMousemoveEvent = e => {
 
-  if(isDrawing) {
-    console.log('isDrawing mousemove');
+  if (isDrawing && mode === LABEL_CREATE_MODE) {
+    console.log('LABEL_CREATE_MODE mousemove');
 
     let endX = e.offsetX;
     let endY = e.offsetY;
@@ -221,12 +290,12 @@ const svgMousemoveEvent = e => {
     let width = startX > endX ? startX - endX : endX - startX;
     let height = startY > endY ? startY - endY : endY - startY;
 
-    g.setAttribute('transform', 'translate('+x+' '+y+') rotate(0 '+width*.5+' '+height*.5+')');
-    rect.setAttribute('width', width);
-    rect.setAttribute('height', height);
+    curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate(0 '+width*.5+' '+height*.5+')');
+    curLabel.firstChild.setAttribute('width', width);
+    curLabel.firstChild.setAttribute('height', height);
   }
-  else if(isDragging) {
-    //console.log('isDragging mousemove');
+  else if (isDragging && mode === LABEL_SELECT_MODE) {
+    console.log('LABEL_SELECT_MODE mousemove');
     
     let endX = e.offsetX;
     let endY = e.offsetY;
@@ -305,7 +374,7 @@ const svgMousemoveEvent = e => {
         rect.setAttribute('width', width);
         break;
       case 8:
-        // selectedLabelList.forEach(ele => {
+        // selectedLabels.forEach(ele => {
         //   let transForm = ele.getAttribute('transform').split(' ');
         //   startX = Number(transForm[0].substring(10));
         //   startY = Number(transForm[1].split(')')[0]);
@@ -344,14 +413,13 @@ const svgMousemoveEvent = e => {
   }
 }
 
-const createAnchors = (node) => {
+const createAnchors = label => {
   console.log('createAnchors');
 
-  const g = node.parentNode;
-  const width = node.getAttribute('width');
-  const height = node.getAttribute('height');
+  let width = label.firstChild.getAttribute('width');
+  let height = label.firstChild.getAttribute('height');
 
-  g.classList.add('selected');
+  label.classList.add('selected');
 
   
   let line = document.createElementNS(svgNS, "line");
@@ -361,7 +429,7 @@ const createAnchors = (node) => {
   line.setAttribute('y2', -25);
   line.setAttribute('stroke', '#5c6dda');
   line.setAttribute('stroke-width', 3);
-  g.appendChild(line);
+  label.appendChild(line);
 
   let circle = document.createElementNS(svgNS, "circle");
   circle.setAttribute('cx', width*.5);
@@ -371,11 +439,10 @@ const createAnchors = (node) => {
   circle.setAttribute('fill', 'white');
   circle.setAttribute('stroke', '#5c6dda');
   circle.setAttribute('stroke-width', 3);
-  circle.addEventListener('mousedown', (e) => {
+  circle.addEventListener('mousedown', e => {
     e.stopPropagation();
 
-    selectedG = e.target.parentNode;
-    latestLabel = selectedG;
+    curLabel = selectedG = e.target.parentNode;
     selectedHandlerNo = 9;
 
     oriX = e.offsetX;
@@ -391,7 +458,7 @@ const createAnchors = (node) => {
     isDragging = true;
   });
 
-  g.appendChild(circle);
+  label.appendChild(circle);
 
   const anchorPosXList = [-7, width*.5-5, width-3, width-3, width-3, width*.5-5, -7, -7];
   const anchorPosYList = [-7, -7, -7, height*.5-5, height-3, height-3, height-3, height*.5-5];
@@ -407,13 +474,12 @@ const createAnchors = (node) => {
     anchor.setAttribute('fill', 'white');
     anchor.setAttribute('stroke', '#5c6dda');
     anchor.setAttribute('stroke-width', 3);
-    anchor.addEventListener('mousedown', (e) => {
+    anchor.addEventListener('mousedown', e => {
       e.stopPropagation();
       console.log('anchor mousedown');
       
-      selectedG = e.target.parentNode;
+      curLabel = selectedG = e.target.parentNode;
       selectedHandlerNo = i;
-      latestLabel = selectedG;
       
       let transForm = selectedG.getAttribute('transform').split(' ');
       startX = Number(transForm[0].substring(10));
@@ -427,11 +493,11 @@ const createAnchors = (node) => {
       isDragging = true;
     });
 
-    g.appendChild(anchor);
+    label.appendChild(anchor);
   }
 }
 
-const updateAnchors = (node) => {
+const updateAnchors = node => {
   console.log('updateAnchors');
 
   const width = node.getAttribute('width');
@@ -458,39 +524,45 @@ const updateAnchors = (node) => {
   }
 }
 
-    const deleteAnchors = (e) => {
-    console.log('canvas onclick - deleteAnchors');
-    
-    // console.log(e); // e가 undefined되면서 에러뜨는 버그
-    // 다른곳에선 mousedown시 호출해서 그때는 이벤트(e)가 안들어감.
-    // 수정필요
 
-    let children = svg.children;
 
-    for(let i = 0; i < children.length; i++){
+const deleteAnchors = () => {
+  console.log('deleteAnchors\nmode: ', mode, '\nisPushingCtrl: ', isPushingCtrl);
 
-      if(children[i] === latestLabel){
-        continue;
-      }
-      if(children[i].children.length <= 1){
-        continue;
-      }
+  if(isPushingCtrl) {
+    curLabel = null;
+    return;
+  }
 
-      children[i].classList.remove('selected');
-
-      
-      let idx = selectedLabelList.findIndex((ele) => {
-        return ele === children[i];
-      });
-      selectedLabelList.splice(idx, 1);
-      //console.log(selectedLabelList);
-
-      for(let j = children[i].children.length - 1; j > 0; j--){
-        children[i].removeChild(children[i].children[j]);
-      }
+  document.querySelectorAll('.selected').forEach(label => {
+    if(label === curLabel) {
+      return true;
     }
-    
-    latestLabel = null;
+
+    label.classList.remove('selected');
+
+    let j = 0;
+    if([...label.childNodes].find(node => node.tagName === 'foreignObject')) {
+      j = 1;
+    }
+
+    for(let i = label.childNodes.length - 1; i > j; i--) {
+      label.removeChild(label.childNodes[i]);
+    }
+  });
+
+  curLabel = null;
 }
 
 
+const updateIds = () => {
+  let _ids = []
+
+  document.querySelectorAll('.selected').forEach(label => {
+    _ids.push(label.dataset.id);
+  });
+
+  ids = _ids;
+
+  _props.selectLabels(ids);
+}

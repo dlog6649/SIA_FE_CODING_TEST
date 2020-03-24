@@ -1,32 +1,18 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
+import { ConnectedRouter } from 'connected-react-router';
+import { Route, Switch } from 'react-router'
 import AnnotatorHome from './components/AnnotatorHome';
 import AnnotatorAnnotatingLabel from './container/AnnotatorAnnotatingLabel';
-import store from './store';
-import './asset/css/design.css';
 
-
-
-function App() {
-  const [component, setComponent] = useState(<AnnotatorHome/>);
-
-  useEffect(() => {
-    console.log('App useEffect');
-  });
-
-  store.subscribe(() => {
-    const type = store.getState().type;
-    if(type === 'HOME') {
-      setComponent(<AnnotatorHome />)
-    }else if(type === 'LABEL')
-      setComponent(<AnnotatorAnnotatingLabel />)
-  });
-
+export default function App({history}) {
   return (
     <div className="App">
-      {component}
+      <ConnectedRouter history={history}>
+        <Switch>
+          <Route exact path="/" component={AnnotatorHome} />
+          <Route path="/view" component={AnnotatorAnnotatingLabel} />
+        </Switch>
+      </ConnectedRouter>
     </div>
   );
 }
-
-
-export default App;

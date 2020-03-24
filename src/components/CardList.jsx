@@ -1,17 +1,17 @@
 import React, {useEffect} from 'react';
 
-export default function CardContainer(props) {
+export default function CardList(props) {
     
     useEffect(() => {
-        console.log('CardContainer useEffect');
+        console.log('CardList useEffect');
 
         fetch('https://jsonplaceholder.typicode.com/photos')
             .then(response => response.json())
             .then(json => {
-                const cardContainer = document.querySelector('.card-container');
+                const cardList = document.querySelector('.card-list');
 
                 for(let i = 0; i < 8; i++) {
-                    cardContainer.innerHTML += `
+                    cardList.innerHTML += `
                         <div class="card">
                             <div class="card-thumbnail">
                                 <img class="thumbnail" src="${json[i].thumbnailUrl}" data-url="${json[i].url}" data-title="${json[i].title}">
@@ -26,12 +26,15 @@ export default function CardContainer(props) {
 
     const viewImg = e => {
         if(e.target.classList.value === 'thumbnail') {
-            props.onClick(e.target.dataset.url, e.target.dataset.title)
+            props.viewImage(e.target.dataset.url, e.target.dataset.title);
         }
     };
 
+
     return (
-        <div className="card-container" onClick={viewImg}>
+        <div>
+            <div className="card-list" onClick={viewImg}>
+            </div>
         </div>
     );
 }

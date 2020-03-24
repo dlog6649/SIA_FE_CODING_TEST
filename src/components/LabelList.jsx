@@ -1,37 +1,60 @@
 import React, {useState, useEffect} from 'react';
+import * as label from '../label';
 
 export default function LabelList(props) {
-    const [labels, setLabels] = useState([{}]);
+    const [ids, setIds] = useState([{}]);
 
     useEffect(() => {
         console.log('LabelList useEffect');
 
-        if(props.labels === undefined){
+        if(props.labels == undefined || props.labels.length === 0){
             return;
         }
 
         let labelListRoot = document.querySelector('.label-list-root');
 
         let labelList = '';
-        props.labels.forEach(node => {
-            labelList += `
-            <li class="label-info btn" 
-                data-class="${node.class}"
-                data-coordinate0-x="${node.coordinate[0].x}"
-                data-coordinate0-y="${node.coordinate[0].y}"
-                data-coordinate1-x="${node.coordinate[1].x}"
-                data-coordinate1-y="${node.coordinate[1].y}"
-                data-coordinate2-x="${node.coordinate[2].x}"
-                data-coordinate2-y="${node.coordinate[2].y}"
-                data-coordinate3-x="${node.coordinate[3].x}"
-                data-coordinate3-y="${node.coordinate[3].y}"
+
+        console.log(props.labels);
+
+        props.labels.forEach(label => {
+            let find = false;
+
+            console.log(props.selectedLabelIds);
+
+            props.selectedLabelIds.forEach(id => {
+                if(id === label.id) {
+                    labelList += `<li class="label-info btn active"`;
+                    find = true;
+                    return false;
+                }
+            });
+
+            if(!find) {
+                labelList += `<li class="label-info btn"`;
+            }
+
+            // coordinates
+            // 0 1
+            // 3 2
+            labelList += ` 
+                id="${label.id}"
+                data-name="${label.name}"
+                data-x-coordinate0="${label.coordinates[0].x}"
+                data-y-coordinate0="${label.coordinates[0].y}"
+                data-x-coordinate1="${label.coordinates[1].x}"
+                data-y-coordinate1="${label.coordinates[1].y}"
+                data-x-coordinate2="${label.coordinates[2].x}"
+                data-y-coordinate2="${label.coordinates[2].y}"
+                data-x-coordinate3="${label.coordinates[3].x}"
+                data-y-coordinate3="${label.coordinates[3].y}"
             >
-                <p class="label-class">${node.class}</p>
+                <p class="label-class">${label.name}</p>
                 <p class="label-coordinate">
-                    (${node.coordinate[0].x}, ${node.coordinate[0].y})
-                    (${node.coordinate[1].x}, ${node.coordinate[1].y})
-                    (${node.coordinate[2].x}, ${node.coordinate[2].y})
-                    (${node.coordinate[3].x}, ${node.coordinate[3].y})
+                    (${label.coordinates[0].x}, ${label.coordinates[0].y})
+                    (${label.coordinates[1].x}, ${label.coordinates[1].y})
+                    (${label.coordinates[2].x}, ${label.coordinates[2].y})
+                    (${label.coordinates[3].x}, ${label.coordinates[3].y})
                 </p>
             </li>
             `;
@@ -40,7 +63,7 @@ export default function LabelList(props) {
         labelListRoot.innerHTML = labelList;
     });
 
-    const labelListToggle = e => {
+    const toggleLabelList = () => {
         let controller = document.querySelector('.label-list-controller');
         let img = document.querySelector('.label-list-btn-img');
         let labelList = document.querySelector('.label-list-root');
@@ -60,32 +83,33 @@ export default function LabelList(props) {
     };
     
     const selectLabel = e => {
-        let labelInfo;
-        e.target.classList.value === 'label-info' ? labelInfo = e.target : labelInfo = e.target.parentNode;
-        labelInfo.classList.toggle('active');
+        console.log(e.ctrlKey);
 
-        let selectedLabels = [];
-        document.querySelectorAll('.label-info.active').forEach(node => {
-            let label = {};
-            label.class = node.dataset.class;
-            label.coordinate = [
-                {x:node.dataset.coordinate0X, y:node.dataset.coordinate0Y}
-                ,{x:node.dataset.coordinate1X, y:node.dataset.coordinate1Y}
-                ,{x:node.dataset.coordinate2X, y:node.dataset.coordinate2Y}
-                ,{x:node.dataset.coordinate3X, y:node.dataset.coordinate3Y}
-            ];
+        let _labelInfo;
+        e.target.classList.value === 'label-info' ? _labelInfo = e.target : _labelInfo = e.target.parentNode;
+        _labelInfo.classList.add('active');
 
-            selectedLabels.push(label);
+        if(!e.ctrlKey) {
+            document.querySelectorAll('.label-info.active').forEach(labelInfo => {
+                if(_labelInfo === labelInfo) {
+                    return true;
+                }
+                labelInfo.classList.remove('active');
+            });
+        }
+
+        let ids = [];
+        document.querySelectorAll('.label-info.active').forEach(labelInfo => {
+            ids.push(labelInfo.id);
         });
-
-        props.onClick(selectedLabels);
+        props.selectLabels(ids);
     }
 
     return (
         <div className="label-list">
             <div className="label-list-controller">
                 <span>Labels</span>
-                <button className="btn label-list-btn" onClick={labelListToggle} type="button">
+                <button className="btn label-list-btn" onClick={toggleLabelList} type="button">
                     <img className="label-list-btn-img" src={require('../asset/images/arrow-left.png')} alt="arrow-left"/>
                 </button>
             </div>

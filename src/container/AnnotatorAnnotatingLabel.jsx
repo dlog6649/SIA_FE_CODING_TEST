@@ -1,12 +1,8 @@
 import AnnotatorAnnotatingLabel from '../components/AnnotatorAnnotatingLabel';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 const mapStateToProps = state => {
-    return {title:state.title};
+    return {title: state.annotator.curImgTitle};
 }
 
-const mapDispatchToProps = dispatch => {
-    return {onClick:() => dispatch({type:'HOME'})};
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(AnnotatorAnnotatingLabel);
+export default connect(mapStateToProps)(AnnotatorAnnotatingLabel);

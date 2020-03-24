@@ -1,16 +1,24 @@
 import LabelBoard from '../components/LabelBoard';
 import { connect } from 'react-redux';
+import { selectLabels, createLabel, updateLabels, deleteLabels } from '../modules/annotator';
 
 const mapStateToProps = state => {
-    return {mode:state.mode, url:state.url, selectedLabels:state.selectedLabels};
+    let _labels = state.annotator.labels.filter(label => label.url === state.annotator.curImgURL);
+    //console.log('_labels: ', _labels);
+    return {
+        mode: state.annotator.mode
+        ,curImgURL: state.annotator.curImgURL
+        ,selectedLabelIds: state.annotator.selectedLabelIds
+        ,labels: _labels
+    };
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        byCreating:_label => dispatch({type:'CREATE', label:_label})
-        ,byDeleting:_label => dispatch({type:'DELETE', label:_label})
-        ,updateLabel:_labels => dispatch({type:'UPDATE', labels:_labels})
-        ,setSelectedLabelList:_selectedLabelList => dispatch({type:'UPDATE', selectedLabels:_selectedLabelList})
+        selectLabels: ids => dispatch(selectLabels(ids))
+        ,createLabel: label => dispatch(createLabel(label))
+        ,updateLabels: (image, labels) => dispatch(updateLabels(image, labels))
+        ,deleteLabels: ids => dispatch(deleteLabels(ids))
     };
 }
 

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import CardContainer from '../container/CardContainer.jsx';
+import CardList from '../container/CardList';
 
 export default function AnnotatorHome() {
     useEffect(() => {
@@ -12,7 +12,7 @@ export default function AnnotatorHome() {
                 <h1>Annotator Home</h1>
             </div>
             <div className="home-content">
-                <CardContainer />
+                <CardList />
             </div>
         </div>
     );

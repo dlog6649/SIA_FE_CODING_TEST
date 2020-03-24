@@ -2,8 +2,10 @@ import React, {useEffect} from 'react';
 import LabelMode from '../container/LabelMode';
 import LabelList from '../container/LabelList';
 import LabelBoard from '../container/LabelBoard';
+import { Link } from 'react-router-dom'
 
 export default function AnnotatorAnnotatingLabel(props) {
+    console.log('AnnotatorAnnotatingLabel', props.title);
 
     useEffect(() => {
         console.log('AnnotatorAnnotatingLabel useEffect');
@@ -11,11 +13,7 @@ export default function AnnotatorAnnotatingLabel(props) {
 
     return (
         <div className="viewer">
-            <a href="AnnotatorHome" onClick={e => {
-                e.preventDefault();
-                props.onClick();
-            }}><img src={require('../asset/images/arrow-left.png')} alt="home"/></a>
-
+            <Link to="/"><img src={require('../asset/images/arrow-left.png')} alt="home"/></Link>
             <div className="viewer-title">
                 {props.title}
             </div>

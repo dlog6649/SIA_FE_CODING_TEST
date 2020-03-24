@@ -1,11 +1,18 @@
 import LabelList from '../components/LabelList';
 import { connect } from 'react-redux';
+import { selectLabels } from '../modules/annotator';
 
 const mapStateToProps = state => {
-    return {labels:state.labels};
+    let _labels = state.annotator.labels.filter(label => label.url === state.annotator.curImgURL);
+    return {
+        labels: _labels,
+        selectedLabelIds: state.annotator.selectedLabelIds
+    };
 }
 const mapDispatchToProps = dispatch => {
-    return {onClick:_selectedLabels => dispatch({type:'SELECT', selectedLabels:_selectedLabels})}
+    return {
+        selectLabels: ids => dispatch(selectLabels(ids))
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LabelList);

@@ -10,7 +10,7 @@ button:focus{outline:none;}
 
 .home{padding:50px 100px;}
 .home .home-title h1{padding:35px 15px; font-size:2.5rem; color:#0f1350; margin:0;}
-.home .card-container:after{content:''; display:block; clear:both;}
+.home .card-list:after{content:''; display:block; clear:both;}
 
 .card{margin:15px; float:left; width:150px; height:auto; border:1px solid lightgray;}
 .card .card-thumbnail{height:150px; border-bottom:1px solid lightgray;}
@@ -37,10 +37,12 @@ button:focus{outline:none;}
 .viewer .viewer-content .label-board{display:flex; flex:1; flex-direction:column;}
 
 
-.btn{-webkit-transition:background-color 0.3s; transition:background-color 0.3s; cursor:Pointer;}
-.btn.active{background-color:#cad0e0;}
-.btn.active:hover{background-color:#cad0e0;}
-.btn:hover{background-color:#e6e9f3;}
-.btn:active{background-color:#cad0e0;}
-.btn-img{vertical-align:middle;}
+.btn{-webkit-transition: background-color 0.3s; transition: background-color 0.3s; cursor: Pointer;}
+.btn.active{background-color: #cad0e0;}
+.btn.active:hover{background-color: #cad0e0;}
+.btn:hover{background-color: #e6e9f3;}
+.btn:active{background-color: #cad0e0;}
+.btn-img{vertical-align: middle;}
 
+.label-input{width: 120px; border-radius: 15px; border: 2px solid lightgray; padding: 0 10px; height: 23px;}
+.label-input:focus{outline:none;}
