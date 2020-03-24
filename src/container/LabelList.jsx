@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { selectLabels } from '../modules/annotator';
 
 const mapStateToProps = state => {
+    console.log('LabelList mapStateToProps: ',state);
     let _labels = state.annotator.labels.filter(label => label.url === state.annotator.curImgURL);
     return {
         labels: _labels,

@@ -2,16 +2,19 @@ import React, {useState, useEffect} from 'react';
 import * as label from '../label';
 
 export default function LabelList(props) {
-    const [ids, setIds] = useState([{}]);
+    //const [ids, setIds] = useState([{}]);
 
     useEffect(() => {
         console.log('LabelList useEffect');
 
-        if(props.labels == undefined || props.labels.length === 0){
+        let labelListRoot = document.querySelector('.label-list-root');
+
+        if(props.labels == undefined || props.labels.length === 0) {
+            while(labelListRoot.firstChild) {
+                labelListRoot.removeChild(labelListRoot.firstChild);
+            }
             return;
         }
-
-        let labelListRoot = document.querySelector('.label-list-root');
 
         let labelList = '';
 
@@ -19,8 +22,6 @@ export default function LabelList(props) {
 
         props.labels.forEach(label => {
             let find = false;
-
-            console.log(props.selectedLabelIds);
 
             props.selectedLabelIds.forEach(id => {
                 if(id === label.id) {
@@ -38,7 +39,7 @@ export default function LabelList(props) {
             // 0 1
             // 3 2
             labelList += ` 
-                id="${label.id}"
+                data-id="${label.id}"
                 data-name="${label.name}"
                 data-x-coordinate0="${label.coordinates[0].x}"
                 data-y-coordinate0="${label.coordinates[0].y}"
@@ -83,8 +84,6 @@ export default function LabelList(props) {
     };
     
     const selectLabel = e => {
-        console.log(e.ctrlKey);
-
         let _labelInfo;
         e.target.classList.value === 'label-info' ? _labelInfo = e.target : _labelInfo = e.target.parentNode;
         _labelInfo.classList.add('active');
@@ -98,11 +97,12 @@ export default function LabelList(props) {
             });
         }
 
-        let ids = [];
+        let selectedLabelids = [];
         document.querySelectorAll('.label-info.active').forEach(labelInfo => {
-            ids.push(labelInfo.id);
+            selectedLabelids.push(labelInfo.dataset.id);
         });
-        props.selectLabels(ids);
+
+        props.selectLabels(selectedLabelids);
     }
 
     return (
@@ -113,7 +113,7 @@ export default function LabelList(props) {
                     <img className="label-list-btn-img" src={require('../asset/images/arrow-left.png')} alt="arrow-left"/>
                 </button>
             </div>
-            <ul className="label-list-root" style={{display:'block'}} onClick={selectLabel}>
+            <ul className="label-list-root" style={{display:'block'}} onMouseDown={selectLabel}>
             </ul>
         </div>
     );

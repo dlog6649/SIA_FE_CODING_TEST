@@ -34,10 +34,8 @@ export default function LabelBoard(props) {
         <div className="label-board">
             <svg id="svg" width="100%" height="100%">
                 <g id="mainG" transform="translate(0 0) scale(1)">
-                    <image id="cardImage" href={props.url} alt="cardImage"/>
-                    {/* <image id="cardImage" href="https://via.placeholder.com/600/92c952" alt="cardImage"/> */}
+                    <image id="cardImage" href={props.curImgURL} alt="cardImage"/>
                 </g>
-                
             </svg>
             {/* <input type="button" onClick={() => {
                 document.querySelector('#te').setAttribute('x', parseInt(document.querySelector('#te').getAttribute('x')) + 5);

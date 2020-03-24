@@ -12,6 +12,7 @@ export var isPushingCtrl = false;
 
 
 var svg;
+var mainG;
 
 var rect;
 
@@ -39,7 +40,6 @@ var curLabel;
 
 var curImgURL;
 
-var selectedLabels = [];
 
 //   9
 // 0 1 2
@@ -48,8 +48,6 @@ var selectedLabels = [];
 const cursorList = ['nw-resize', 'n-resize', 'ne-resize', 'e-resize', 'se-resize', 's-resize', 'sw-resize', 'w-resize'];
 var selectedHandlerNo;
 
-// 레이블 생성 후 또는 레이블 클릭 후 앵커 제거 방지
-var latestLabel = null;
 
 export const getLabels = () => {
   return labels;
@@ -99,6 +97,7 @@ export const initialize = () => {
   document.addEventListener('mouseup', documentMouseupEvent);
 
   svg = document.querySelector('#svg');
+  mainG = document.querySelector('#mainG');
   svg.addEventListener('mousedown', svgMousedownEvent);
   svg.addEventListener('mousemove', svgMousemoveEvent);
 
@@ -122,10 +121,12 @@ const documentKeydownEvent = e => {
   }
   
   if(e.keyCode === 46 || e.keyCode === 8) {
-    let selectedLabels = document.querySelectorAll('.selected');
-    selectedLabels.forEach(node => {
-      svg.removeChild(node);
+    let deletedIds = [];
+    document.querySelectorAll('.selected').forEach(label => {
+      deletedIds.push(label.dataset.id);
+      mainG.removeChild(label);
     });
+    _props.deleteLabels(deletedIds);
   }
   
   if(e.keyCode === 17) {
@@ -151,7 +152,7 @@ const documentMouseupEvent = e => {
     let label = curLabel.firstChild;
 
     if(label.getAttribute('width') < 10 || label.getAttribute('height') < 10) {
-      svg.removeChild(label.parentNode);
+      mainG.removeChild(label.parentNode);
     }
     else {
       let transForm = label.parentNode.getAttribute('transform').split(' ');
@@ -180,7 +181,7 @@ const documentMouseupEvent = e => {
           _props.createLabel(label.parentNode);
         }
       });
-
+      
       label.parentNode.dataset.id = curId++;
 
       // coordinates
@@ -198,6 +199,25 @@ const documentMouseupEvent = e => {
       inputWrapper.appendChild(input);
       label.parentNode.appendChild(inputWrapper);
     }
+  }
+  else if(isDragging && mode === LABEL_SELECT_MODE) {
+
+    let transForm = curLabel.getAttribute('transform').split(' ');
+    let x = Number(transForm[0].substring(10));
+    let y = Number(transForm[1].split(')')[0]);
+    let width = Number(curLabel.firstChild.getAttribute('width'));
+    let height = Number(curLabel.firstChild.getAttribute('height'));
+
+    curLabel.dataset.xCoordinate0 = x;
+    curLabel.dataset.yCoordinate0 = y;
+    curLabel.dataset.xCoordinate1 = x + width;
+    curLabel.dataset.yCoordinate1 = y;
+    curLabel.dataset.xCoordinate2 = x + width;
+    curLabel.dataset.yCoordinate2 = y + height;
+    curLabel.dataset.xCoordinate3 = x;
+    curLabel.dataset.yCoordinate3 = y + height;
+
+    _props.updateLabels(document.querySelectorAll('.label'));
   }
   
   isDrawing = false;
@@ -235,7 +255,7 @@ const svgMousedownEvent = e => {
     rect.addEventListener('mousedown', e => {
       console.log('label mousedown');
 
-      if(mode === LABEL_CREATE_MODE) {
+      if(mode === LABEL_CREATE_MODE || e.ctrlKey) {
         return;
       }
 
@@ -244,13 +264,13 @@ const svgMousedownEvent = e => {
       //console.log(oriX, oriY);
       selectedHandlerNo = 8;
 
-      curLabel = selectedG = e.target.parentNode;
+      curLabel = e.target.parentNode;
 
-      let transForm = selectedG.getAttribute('transform').split(' ');
+      let transForm = curLabel.getAttribute('transform').split(' ');
       startX = Number(transForm[0].substring(10));
       startY = Number(transForm[1].split(')')[0]);
 
-      selectedG.classList.add('selected');
+      curLabel.classList.add('selected');
 
       oldDegree = parseFloat(transForm[2].substring(7));
       oldRotX = Number(transForm[3]);
@@ -268,7 +288,7 @@ const svgMousedownEvent = e => {
     });
 
     curLabel.appendChild(rect);
-    svg.appendChild(curLabel);
+    mainG.appendChild(curLabel);
   }
   else if(mode === LABEL_SELECT_MODE) {
     deleteAnchors();
@@ -302,7 +322,9 @@ const svgMousemoveEvent = e => {
 
     let x, y, width, height;
     
-    let rect = selectedG.firstChild;
+    curLabel = e.target.parentNode;
+
+    let rect = curLabel.firstChild;
 
     switch(selectedHandlerNo) {
       case 0:
@@ -310,7 +332,7 @@ const svgMousemoveEvent = e => {
         y = startY + oldHeight > endY ? endY : startY + oldHeight;
         width = startX + oldWidth > endX ? startX + oldWidth - endX : endX - (startX + oldWidth);
         height = startY + oldHeight > endY ? startY + oldHeight - endY : endY - (startY + oldHeight);
-        selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
         rect.setAttribute('width', width);
         rect.setAttribute('height', height);
         break;
@@ -319,7 +341,7 @@ const svgMousemoveEvent = e => {
         y = startY + oldHeight > endY ? endY : startY + oldHeight;
         width = oldWidth;
         height = startY + oldHeight > endY ? startY + oldHeight - endY : endY - (startY + oldHeight);
-        selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
         rect.setAttribute('height', height);
         break;
       case 2:
@@ -327,7 +349,7 @@ const svgMousemoveEvent = e => {
         y = startY + oldHeight > endY ? endY : startY + oldHeight;
         width = startX > endX ? startX - endX : endX - startX;
         height = startY + oldHeight > endY ? startY + oldHeight - endY : endY - (startY + oldHeight);
-        selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
         rect.setAttribute('width', width);
         rect.setAttribute('height', height);
         break;
@@ -336,7 +358,7 @@ const svgMousemoveEvent = e => {
         y = startY;
         width = startX > endX ? startX - endX : endX - startX;
         height = oldHeight;
-        selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
         rect.setAttribute('width', width);
         break;
       case 4:
@@ -344,7 +366,7 @@ const svgMousemoveEvent = e => {
         y = startY < endY ? startY : endY;
         width = startX > endX ? startX - endX : endX - startX;
         height = startY > endY ? startY - endY : endY - startY;
-        selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
         rect.setAttribute('width', width);
         rect.setAttribute('height', height);
         break;
@@ -353,7 +375,7 @@ const svgMousemoveEvent = e => {
         y = startY < endY ? startY : endY;
         width = oldWidth;
         height = startY > endY ? startY - endY : endY - startY;
-        selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
         rect.setAttribute('height', height);
         break;
       case 6:
@@ -361,7 +383,7 @@ const svgMousemoveEvent = e => {
         y = startY < endY ? startY : endY;
         width = startX + oldWidth > endX ? startX + oldWidth - endX : endX - (startX + oldWidth);
         height = startY > endY ? startY - endY : endY - startY;
-        selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
         rect.setAttribute('width', width);
         rect.setAttribute('height', height);
         break;
@@ -370,7 +392,7 @@ const svgMousemoveEvent = e => {
         y = startY;
         width = startX + oldWidth > endX ? startX + oldWidth - endX : endX - (startX + oldWidth);
         height = oldHeight;
-        selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+width*.5+' '+height*.5+')');
         rect.setAttribute('width', width);
         break;
       case 8:
@@ -401,15 +423,20 @@ const svgMousemoveEvent = e => {
 
           
 
-          selectedG.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+oldRotX+' '+oldRotY+')')
+          curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+oldDegree+' '+oldRotX+' '+oldRotY+')')
         //});
         break;
       case 9:
+        x = startX;
+        y = startY;
         var degree = (Math.atan2(parseFloat(endY) - parseFloat((startY + oldRotY)), parseFloat(endX) - parseFloat((startX + oldRotX))) * 180 / 3.1415) + 90;
-        selectedG.setAttribute('transform', 'translate('+startX+' '+startY+') rotate('+degree+' '+oldRotX+' '+oldRotY+')');
+        curLabel.setAttribute('transform', 'translate('+x+' '+y+') rotate('+degree+' '+oldRotX+' '+oldRotY+')');
         break;
     }
+
+
     updateAnchors(rect);
+
   }
 }
 
