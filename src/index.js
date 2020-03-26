@@ -2,13 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './asset/css/design.css';
 import * as serviceWorker from './serviceWorker';
-import { ConnectedRouter } from 'connected-react-router';
 import { Provider } from 'react-redux';
 import configureStore, { history } from './configureStore';
 import App from './App';
-import { Route, Switch } from 'react-router'
-import AnnotatorHome from './components/AnnotatorHome';
-import AnnotatorAnnotatingLabel from './container/AnnotatorAnnotatingLabel';
+
+// import { ConnectedRouter } from 'connected-react-router';
+// import { Route, Switch } from 'react-router'
+// import AnnotatorHome from './components/AnnotatorHome';
+// import AnnotatorAnnotatingLabel from './container/AnnotatorAnnotatingLabel';
 
 
 const store = configureStore(/* provide initial state if any */);

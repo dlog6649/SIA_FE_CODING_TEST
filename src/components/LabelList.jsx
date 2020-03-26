@@ -1,15 +1,14 @@
-import React, {useState, useEffect} from 'react';
-import * as label from '../label';
+import React, {useEffect} from 'react';
+import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from '../modules/annotator';
 
 export default function LabelList(props) {
-    //const [ids, setIds] = useState([{}]);
 
     useEffect(() => {
-        console.log('LabelList useEffect');
+        console.log('LabelList useEffect [props.labels]');
 
         let labelListRoot = document.querySelector('.label-list-root');
 
-        if(props.labels == undefined || props.labels.length === 0) {
+        if(props.labels === undefined || props.labels.length === 0) {
             while(labelListRoot.firstChild) {
                 labelListRoot.removeChild(labelListRoot.firstChild);
             }
@@ -18,11 +17,9 @@ export default function LabelList(props) {
 
         let labelList = '';
 
-        console.log(props.labels);
-
         props.labels.forEach(label => {
-            let find = false;
 
+            let find = false;
             props.selectedLabelIds.forEach(id => {
                 if(id === label.id) {
                     labelList += `<li class="label-info btn active"`;
@@ -38,7 +35,7 @@ export default function LabelList(props) {
             // coordinates
             // 0 1
             // 3 2
-            labelList += ` 
+            labelList += `
                 data-id="${label.id}"
                 data-name="${label.name}"
                 data-x-coordinate0="${label.coordinates[0].x}"
@@ -62,7 +59,47 @@ export default function LabelList(props) {
         });
 
         labelListRoot.innerHTML = labelList;
-    });
+
+    }, [props.labels]);
+
+    useEffect(() => {
+        console.log('LabelList useEffect [props.selectedLabelIds]');
+
+        if(compareIds(props.selectedLabelIds)) {
+            console.log('LabelList useEffect [props.selectedLabelIds] returned');
+            return;
+        }
+
+        console.log('props.selectedLabelIds: ',props.selectedLabelIds);
+
+        document.querySelectorAll('.label-info').forEach(labelInfo => {
+            labelInfo.classList.remove('active');
+
+            props.selectedLabelIds.forEach(id => {
+                if(labelInfo.dataset.id === id) {
+                    labelInfo.classList.add('active');
+                }
+            });
+        });
+
+    }, [props.selectedLabelIds]);
+
+    const compareIds = (propsIds) => {
+        let ids = [];
+        document.querySelectorAll('.label-info.active').forEach(labelInfo => {
+            ids.push(labelInfo.dataset.id);
+        });
+
+        if(ids.length !== propsIds.length) {
+            return false;
+        }
+        for(let i = 0; i < propsIds.length; i++) {
+            if(!ids.includes(propsIds[i])) {
+            return false;
+            }
+        }
+        return true;
+    }
 
     const toggleLabelList = () => {
         let controller = document.querySelector('.label-list-controller');
@@ -77,15 +114,20 @@ export default function LabelList(props) {
         }
         else {
             controller.firstChild.style.display = 'block';
-            controller.style.width = '300px';
+            controller.style.width = '310px';
             img.src = require('../asset/images/arrow-left.png');
             labelList.style.display = 'block';
         }
     };
     
     const selectLabel = e => {
+        if(props.mode === LABEL_CREATE_MODE) {
+            return;
+        }
+        console.log('selectLabel');
+        
         let _labelInfo;
-        e.target.classList.value === 'label-info' ? _labelInfo = e.target : _labelInfo = e.target.parentNode;
+        e.target.classList.value.indexOf('label-info') !== -1 ? _labelInfo = e.target : _labelInfo = e.target.parentNode;
         _labelInfo.classList.add('active');
 
         if(!e.ctrlKey) {
@@ -97,12 +139,12 @@ export default function LabelList(props) {
             });
         }
 
-        let selectedLabelids = [];
+        let ids = [];
         document.querySelectorAll('.label-info.active').forEach(labelInfo => {
-            selectedLabelids.push(labelInfo.dataset.id);
+            ids.push(labelInfo.dataset.id);
         });
 
-        props.selectLabels(selectedLabelids);
+        props.selectLabels(ids);
     }
 
     return (
