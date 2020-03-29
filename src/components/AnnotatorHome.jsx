@@ -6,7 +6,7 @@ export default function AnnotatorHome() {
     
     useEffect(() => {
         console.log('AnotatorHome useEffect');
-    },[]);
+    });
 
 
     return (

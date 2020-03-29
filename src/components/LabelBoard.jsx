@@ -41,7 +41,7 @@ export default function LabelBoard(props) {
             return;
         }
 
-        label.drawImage(props.curImgURL, props.img);
+        label.redrawImage(props.curImgURL, props.img);
 
     }, [props.img]);
 
@@ -54,7 +54,7 @@ export default function LabelBoard(props) {
             return;
         }
 
-        label.drawLabels(props.lbls, props.selLblIds);
+        label.redrawLabels(props.lbls, props.selLblIds);
 
     }, [props.lbls]);
 
@@ -89,6 +89,11 @@ export default function LabelBoard(props) {
     return (
         <div className="label-board">
             <svg id="svg" width="100%" height="100%">
+            <defs>
+                <filter id="f1">
+                    <feDropShadow dx="-1" dy="1" stdDeviation="2.5" floodColor="gray"/>
+                </filter>
+            </defs>
                 {/* <image transform="translate(50 50) scale(0.7)" id="img" href="https://via.placeholder.com/600/92c952" alt="cardImage"/> */}
                 {/* <rect transform="translate(50 50)" width="100" height="100" fillOpacity="0.1" /> */}
             </svg>

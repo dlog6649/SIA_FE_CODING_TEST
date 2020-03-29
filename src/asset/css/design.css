@@ -1,29 +1,50 @@
-/* div{border: 1px solid black;} */
-
+/* Common */
 html, body, #root, .App{margin: 0; padding: 0; height: 100%}
 li{display: block; text-align: none;}
 ul{list-style-type: none; padding-inline-start: 0px; margin-block-start: 0; margin-block-end: 0;}
 p{margin: 0}
 input[type=range]{-webkit-appearance: none; width: 100%; background: transparent;}
 input[type=range]:focus{outline: none;}
-
 button{border-style: none; background-color: white; padding: 0;}
 button:focus{outline: none;}
+.btn{-webkit-transition: background-color 0.3s; transition: background-color 0.3s; cursor: Pointer;}
+.btn.active{background-color: #cad0e0;}
+.btn.active:hover{background-color: #cad0e0;}
+.btn:hover{background-color: #e6e9f3;}
+.btn:active{background-color: #cad0e0;}
+.btn-img{vertical-align: middle;}
+/* //Common */
 
+/*
+ * AnnotatorHome
+ */
 .home{padding: 50px 100px;}
 .home .home-title h1{padding: 35px 15px; font-size: 2.5rem; color: #0f1350; margin: 0;}
-.home .card-list:after{content: ''; display: block; clear: both;}
 
+/* CardList */
+.home .card-list:after{content: ''; display: block; clear: both;}
 .card{margin: 15px; float: left; width: 150px; height: auto; border: 1px solid lightgray;}
 .card .card-thumbnail{height: 150px; border-bottom: 1px solid lightgray;}
 .card .card-thumbnail .thumbnail{cursor: Pointer; width: 100%; height: 100%;}
 .card .card-title{padding: 5px 7px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight: 600; font-size: 0.9rem; color: #2e2e2e}
+/* //CardList */
+/*
+ * //AnnotatorHome
+ */
 
+/*
+ * AnnotatorAnnotatingLabel
+ */
 .viewer{display: flex; flex-direction: column; height: 100%;}
 .viewer .viewer-title{border: 1px solid lightgray; padding: 20px 20px 20px 50px; font-size: 2rem; font-weight: 800; color: #0f1350;}
 .viewer .viewer-content{display: flex; flex-direction: row; flex: 1; overflow: auto;}
+
+/* LabelMode */
 .viewer .viewer-content .label-mode{display: flex; flex: none; flex-direction: column; border-right: 1px solid lightgray;}
 .viewer .viewer-content .label-mode .label-mode-btn{border-radius: 8px; margin: 5px 7px;}
+/* //LabelMode */
+
+/* LabelList */
 .viewer .viewer-content .label-list{display: flex; flex: none; flex-direction: column; border-right: 1px solid lightgray;}
 .viewer .viewer-content .label-list ul{overflow: auto;}
 .viewer .viewer-content .label-list ul::-webkit-scrollbar{width: 5px;}
@@ -35,20 +56,12 @@ button:focus{outline: none;}
 .viewer .viewer-content .label-list .label-info{padding: 14px 20px 20px 20px; border-bottom: 1px solid lightgray; cursor: Pointer;}
 .viewer .viewer-content .label-list .label-info .label-class{font-size: 0.8rem; font-weight: bold; color: #636a7b;}
 .viewer .viewer-content .label-list .label-info .label-coordinate{font-size: 0.7rem; padding-top: 5px; color: #828282;}
+/* //LabelList */
 
+/* LabelBoard */
 .viewer .viewer-content .label-board{display: flex; flex: 1; flex-direction: column;}
-
-
-.btn{-webkit-transition: background-color 0.3s; transition: background-color 0.3s; cursor: Pointer;}
-.btn.active{background-color: #cad0e0;}
-.btn.active:hover{background-color: #cad0e0;}
-.btn:hover{background-color: #e6e9f3;}
-.btn:active{background-color: #cad0e0;}
-.btn-img{vertical-align: middle;}
-
 .label-input{width: 120px; border-radius: 15px; border: 2px solid lightgray; padding: 0 10px; height: 23px;}
 .label-input:focus{outline: none;}
-
 .label-board-scaler{position: fixed; bottom: 50px; right: 32px; width: 36px; height: 170px; border-radius: 6px; box-shadow: 0 0 3px 1.5px #e0e0e0; background-color: white; }
 .label-board-scaler .scaler-plus{position: absolute; left: 12px; top: 11px;}
 .label-board-scaler .scaler-minus{position: absolute; left: 12px; bottom: 11px;}
@@ -70,7 +83,6 @@ button:focus{outline: none;}
   cursor: pointer; background: #333333;
   border-radius: 10px;
 }
-
 .label-contextmenu{display: none; position: absolute; width: 230px; cursor: default; border-radius: 5px; background-color: #fbfbfb; box-shadow: 1px 1px 5px 0 #b5b5b5}
 .label-contextmenu .item{padding: 10px 15px;}
 .label-contextmenu .item.disabled{color: #b8bdc7}
@@ -78,3 +90,7 @@ button:focus{outline: none;}
 .label-contextmenu .item:hover{background-color: #e0e3ea;}
 .label-contextmenu .item .item-name{font-size: 0.91rem;}
 .label-contextmenu .item .item-shortcut{float: right; padding-top: 5px; font-size: 0.7rem; color: #717d9e;}
+/* //LabelBoard */
+/*
+ * //AnnotatorAnnotatingLabel
+ */

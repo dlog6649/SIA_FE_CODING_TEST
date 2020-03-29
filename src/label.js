@@ -7,12 +7,13 @@ var svg;
 var contextmenu;
 var mode = LABEL_SELECT_MODE;
 var curId = 0;
-var curScale = 0.7;
+var curScale = 0.8;
 
 var isDrawing = false;
 var isDragging = false;
 var isPushingSpacebar = false;
 var isPushingCtrl = false;
+var isWritingTxt = false;
 
 var startX;
 var startY;
@@ -26,12 +27,12 @@ var preHeight;
 var menuX;
 var menuY;
 
-var cloneLbls = [];
 var curLabel;
 var selLbl;
-var selLblsInfo = [];
 var selLblIds = [];
+var selLblsInfo = [];
 var allLblsInfo = [];
+var cloneLbls = [];
 
 //   9
 // 0 1 2
@@ -199,44 +200,7 @@ const buildContextmenu = () => {
 
     switch (menu.id) {
       case 'edit':
-        let child = curLabel.firstChild;
-        while (child) {
-          if (child.tagName === 'foreignObject') {
-            contextmenu.style.display = 'none';
-            return;
-          }
-          child = child.nextSibling;
-        }
-
-        let labelBody = curLabel.firstChild;
-        let width = parseFloat(labelBody.getAttribute('width'));
-
-        let inputWrapper = document.createElementNS(svgNS, "foreignObject");
-        inputWrapper.setAttribute('x', width + 20);
-        inputWrapper.setAttribute('y', 0);
-        inputWrapper.setAttribute('width', '145');
-        inputWrapper.setAttribute('height', '30');
-
-        let input = document.createElement("input");
-        input.classList.add('label-input');
-        input.setAttribute('type', 'text');
-        input.setAttribute('placeholder', 'Input Class name');
-        if (curLabel.dataset.name !== '') {
-          input.setAttribute('value', curLabel.dataset.name);
-        }
-        input.addEventListener('mousedown', e => {
-          e.stopPropagation();
-        });
-        input.addEventListener('keydown', e => {
-          if(e.keyCode === 13) {
-            labelBody.parentNode.dataset.name = e.target.value;
-            labelBody.parentNode.removeChild(inputWrapper);
-            _props.updateLabels(document.querySelectorAll('.label'), updateAndGetIds());
-          }
-        });
-
-        inputWrapper.appendChild(input);
-        curLabel.appendChild(inputWrapper);
+        editLabelName();
         break;
       case 'cut':
         copySelectedLabels();
@@ -252,9 +216,23 @@ const buildContextmenu = () => {
         deleteSelectedLabels();
         break;
     }
-
     contextmenu.style.display = 'none';
   });
+}
+
+
+
+
+const editLabelName = () => {
+  let child = curLabel.firstChild;
+  while (child) {
+    if (child.tagName === 'foreignObject') {
+      contextmenu.style.display = 'none';
+      return;
+    }
+    child = child.nextSibling;
+  }
+  createInputBox(curLabel.firstChild);
 }
 
 
@@ -299,7 +277,7 @@ const showContextmenu = e => {
 }
 
 
-export const drawImage = (url, image) => {
+export const redrawImage = (url, image) => {
   if(!image) {
     return;
   }
@@ -319,7 +297,7 @@ export const drawImage = (url, image) => {
 }
 
 
-export const drawLabels = (lbls, _selLblIds) => {
+export const redrawLabels = (lbls, _selLblIds) => {
   let i = 0;
   document.querySelectorAll('.label').forEach(label => {
     console.log('delete label: ',i);
@@ -369,6 +347,10 @@ export const drawLabels = (lbls, _selLblIds) => {
 const documentKeydownEvent = e => {
   console.log('keydown');
 
+  if (isWritingTxt) {
+    return;
+  }
+
   let key = 'which' in e ? e.which : e.keyCode;
 
   if (key === 32) { // spacebar
@@ -392,12 +374,14 @@ const documentKeydownEvent = e => {
   }
 }
 
+
 const copySelectedLabels = () => {
   cloneLbls = [];
   for(let lbl of document.querySelectorAll('.selected')) {
     cloneLbls.push(lbl.cloneNode(true));
   }
 }
+
 
 const pasteCopiedLabels = isClickedMenu => {
   if (!cloneLbls.length) {
@@ -478,29 +462,7 @@ function imgScaleSliderEvent() {
   let preScale = curScale;
   curScale = val;
 
-  let img = document.querySelector('#img');
-  let transform = img.getAttribute('transform').split(' ');
-  let imgX = parseFloat(transform[0].substring(10));
-  let imgY = parseFloat(transform[1].split(')')[0]);
-  img.setAttribute('transform', 'translate('+imgX+' '+imgY+') scale('+curScale+')');
-
-  let labels = document.querySelectorAll('.label');
-
-  labels.forEach(label => {
-    transform = label.getAttribute('transform').split(' ');
-    let labelX = parseFloat(transform[0].substring(10));
-    let labelY = parseFloat(transform[1].split(')')[0]);
-    let newX = parseFloat(((((labelX - imgX) / preScale) * curScale) + imgX).toFixed(2));
-    let newY = parseFloat(((((labelY - imgY) / preScale) * curScale) + imgY).toFixed(2));
-
-    let degree = parseInt(transform[3].substring(7));
-    let rotX = parseFloat(transform[4]);
-    let rotY = parseFloat(transform[5].split(')')[0]);
-    
-    label.setAttribute('transform', 'translate('+newX+' '+newY+') scale('+curScale+') rotate('+degree+' '+rotX+' '+rotY+')');
-  });
-
-  _props.updateImgLabels(img, labels);
+  controlZoom(preScale);
 }
 
 
@@ -513,12 +475,17 @@ const svgMousewheelEvent = e => {
   }
 
   let preScale = curScale;
-  e.deltaY > 0 ? curScale = parseFloat((curScale - 0.1).toFixed(1)) : curScale = parseFloat((curScale + 0.1).toFixed(1));
+  curScale = e.deltaY > 0 ? parseFloat((curScale - 0.1).toFixed(1)) : parseFloat((curScale + 0.1).toFixed(1));
 
   let scaler = document.querySelector('.scaler-range');
   scaler.style.background = 'linear-gradient(to right, #333333 0%, #333333 ' + curScale*50 + '%, #dedede ' + curScale*50 + '%, #dedede 100%)';
   _setScale(curScale);
   
+  controlZoom(preScale);
+}
+
+
+const controlZoom = preScale => {
   let img = document.querySelector('#img');
   let transform = img.getAttribute('transform').split(' ');
   let imgX = parseFloat(transform[0].substring(10));
@@ -550,7 +517,7 @@ const svgMousedownEvent = e => {
 
   if(isPushingSpacebar) {
     isDragging = true;
-    dragImg(e);
+    initImgForDrag(e);
   }
   else if(mode === LABEL_CREATE_MODE) {
     // 마우스 왼쪽 클릭이 아니면
@@ -561,7 +528,7 @@ const svgMousedownEvent = e => {
     initializeLabel(e);
   }
   else if(mode === LABEL_SELECT_MODE) {
-    if (document.querySelectorAll('.selected').length === 0) {
+    if (!document.querySelectorAll('.selected').length) {
       return;
     }
     deleteAnchors();
@@ -570,7 +537,7 @@ const svgMousedownEvent = e => {
 }
 
 
-const dragImg = e => {
+const initImgForDrag = e => {
   startX = e.offsetX;
   startY = e.offsetY;
 
@@ -653,128 +620,16 @@ const labelBodyMouseDownEvent = e => {
   selLblsInfo = _selLblsInfo;
 }
 
+
 const svgMousemoveEvent = e => {
   if (isDragging && isPushingSpacebar) {
-    let endX = e.offsetX;
-    let endY = e.offsetY;
-    let imgX = preX + endX - startX;
-    let imgY = preY + endY - startY;
-    document.querySelector('#img').setAttribute('transform', 'translate('+imgX+' '+imgY+') scale('+curScale+')');
-
-    document.querySelectorAll('.label').forEach(label => {
-      let info = allLblsInfo.find(_label => _label.id === label.dataset.id);
-      let labelX = (info.preX + endX - startX).toFixed(2);
-      let labelY = (info.preY + endY - startY).toFixed(2);
-      label.setAttribute('transform', 'translate('+labelX+' '+labelY+') scale('+curScale+') rotate('+info.preDegree+' '+info.preRotX+' '+info.preRotY+')');
-    });
+    moveImgAndLabels(e);
   }
   else if (isDrawing && mode === LABEL_CREATE_MODE) {
-    console.log('LABEL_CREATE_MODE mousemove');
-
-    let endX = e.offsetX;
-    let endY = e.offsetY;
-    let x = startX < endX ? startX : endX;
-    let y = startY < endY ? startY : endY;
-    let width = startX > endX ? startX - endX : endX - startX;
-    let height = startY > endY ? startY - endY : endY - startY;
-    
-    curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+width*.5+' '+height*.5+')');
-    curLabel.firstChild.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
-    curLabel.firstChild.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
+    drawLabel(e);
   }
   else if (isDragging && mode === LABEL_SELECT_MODE) {
-    console.log('LABEL_SELECT_MODE mousemove');
-    
-    let endX = e.offsetX;
-    let endY = e.offsetY;
-    let x, y, width, height;
-    let labelBody = curLabel.firstChild;
-
-    switch (selectedHandlerNo) {
-      case 0:
-        x = preX + preWidth > endX ? endX : preX + preWidth;
-        y = preY + preHeight > endY ? endY : preY + preHeight;
-        width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
-        height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
-        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
-        break;
-      case 1:
-        x = preX;
-        y = preY + preHeight > endY ? endY : preY + preHeight;
-        width = preWidth;
-        height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
-        break;
-      case 2:
-        x = preX < endX ? preX : endX;
-        y = preY + preHeight > endY ? endY : preY + preHeight;
-        width = preX > endX ? preX - endX : endX - preX;
-        height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
-        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
-        break;
-      case 3:
-        x = preX < endX ? preX : endX;
-        y = preY;
-        width = preX > endX ? preX - endX : endX - preX;
-        height = preHeight;
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
-        break;
-      case 4:
-        x = preX < endX ? preX : endX;
-        y = preY < endY ? preY : endY;
-        width = preX > endX ? preX - endX : endX - preX;
-        height = preY > endY ? preY - endY : endY - preY;
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
-        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
-        break;
-      case 5:
-        x = preX;
-        y = preY < endY ? preY : endY;
-        width = preWidth;
-        height = preY > endY ? preY - endY : endY - preY;
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
-        break;
-      case 6:
-        x = preX + preWidth > endX ? endX : preX + preWidth;
-        y = preY < endY ? preY : endY;
-        width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
-        height = preY > endY ? preY - endY : endY - preY;
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
-        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
-        break;
-      case 7:
-        x = preX + preWidth > endX ? endX : preX + preWidth;
-        y = preY;
-        width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
-        height = preHeight;
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
-        break;
-      case 8:
-        document.querySelectorAll('.selected').forEach(label => {
-          let info = selLblsInfo.find(selLabel => selLabel.id === label.dataset.id);
-          x = (info.preX + endX - startX).toFixed(2);
-          y = (info.preY + endY - startY).toFixed(2);
-          label.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+info.preDegree+' '+info.preRotX+' '+info.preRotY+')');
-        });
-        break;
-      case 9:
-        x = preX;
-        y = preY;
-        var degree = (Math.atan2(parseFloat(endY) - parseFloat((preY + preRotY)), parseFloat(endX) - parseFloat((preX + preRotX))) * 180 / 3.1415) + 90;
-        curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+degree+' '+preRotX+' '+preRotY+')');
-        break;
-    }
-    updateAnchors(labelBody);
+    dragLabel(e);
   }
 }
 
@@ -799,6 +654,162 @@ const documentMouseupEvent = e => {
 }
 
 
+const moveImgAndLabels = e => {
+  let endX = e.offsetX;
+  let endY = e.offsetY;
+  let imgX = preX + endX - startX;
+  let imgY = preY + endY - startY;
+  document.querySelector('#img').setAttribute('transform', 'translate('+imgX+' '+imgY+') scale('+curScale+')');
+
+  document.querySelectorAll('.label').forEach(label => {
+    let info = allLblsInfo.find(_label => _label.id === label.dataset.id);
+    let labelX = (info.preX + endX - startX).toFixed(2);
+    let labelY = (info.preY + endY - startY).toFixed(2);
+    label.setAttribute('transform', 'translate('+labelX+' '+labelY+') scale('+curScale+') rotate('+info.preDegree+' '+info.preRotX+' '+info.preRotY+')');
+  });
+}
+
+
+const drawLabel = e => {
+  let endX = e.offsetX;
+  let endY = e.offsetY;
+  let x = startX < endX ? startX : endX;
+  let y = startY < endY ? startY : endY;
+  let width = startX > endX ? startX - endX : endX - startX;
+  let height = startY > endY ? startY - endY : endY - startY;
+
+  //curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+(width/curScale)*.5*curScale+' '+(height/curScale)*.5*curScale+')');
+  
+  curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+(width/curScale)*.5+' '+(height/curScale)*.5+')');
+  //curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+(width*.5)/curScale+' '+(height*.5)/curScale+')');
+
+  //curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+(width*.5)/curScale+' '+(height*.5)/curScale+')');
+
+  //curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+width*curScale+' '+height*curScale+')');
+
+  //curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+width*.5+' '+height*.5+')');
+  curLabel.firstChild.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
+  curLabel.firstChild.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
+}
+
+const dragLabel = e => {
+  let endX = e.offsetX;
+  let endY = e.offsetY;
+  let x, y, width, height;
+  let labelBody = curLabel.firstChild;
+
+  switch (selectedHandlerNo) {
+    case 0:
+      x = preX + preWidth > endX ? endX : preX + preWidth;
+      y = preY + preHeight > endY ? endY : preY + preHeight;
+      width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
+      height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
+      width = parseFloat((width/curScale).toFixed(2));
+      height = parseFloat((height/curScale).toFixed(2));
+      curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
+      labelBody.setAttribute('width', width);
+      labelBody.setAttribute('height', height);
+      break;
+    case 1:
+
+      // var radius = Math.sqrt(preRotX * preRotX + preRotY * preRotY);
+
+      // var newX = Math.cos(preDegree * (Math.PI / 180)) * radius;
+      // var newY = Math.sin(preDegree * (Math.PI / 180)) * radius;
+
+      // var newX = -newX;
+      // var newY = -newY;
+
+      // var xx = preX - newX;
+      // var yy = preY - newY;
+
+      // y = yy + preHeight > endY ? endY : yy + preHeight;
+      // height = yy + preHeight > endY ? yy + preHeight - endY : endY - (yy + preHeight);
+      // height = parseFloat((height/curScale).toFixed(2));
+
+      // console.log(radius);
+      // //console.log(preRotX, preRotY);
+      // console.log(newX, newY);
+
+      y = preY + preHeight > endY ? endY : preY + preHeight;
+      height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
+      height = parseFloat((height/curScale).toFixed(2));
+      curLabel.setAttribute('transform', 'translate('+preX+' '+y+') scale('+curScale+') rotate('+preDegree+' '+preRotX+' '+height*.5+')');
+      labelBody.setAttribute('height', height);
+      break;
+    case 2:
+      x = preX < endX ? preX : endX;
+      y = preY + preHeight > endY ? endY : preY + preHeight;
+      width = preX > endX ? preX - endX : endX - preX;
+      height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
+      width = parseFloat((width/curScale).toFixed(2));
+      height = parseFloat((height/curScale).toFixed(2));
+      curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
+      labelBody.setAttribute('width', width);
+      labelBody.setAttribute('height', height);
+      break;
+    case 3:
+      x = preX < endX ? preX : endX;
+      width = preX > endX ? preX - endX : endX - preX;
+      width = parseFloat((width/curScale).toFixed(2));
+      curLabel.setAttribute('transform', 'translate('+x+' '+preY+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+preRotY+')');
+      labelBody.setAttribute('width', width);
+      break;
+    case 4:
+      x = preX < endX ? preX : endX;
+      y = preY < endY ? preY : endY;
+      width = preX > endX ? preX - endX : endX - preX;
+      height = preY > endY ? preY - endY : endY - preY;
+      curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
+      labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
+      labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
+      break;
+    case 5:
+      y = preY < endY ? preY : endY;
+      height = preY > endY ? preY - endY : endY - preY;
+      height = parseFloat((height/curScale).toFixed(2));
+      curLabel.setAttribute('transform', 'translate('+preX+' '+y+') scale('+curScale+') rotate('+preDegree+' '+preRotX+' '+height*.5+')');
+      labelBody.setAttribute('height', height);
+      break;
+    case 6:
+      x = preX + preWidth > endX ? endX : preX + preWidth;
+      y = preY < endY ? preY : endY;
+      width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
+      height = preY > endY ? preY - endY : endY - preY;
+      width = parseFloat((width/curScale).toFixed(2));
+      height = parseFloat((height/curScale).toFixed(2));
+      curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
+      labelBody.setAttribute('width', width);
+      labelBody.setAttribute('height', height);
+      break;
+    case 7:
+      x = preX + preWidth > endX ? endX : preX + preWidth;
+      width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
+      width = parseFloat((width/curScale).toFixed(2));
+      curLabel.setAttribute('transform', 'translate('+x+' '+preY+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+preRotY+')');
+      labelBody.setAttribute('width', width);
+      break;
+    case 8:
+      document.querySelectorAll('.selected').forEach(label => {
+        let info = selLblsInfo.find(selLabel => selLabel.id === label.dataset.id);
+        x = (info.preX + endX - startX).toFixed(2);
+        y = (info.preY + endY - startY).toFixed(2);
+        label.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+info.preDegree+' '+info.preRotX+' '+info.preRotY+')');
+      });
+      break;
+    case 9:
+      let oriRotX = parseFloat(curLabel.firstChild.getAttribute('width')) * curScale * 0.5;
+      let oriRotY = parseFloat(curLabel.firstChild.getAttribute('height')) * curScale * 0.5;
+      let degree = (Math.atan2(endY - (preY + oriRotY), endX - (preX + oriRotX)) * 180 / Math.PI) + 90;
+      degree = degree < 0 ? degree + 360 : degree;
+      degree = parseInt(degree);
+      curLabel.setAttribute('transform', 'translate('+preX+' '+preY+') scale('+curScale+') rotate('+degree+' '+preRotX+' '+preRotY+')');
+      break;
+  }
+  updateAnchors(labelBody);
+}
+
+
 const createLabel = () => {
   let labelBody = curLabel.firstChild;
 
@@ -807,6 +818,16 @@ const createLabel = () => {
     return false;
   }
 
+  curLabel.dataset.id = curId++;
+  curLabel.dataset.name = '';
+
+  createInputBox(labelBody);
+
+  return true;
+}
+
+
+const createInputBox = labelBody => {
   let width = parseFloat(labelBody.getAttribute('width'));
 
   let inputWrapper = document.createElementNS(svgNS, "foreignObject");
@@ -819,26 +840,27 @@ const createLabel = () => {
   input.classList.add('label-input');
   input.setAttribute('type', 'text');
   input.setAttribute('placeholder', 'Input Class name');
+  if (labelBody.parentNode.dataset.name) {
+    input.setAttribute('value', labelBody.parentNode.dataset.name);
+  }
   input.addEventListener('mousedown', e => {
     e.stopPropagation();
+  });
+  input.addEventListener('focus', e => {
+    isWritingTxt = true;
+  });
+  input.addEventListener('focusout', e => {
+    isWritingTxt = false;
   });
   input.addEventListener('keydown', e => {
     if(e.keyCode === 13) {
       labelBody.parentNode.dataset.name = e.target.value;
       labelBody.parentNode.removeChild(inputWrapper);
-
       _props.updateLabels(document.querySelectorAll('.label'), updateAndGetIds());
     }
   });
-  
-  curLabel.dataset.id = curId++;
-
   inputWrapper.appendChild(input);
   curLabel.appendChild(inputWrapper);
-
-  curLabel.dataset.name = '';
-
-  return true;
 }
 
 
@@ -847,8 +869,8 @@ const createAnchors = label => {
 
   label.classList.add('selected');
 
-  let width = label.firstChild.getAttribute('width');
-  let height = label.firstChild.getAttribute('height');
+  let width = parseFloat(label.firstChild.getAttribute('width'));
+  let height = parseFloat(label.firstChild.getAttribute('height'));
 
   let line = document.createElementNS(svgNS, "line");
   line.setAttribute('x1', width*.5);
@@ -934,6 +956,8 @@ const createAnchors = label => {
       preX = parseFloat(transform[0].substring(10));
       preY = parseFloat(transform[1].split(')')[0]);
       preDegree = parseFloat(transform[3].substring(7));
+      preRotX = parseFloat(transform[4]);
+      preRotY = parseFloat(transform[5].split(')')[0]);
       preWidth = parseFloat((curLabel.firstChild.getAttribute('width') * curScale).toFixed(2));
       preHeight = parseFloat((curLabel.firstChild.getAttribute('height') * curScale).toFixed(2));
 
@@ -942,6 +966,61 @@ const createAnchors = label => {
 
     label.appendChild(anchor);
   }
+
+  let nameLen = 0;
+  if (label.dataset.name) {
+    nameLen = label.dataset.name.length;
+    nameLen *= 5;
+  }
+
+  let infoBox = document.createElementNS(svgNS, "rect");
+  infoBox.setAttribute('x', width+23);
+  infoBox.setAttribute('y', height+5);
+  infoBox.setAttribute('rx', 5);
+  infoBox.setAttribute('ry', 5);
+  infoBox.setAttribute('width', 70 + nameLen);
+  if (!label.dataset.name) {
+    infoBox.setAttribute('height', 36);
+  }
+  else {
+    infoBox.setAttribute('height', 50);
+  }
+  infoBox.setAttribute('fill', 'white');
+  infoBox.setAttribute('filter', 'url(#f1)');
+  infoBox.classList.add('infoBox');
+  label.appendChild(infoBox);
+
+  let infoTxt = document.createElementNS(svgNS, "text");
+  infoTxt.setAttribute('y', height + 5);
+
+  let tspan0 = document.createElementNS(svgNS, "tspan");
+  tspan0.setAttribute('x', width + 30);
+  tspan0.setAttribute('dy', 15);
+  tspan0.setAttribute('font-size', 11);
+  tspan0.setAttribute('font-weight', 600);
+  tspan0.setAttribute('cursor', 'default');
+
+  let tspan1 = document.createElementNS(svgNS, "tspan");
+  tspan1.setAttribute('x', width + 30);
+  tspan1.setAttribute('dy', 15);
+  tspan1.setAttribute('font-size', 10);
+  tspan1.setAttribute('cursor', 'default');
+
+  let tspan2 = document.createElementNS(svgNS, "tspan");
+  tspan2.setAttribute('x', width + 30);
+  tspan2.setAttribute('dy', 14);
+  tspan2.setAttribute('font-size', 10);
+  tspan2.setAttribute('cursor', 'default');
+
+  tspan0.innerHTML = label.dataset.name;
+  tspan1.innerHTML = 'W ' + width;
+  tspan2.innerHTML = 'H ' + height;
+
+  infoTxt.appendChild(tspan0);
+  infoTxt.appendChild(tspan1);
+  infoTxt.appendChild(tspan2);
+
+  label.appendChild(infoTxt);
 }
 
 
@@ -953,21 +1032,32 @@ const updateAnchors = labelBody => {
   let anchorPosYList = [-7, -7, -7, height*.5-5, height-3, height-3, height-3, height*.5-5];
 
   let i = 0;
-  while(labelBody.nextSibling){
+  while (labelBody.nextSibling) {
     labelBody = labelBody.nextSibling;
-    if(labelBody.tagName === 'line') {
+
+    if (labelBody.tagName === 'line') {
       labelBody.setAttribute('x1', width*.5);
       labelBody.setAttribute('x2', width*.5);
     }
-    else if(labelBody.tagName === 'circle') {
+    else if (labelBody.tagName === 'circle') {
       labelBody.setAttribute('cx', width*.5);
     }
-    else if(labelBody.tagName === 'rect') {
+    else if (labelBody.tagName === 'rect' && !labelBody.classList.contains('infoBox')) {
       labelBody.setAttribute('x', anchorPosXList[i]);
       labelBody.setAttribute('y', anchorPosYList[i]);
       i++;
     }
-    else if(labelBody.tagName === 'foreignObject') {
+    else if (labelBody.tagName === 'rect' && labelBody.classList.contains('infoBox')) {
+      labelBody.setAttribute('x', width+23);
+      labelBody.setAttribute('y', height+5);
+    }
+    else if (labelBody.tagName === 'text') {
+      labelBody.setAttribute('y', height + 5);
+      for (let tspan of labelBody.childNodes) {
+        tspan.setAttribute('x', width + 30);
+      }
+    }
+    else if (labelBody.tagName === 'foreignObject') {
       labelBody.setAttribute('x', width + 20);
     }
   }
