@@ -1,34 +1,31 @@
 import React, {useEffect} from 'react';
 import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from '../modules/annotator';
 
+
 export default function LabelList(props) {
 
+
     useEffect(() => {
-        console.log('LabelList useEffect [props.labels]');
+        console.log('LabelList useEffect [props.lbls]');
+        
+        let lbls = props.lbls;
+        if (!lbls) {
+            lbls = [];
+        }
 
         let labelListRoot = document.querySelector('.label-list-root');
 
-        if(props.labels === undefined || props.labels.length === 0) {
-            while(labelListRoot.firstChild) {
-                labelListRoot.removeChild(labelListRoot.firstChild);
-            }
-            return;
+        while(labelListRoot.firstChild) {
+            labelListRoot.removeChild(labelListRoot.firstChild);
         }
 
         let labelList = '';
 
-        props.labels.forEach(label => {
-
-            let find = false;
-            props.selectedLabelIds.forEach(id => {
-                if(id === label.id) {
-                    labelList += `<li class="label-info btn active"`;
-                    find = true;
-                    return false;
-                }
-            });
-
-            if(!find) {
+        lbls.forEach(label => {
+            if(props.selLblIds.find(id => id === label.id)) {
+                labelList += `<li class="label-info btn active"`;
+            }
+            else {
                 labelList += `<li class="label-info btn"`;
             }
 
@@ -37,22 +34,13 @@ export default function LabelList(props) {
             // 3 2
             labelList += `
                 data-id="${label.id}"
-                data-name="${label.name}"
-                data-x-coordinate0="${label.coordinates[0].x}"
-                data-y-coordinate0="${label.coordinates[0].y}"
-                data-x-coordinate1="${label.coordinates[1].x}"
-                data-y-coordinate1="${label.coordinates[1].y}"
-                data-x-coordinate2="${label.coordinates[2].x}"
-                data-y-coordinate2="${label.coordinates[2].y}"
-                data-x-coordinate3="${label.coordinates[3].x}"
-                data-y-coordinate3="${label.coordinates[3].y}"
             >
                 <p class="label-class">${label.name}</p>
                 <p class="label-coordinate">
-                    (${label.coordinates[0].x}, ${label.coordinates[0].y})
-                    (${label.coordinates[1].x}, ${label.coordinates[1].y})
-                    (${label.coordinates[2].x}, ${label.coordinates[2].y})
-                    (${label.coordinates[3].x}, ${label.coordinates[3].y})
+                    (${parseInt(label.coordinates[0].x)}, ${parseInt(label.coordinates[0].y)})
+                    (${parseInt(label.coordinates[1].x)}, ${parseInt(label.coordinates[1].y)})
+                    (${parseInt(label.coordinates[2].x)}, ${parseInt(label.coordinates[2].y)})
+                    (${parseInt(label.coordinates[3].x)}, ${parseInt(label.coordinates[3].y)})
                 </p>
             </li>
             `;
@@ -60,36 +48,35 @@ export default function LabelList(props) {
 
         labelListRoot.innerHTML = labelList;
 
-    }, [props.labels]);
+    }, [props.lbls]);
+
 
     useEffect(() => {
-        console.log('LabelList useEffect [props.selectedLabelIds]');
-
-        if(compareIds(props.selectedLabelIds)) {
-            console.log('LabelList useEffect [props.selectedLabelIds] returned');
+        console.log('LabelList useEffect [props.selLblIds]');
+        
+        if(compareIds(props.selLblIds)) {
+            console.log('LabelList useEffect [props.selLblIds] returned');
             return;
         }
-
-        console.log('props.selectedLabelIds: ',props.selectedLabelIds);
 
         document.querySelectorAll('.label-info').forEach(labelInfo => {
             labelInfo.classList.remove('active');
 
-            props.selectedLabelIds.forEach(id => {
+            props.selLblIds.forEach(id => {
                 if(labelInfo.dataset.id === id) {
                     labelInfo.classList.add('active');
                 }
             });
         });
 
-    }, [props.selectedLabelIds]);
+    }, [props.selLblIds]);
+
 
     const compareIds = (propsIds) => {
         let ids = [];
         document.querySelectorAll('.label-info.active').forEach(labelInfo => {
             ids.push(labelInfo.dataset.id);
         });
-
         if(ids.length !== propsIds.length) {
             return false;
         }
@@ -101,6 +88,7 @@ export default function LabelList(props) {
         return true;
     }
 
+
     const toggleLabelList = () => {
         let controller = document.querySelector('.label-list-controller');
         let img = document.querySelector('.label-list-btn-img');
@@ -108,26 +96,26 @@ export default function LabelList(props) {
 
         if(labelList.style.display === 'block') {
             controller.firstChild.style.display = 'none';
-            controller.style.width = '38px';
+            controller.style.minWidth = '38px';
             img.src = require('../asset/images/arrow-right.png');
             labelList.style.display = 'none';
         }
         else {
             controller.firstChild.style.display = 'block';
-            controller.style.width = '310px';
+            controller.style.minWidth = '300px';
             img.src = require('../asset/images/arrow-left.png');
             labelList.style.display = 'block';
         }
     };
     
+
     const selectLabel = e => {
         if(props.mode === LABEL_CREATE_MODE) {
             return;
         }
-        console.log('selectLabel');
         
         let _labelInfo;
-        e.target.classList.value.indexOf('label-info') !== -1 ? _labelInfo = e.target : _labelInfo = e.target.parentNode;
+        _labelInfo = e.target.classList.value.indexOf('label-info') !== -1 ? e.target : e.target.parentNode;
         _labelInfo.classList.add('active');
 
         if(!e.ctrlKey) {
@@ -146,6 +134,7 @@ export default function LabelList(props) {
 
         props.selectLabels(ids);
     }
+
 
     return (
         <div className="label-list">

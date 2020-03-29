@@ -22,14 +22,14 @@ button:focus{outline: none;}
 .viewer{display: flex; flex-direction: column; height: 100%;}
 .viewer .viewer-title{border: 1px solid lightgray; padding: 20px 20px 20px 50px; font-size: 2rem; font-weight: 800; color: #0f1350;}
 .viewer .viewer-content{display: flex; flex-direction: row; flex: 1; overflow: auto;}
-.viewer .viewer-content .label-mode{display: flex; flex: none; flex-direction: column; border-right:  1px solid lightgray;}
-.viewer .viewer-content .label-mode .label-mode-btn{border-radius:  8px; margin: 5px 7px;}
-.viewer .viewer-content .label-list{display: flex; flex: none; flex-direction: column;}
-.viewer .viewer-content .label-list ul{overflow: auto; border-right: 1px solid lightgray;}
+.viewer .viewer-content .label-mode{display: flex; flex: none; flex-direction: column; border-right: 1px solid lightgray;}
+.viewer .viewer-content .label-mode .label-mode-btn{border-radius: 8px; margin: 5px 7px;}
+.viewer .viewer-content .label-list{display: flex; flex: none; flex-direction: column; border-right: 1px solid lightgray;}
+.viewer .viewer-content .label-list ul{overflow: auto;}
 .viewer .viewer-content .label-list ul::-webkit-scrollbar{width: 5px;}
 .viewer .viewer-content .label-list ul::-webkit-scrollbar-thumb{background-color: #727fa3; border-radius: 20px;}
 .viewer .viewer-content .label-list ul::-webkit-scrollbar-track{background-color: #d5d9e2; border-radius: 20px;}
-.viewer .viewer-content .label-list .label-list-controller{display: flex; width: 310px; border-bottom: 1px solid lightgray; border-right: 1px solid lightgray;}
+.viewer .viewer-content .label-list .label-list-controller{display: flex; min-width: 300px; width: auto; border-bottom: 1px solid lightgray;}
 .viewer .viewer-content .label-list .label-list-controller span{padding: 5px 15px; color: #4d66a7; font-size: 0.85rem;}
 .viewer .viewer-content .label-list .label-list-controller .label-list-btn{display: flex; margin-left: auto; padding: 10px 13px;}
 .viewer .viewer-content .label-list .label-info{padding: 14px 20px 20px 20px; border-bottom: 1px solid lightgray; cursor: Pointer;}
@@ -49,51 +49,32 @@ button:focus{outline: none;}
 .label-input{width: 120px; border-radius: 15px; border: 2px solid lightgray; padding: 0 10px; height: 23px;}
 .label-input:focus{outline: none;}
 
-/* .label-board-scaler{position: fixed; bottom: 50px; right: 32px; width: 35px; height: 170px; border-radius: 6px; box-shadow: 0 0 3px 1.5px #e0e0e0;} */
-.label-board-scaler{position: fixed; bottom: 50px; right: 32px; width: 35px; height: 170px; border-radius: 6px; box-shadow: 0 0 3px 1.5px #e0e0e0;}
-.label-board-scaler .scaler-plus{position: absolute; left: 10px; top: 2px; font-size: 1.4rem;}
-.label-board-scaler .scaler-minus{position: absolute; left: 11px; bottom: 0px; font-size: 2rem;}
-
-
-.label-board-scaler .scaler-range{width: 100px; transform: rotate(90deg); transform-origin: left;}
+.label-board-scaler{position: fixed; bottom: 50px; right: 32px; width: 36px; height: 170px; border-radius: 6px; box-shadow: 0 0 3px 1.5px #e0e0e0; background-color: white; }
+.label-board-scaler .scaler-plus{position: absolute; left: 12px; top: 11px;}
+.label-board-scaler .scaler-minus{position: absolute; left: 12px; bottom: 11px;}
+.label-board-scaler .scaler-range{
+  position: relative;
+  top: 122px;
+  left: 16px;
+  width: 104px;
+  height: 3px;
+  transform: rotate(-90deg); 
+  transform-origin: left;
+  background: linear-gradient(to right, #333333 0%, #333333 50%, #dedede 50%, #dedede 100%);
+  border-radius: 10px;
+}
 .label-board-scaler .scaler-range::-webkit-slider-thumb{
-    -webkit-appearance: none;
-    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; 
-    width: 3px; height: 13px; 
-    border: 3px solid gray;
-    border-radius: 3px;
-    cursor: pointer;
-    background: #333333;
-    
-    /* margin: 0 -7px; */
-
-    /* -webkit-appearance: none;
-  border: 1px solid #000000;
-  height: 36px;
-  width: 16px;
-  border-radius: 3px;
-  background: #ffffff;
-  cursor: pointer;
-  margin-top: -14px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-  /*box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; */
-}
-.label-board-scaler .scaler-range::-webkit-slider-runnable-track{
-    /* width: 3px; */
-    background: #333333;
-
-    width: 300px;
-    height: 3px;
-    /* margin-left: 25px;
-    margin-bottom: 32px;
-    margin-right: -20px; */
-
-    /* position: relative;
-    bottom: 16px;
-    left: 10px; */
-
-    /* border: none; */
-    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-    border: 0.2px solid #010101;
-    border-radius: 3px;
+  -webkit-appearance: none; 
+  width: 3px; 
+  height: 15px; 
+  cursor: pointer; background: #333333;
+  border-radius: 10px;
 }
 
+.label-contextmenu{display: none; position: absolute; width: 230px; cursor: default; border-radius: 5px; background-color: #fbfbfb; box-shadow: 1px 1px 5px 0 #b5b5b5}
+.label-contextmenu .item{padding: 10px 15px;}
+.label-contextmenu .item.disabled{color: #b8bdc7}
+.label-contextmenu .item:first-child{border-bottom: 1px solid #d1d2d8;}
+.label-contextmenu .item:hover{background-color: #e0e3ea;}
+.label-contextmenu .item .item-name{font-size: 0.91rem;}
+.label-contextmenu .item .item-shortcut{float: right; padding-top: 5px; font-size: 0.7rem; color: #717d9e;}

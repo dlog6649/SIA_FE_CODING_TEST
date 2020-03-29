@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { viewImage } from '../modules/annotator';
 import { push } from 'connected-react-router';
 
+
 const mapDispatchToProps = dispatch => {
     return {
         viewImage:(url, title) => {
@@ -11,5 +12,6 @@ const mapDispatchToProps = dispatch => {
         }
     };
 };
+
 
 export default connect(null, mapDispatchToProps)(CardList);

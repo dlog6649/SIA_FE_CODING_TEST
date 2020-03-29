@@ -1,11 +1,12 @@
-import { _props } from './components/LabelBoard';
+import { _props, _setScale } from './components/LabelBoard';
 import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from './modules/annotator';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
 var svg;
+var contextmenu;
 var mode = LABEL_SELECT_MODE;
-var curId;
+var curId = 0;
 var curScale = 0.7;
 
 var isDrawing = false;
@@ -22,13 +23,15 @@ var preRotX;
 var preRotY;
 var preWidth;
 var preHeight;
+var menuX;
+var menuY;
 
+var cloneLbls = [];
 var curLabel;
-var labels = [];
-var selectedLabel;
-var selectedLabelsInfo = [];
-var selectedLabelIds = [];
-var allLabelsInfo = [];
+var selLbl;
+var selLblsInfo = [];
+var selLblIds = [];
+var allLblsInfo = [];
 
 //   9
 // 0 1 2
@@ -38,38 +41,92 @@ const cursorList = ['nw-resize', 'n-resize', 'ne-resize', 'e-resize', 'se-resize
 var selectedHandlerNo;
 
 
-export const compareIds = propsIds => {
-  if(selectedLabelIds.length !== propsIds.length) {
+export const compareImage = _image => {
+  if(!_image) {
+    return true;
+  }
+
+  let image = document.querySelector('#img');
+
+  if(!image) {
     return false;
   }
-  for(let i = 0; i < propsIds.length; i++) {
-    if(!selectedLabelIds.includes(propsIds[i])) {
+  
+  let transform = image.getAttribute('transform').split(' ');
+  let x = parseFloat(transform[0].substring(10));
+  let y = parseFloat(transform[1].split(')')[0]);
+  let s = parseFloat(transform[2].substring(6).split(')')[0]);
+
+  if (_image.x !== x || _image.y !== y || _image.scale !== s) {
+    return false;
+  }
+  return true;
+}
+
+
+export const compareLabels = _labels => {
+  if (!_labels) {
+    _labels = [];
+  }
+
+  let labels = document.querySelectorAll('.label');
+
+  if (_labels.length !== labels.length) {
+    return false;
+  }
+
+  for (let label of labels) {
+    let _label = _labels.find(_label => _label.id === label.dataset.id);
+
+    if(!_label) {
+      return false;
+    }
+    
+    let transform = label.getAttribute('transform').split(' ');
+    let x = parseFloat(transform[0].substring(10));
+    let y = parseFloat(transform[1].split(')')[0]);
+    let w = parseFloat(label.firstChild.getAttribute('width'));
+    let h = parseFloat(label.firstChild.getAttribute('height'));
+
+    let _x = parseFloat(_label.coordinates[0].x);
+    let _y = parseFloat(_label.coordinates[0].y);
+    let _w = parseFloat((_label.coordinates[1].x - _label.coordinates[0].x).toFixed(2));
+    let _h = parseFloat((_label.coordinates[3].y - _label.coordinates[0].y).toFixed(2));
+
+    if (x !== _x || y !== _y || w !== _w || h !== _h) {
       return false;
     }
   }
   return true;
 }
 
+
+export const compareIds = propsIds => {
+  if(selLblIds.length !== propsIds.length) {
+    return false;
+  }
+  for(let i = 0; i < propsIds.length; i++) {
+    if(!selLblIds.includes(propsIds[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
 export const getMode = () => {
   return mode;
 }
 
-export const getLabels = () => {
-  return labels;
-}
 
-export const getSelectedLabelIds = () => {
-  return selectedLabelIds;
-}
-
-export const setSelectedLabelIds = _ids => {
+export const setSelLblIds = _ids => {
   console.log('label.setIds');
 
   deleteAnchors();
 
-  selectedLabelIds = _ids;
+  selLblIds = _ids;
 
-  selectedLabelIds.forEach(id => {
+  selLblIds.forEach(id => {
     document.querySelectorAll('.label').forEach(label => {
       if(id === label.dataset.id) {
         createAnchors(label);
@@ -78,6 +135,7 @@ export const setSelectedLabelIds = _ids => {
   });
 }
 
+
 export const setMode = _mode => {
   mode = _mode;
 
@@ -85,9 +143,10 @@ export const setMode = _mode => {
     mode === LABEL_SELECT_MODE ? label.firstChild.setAttribute('cursor', 'move') : label.firstChild.setAttribute('cursor', 'auto');
   });
   
-  selectedLabel = null;
+  selLbl = null;
   deleteAnchors();
 }
+
 
 export const initialize = () => {
   console.log('initializing');
@@ -95,12 +154,24 @@ export const initialize = () => {
   document.addEventListener('keydown', documentKeydownEvent);
   document.addEventListener('keyup', documentKeyupEvent);
   document.addEventListener('mouseup', documentMouseupEvent);
-
+  document.addEventListener("click", hideContextmenu);
+  document.addEventListener("mousewheel", hideContextmenu);
+  document.addEventListener("contextmenu", hideDefaultContextmenu);
+  
   svg = document.querySelector('#svg');
   svg.addEventListener('mousedown', svgMousedownEvent);
   svg.addEventListener('mousemove', throttle(svgMousemoveEvent, 25));
-  svg.addEventListener('mousewheel', throttle(svgMousewheelEvent, 40))
+  svg.addEventListener('mousewheel', throttle(svgMousewheelEvent, 40));
+  svg.addEventListener("contextmenu", showContextmenu);
+
+  buildContextmenu();
+
+  document.querySelector('.scaler-range').addEventListener('change', imgScaleSliderEvent);
+
+  let lbls = document.querySelectorAll('.label');
+  curId = !lbls.length ? 0 : parseInt(lbls[lbls.length - 1].id) + 1;
 }
+
 
 export const finalize = () => {
   console.log('finalizing');
@@ -108,10 +179,128 @@ export const finalize = () => {
   document.removeEventListener('keydown', documentKeydownEvent);
   document.removeEventListener('keyup', documentKeyupEvent);
   document.removeEventListener('mouseup', documentMouseupEvent);
+  document.removeEventListener("click", hideContextmenu);
+  document.removeEventListener("mousewheel", hideContextmenu);
+  document.removeEventListener("contextmenu", hideDefaultContextmenu);
 }
 
-export const drawImage = image => {
-  if(image === undefined) {
+
+const hideDefaultContextmenu = e => {
+  e.preventDefault();
+}
+
+
+const buildContextmenu = () => {
+  contextmenu = document.querySelector('.label-contextmenu');
+  contextmenu.addEventListener('click', e => {
+    e.stopPropagation();
+
+    let menu = e.target.tagName === 'SPAN' ? e.target.parentNode : e.target;
+
+    switch (menu.id) {
+      case 'edit':
+        let child = curLabel.firstChild;
+        while (child) {
+          if (child.tagName === 'foreignObject') {
+            contextmenu.style.display = 'none';
+            return;
+          }
+          child = child.nextSibling;
+        }
+
+        let labelBody = curLabel.firstChild;
+        let width = parseFloat(labelBody.getAttribute('width'));
+
+        let inputWrapper = document.createElementNS(svgNS, "foreignObject");
+        inputWrapper.setAttribute('x', width + 20);
+        inputWrapper.setAttribute('y', 0);
+        inputWrapper.setAttribute('width', '145');
+        inputWrapper.setAttribute('height', '30');
+
+        let input = document.createElement("input");
+        input.classList.add('label-input');
+        input.setAttribute('type', 'text');
+        input.setAttribute('placeholder', 'Input Class name');
+        if (curLabel.dataset.name !== '') {
+          input.setAttribute('value', curLabel.dataset.name);
+        }
+        input.addEventListener('mousedown', e => {
+          e.stopPropagation();
+        });
+        input.addEventListener('keydown', e => {
+          if(e.keyCode === 13) {
+            labelBody.parentNode.dataset.name = e.target.value;
+            labelBody.parentNode.removeChild(inputWrapper);
+            _props.updateLabels(document.querySelectorAll('.label'), updateAndGetIds());
+          }
+        });
+
+        inputWrapper.appendChild(input);
+        curLabel.appendChild(inputWrapper);
+        break;
+      case 'cut':
+        copySelectedLabels();
+        deleteSelectedLabels();
+        break;
+      case 'copy':
+        copySelectedLabels();
+        break;
+      case 'paste':
+        pasteCopiedLabels(true);
+        break;
+      case 'delete':
+        deleteSelectedLabels();
+        break;
+    }
+
+    contextmenu.style.display = 'none';
+  });
+}
+
+
+const hideContextmenu = () => {
+  contextmenu.style.display = 'none';
+}
+
+
+const showContextmenu = e => {
+  e.preventDefault();
+
+  if (mode === LABEL_CREATE_MODE) {
+    return;
+  }
+
+  menuX = e.offsetX;
+  menuY = e.offsetY;
+
+  contextmenu.style.display = 'block';
+  contextmenu.style.left = e.pageX + 'px';
+  contextmenu.style.top = e.pageY + 'px';
+
+  if (e.target.id === 'svg' || e.target.tagName === 'image') {
+    document.querySelector('.item.edit').style.display = 'none';
+    document.querySelector('.item.cut').style.display = 'none';
+    document.querySelector('.item.copy').style.display = 'none';
+    document.querySelector('.item.delete').style.display = 'none';
+  }
+  else {
+    document.querySelector('.item.edit').style.display = 'block';
+    document.querySelector('.item.cut').style.display = 'block';
+    document.querySelector('.item.copy').style.display = 'block';
+    document.querySelector('.item.delete').style.display = 'block';
+  }
+
+  if (!cloneLbls.length) {
+    document.querySelector('.item.paste').classList.add('disabled');
+  }
+  else {
+    document.querySelector('.item.paste').classList.remove('disabled');
+  }
+}
+
+
+export const drawImage = (url, image) => {
+  if(!image) {
     return;
   }
   if(document.querySelector("#img")) {
@@ -122,14 +311,15 @@ export const drawImage = image => {
   
   let img = document.createElementNS(svgNS, 'image');
   img.setAttribute('transform', 'translate('+image.x+' '+image.y+') scale('+curScale+')');
-  img.setAttribute('href', image.url);
+  img.setAttribute('href', url);
   img.setAttribute('alt', 'sampleImg');
   img.id = 'img';
 
   svg.appendChild(img);
 }
 
-export const drawLabels = (labels, _selectedLabelIds) => {
+
+export const drawLabels = (lbls, _selLblIds) => {
   let i = 0;
   document.querySelectorAll('.label').forEach(label => {
     console.log('delete label: ',i);
@@ -137,32 +327,19 @@ export const drawLabels = (labels, _selectedLabelIds) => {
     i++;
   });
 
-  labels.length === 0 ? curId = 0 : curId = parseInt(labels[labels.length - 1].id) + 1;
+  curId = !lbls.length ? 0 : parseInt(lbls[lbls.length - 1].id) + 1;
 
-  labels.forEach(label => {
-    let x = parseFloat(label.coordinates[0].x);
-    let y = parseFloat(label.coordinates[0].y);
-
-    let width = parseInt(parseFloat(label.coordinates[1].x) - parseFloat(label.coordinates[0].x));
-    let height = parseInt(parseFloat(label.coordinates[3].y) - parseFloat(label.coordinates[0].y));
+  lbls.forEach(label => {
+    let x = label.coordinates[0].x;
+    let y = label.coordinates[0].y;
+    let width = parseFloat((label.coordinates[1].x - label.coordinates[0].x).toFixed(2));
+    let height = parseFloat((label.coordinates[3].y - label.coordinates[0].y).toFixed(2));
 
     let newLabel = document.createElementNS(svgNS, "g");
     newLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+width*.5+' '+height*.5+')');
     newLabel.classList.add('label');
     newLabel.dataset.id = label.id;
     newLabel.dataset.name = label.name;
-
-    // coordinates
-    // 0 1
-    // 3 2
-    newLabel.dataset.xCoordinate0 = x;
-    newLabel.dataset.yCoordinate0 = y;
-    newLabel.dataset.xCoordinate1 = (x + width).toFixed(1);
-    newLabel.dataset.yCoordinate1 = y;
-    newLabel.dataset.xCoordinate2 = (x + width).toFixed(1);
-    newLabel.dataset.yCoordinate2 = (y + height).toFixed(1);
-    newLabel.dataset.xCoordinate3 = x;
-    newLabel.dataset.yCoordinate3 = (y + height).toFixed(1);
 
     let labelBody = document.createElementNS(svgNS, "rect");
     labelBody.setAttribute('width', width);
@@ -180,34 +357,7 @@ export const drawLabels = (labels, _selectedLabelIds) => {
     newLabel.appendChild(labelBody);
     svg.appendChild(newLabel);
 
-    if(newLabel.dataset.name === '') {
-      let inputWrapper = document.createElementNS(svgNS, "foreignObject");
-      inputWrapper.setAttribute('x', width + 20);
-      inputWrapper.setAttribute('y', 0);
-      inputWrapper.setAttribute('width', '145');
-      inputWrapper.setAttribute('height', '30');
-  
-      let input = document.createElement("input");
-      input.classList.add('label-input');
-      input.setAttribute('type', 'text');
-      input.setAttribute('placeholder', 'Input Class name');
-      input.addEventListener('mousedown', e => {
-        e.stopPropagation();
-      });
-      input.addEventListener('keydown', e => {
-        if(e.keyCode === 13) {
-          labelBody.parentNode.dataset.name = e.target.value;
-          labelBody.parentNode.removeChild(inputWrapper);
-  
-          updateIds();
-          _props.updateLabels(document.querySelectorAll('.label'), selectedLabelIds);
-        }
-      });
-      inputWrapper.appendChild(input);
-      newLabel.appendChild(inputWrapper);
-    }
-
-    _selectedLabelIds.forEach(id => {
+    _selLblIds.forEach(id => {
       if(newLabel.dataset.id === id) {
         createAnchors(newLabel);
       }
@@ -215,104 +365,185 @@ export const drawLabels = (labels, _selectedLabelIds) => {
   });
 }
 
+
 const documentKeydownEvent = e => {
   console.log('keydown');
 
-  if(e.keyCode === 32) {
+  let key = 'which' in e ? e.which : e.keyCode;
+
+  if (key === 32) { // spacebar
     isPushingSpacebar = true;
   }
-  
-  if(e.keyCode === 46 || e.keyCode === 8) {
-    let deletedIds = [];
-    document.querySelectorAll('.selected').forEach(label => {
-      deletedIds.push(label.dataset.id);
-      svg.removeChild(label);
-    });
-    _props.deleteLabels(deletedIds);
+  if (key === 46 || key === 8) { // delete or backspace
+    deleteSelectedLabels();
   }
-  
-  if(e.keyCode === 17) {
+  if (e.ctrlKey) {
     isPushingCtrl = true;
+  }
+  if (e.ctrlKey && key === 88) { // ctrl + x
+    copySelectedLabels();
+    deleteSelectedLabels();
+  }
+  if (e.ctrlKey && key === 67) { // ctrl + c
+    copySelectedLabels();
+  }
+  if (e.ctrlKey && key === 86) { // ctrl + v
+    pasteCopiedLabels(false);
   }
 }
 
+const copySelectedLabels = () => {
+  cloneLbls = [];
+  for(let lbl of document.querySelectorAll('.selected')) {
+    cloneLbls.push(lbl.cloneNode(true));
+  }
+}
+
+const pasteCopiedLabels = isClickedMenu => {
+  if (!cloneLbls.length) {
+    return;
+  }
+
+  let transform, standardX, standardY, movedX, movedY;
+
+  if (isClickedMenu) {
+    transform = cloneLbls[0].getAttribute('transform').split(' ');
+    standardX = parseFloat(transform[0].substring(10));
+    standardY = parseFloat(transform[1].split(')')[0]);
+    movedX = menuX - standardX;
+    movedY = menuY - standardY;
+  }
+  else {
+    movedX = 10;
+    movedY = 10;
+  }
+
+  for (let i = 0; i < cloneLbls.length; i++) {
+    transform = cloneLbls[i].getAttribute('transform').split(' ');
+    let x = parseFloat(transform[0].substring(10));
+    let y = parseFloat(transform[1].split(')')[0]);
+    let deg = parseInt(transform[3].substring(7));
+    let rotX = parseFloat(transform[4]);
+    let rotY = parseFloat(transform[5].split(')')[0]);
+
+    cloneLbls[i].setAttribute('transform', 'translate('+(x+movedX)+' '+(y+movedY)+') scale('+curScale+') rotate('+deg+' '+rotX+' '+rotY+')');
+    cloneLbls[i].dataset.id = curId++;
+    cloneLbls[i].firstChild.addEventListener('mousedown', labelBodyMouseDownEvent);
+
+    svg.appendChild(cloneLbls[i]);
+
+    cloneLbls[i] = cloneLbls[i].cloneNode(true);
+  }
+  _props.createLabels(cloneLbls);
+}
+
+
 const documentKeyupEvent = e => {
-  if(e.keyCode === 32) {
+  let key = 'which' in e ? e.which : e.keyCode;
+
+  if(key === 32) {
     isPushingSpacebar = false;
   }
-  if(e.keyCode === 17) {
+  if(key === 17) {
     isPushingCtrl = false;
   }
 }
 
-const svgMousewheelEvent = e => {
-  console.log('svgMousewheelEvent');
-  e.preventDefault();
 
-  let preScale;
-
-  if(e.deltaY > 0) {
-    curScale -= 0.1;
-    curScale = parseFloat(curScale.toFixed(1));
-    preScale = curScale + 0.1;
-  }
-  else {
-    curScale += 0.1;
-    curScale = parseFloat(curScale.toFixed(1));
-    preScale = curScale - 0.1;
-  }
+const deleteSelectedLabels = () => {
+  let selLbls = document.querySelectorAll('.selected');
   
-  if(curScale < 0.1) {
-    curScale = 0.1;
-    return;
-  }
-  else if(curScale > 2) {
-    curScale = 2;
+  if(!selLbls.length) {
     return;
   }
   
+  let deletedIds = [];
+
+  for(let lbl of selLbls) {
+    deletedIds.push(lbl.dataset.id);
+    svg.removeChild(lbl);
+  }
+
+  _props.deleteLabels(deletedIds);
+}
+
+
+function imgScaleSliderEvent() {
+  let val = parseFloat(this.value);
+  
+  if(curScale === val) {
+    return;
+  }
+  
+  let preScale = curScale;
+  curScale = val;
+
   let img = document.querySelector('#img');
-  let transForm = img.getAttribute('transform').split(' ');
-  let imgX = parseFloat(transForm[0].substring(10));
-  let imgY = parseFloat(transForm[1].split(')')[0]);
-
+  let transform = img.getAttribute('transform').split(' ');
+  let imgX = parseFloat(transform[0].substring(10));
+  let imgY = parseFloat(transform[1].split(')')[0]);
   img.setAttribute('transform', 'translate('+imgX+' '+imgY+') scale('+curScale+')');
 
   let labels = document.querySelectorAll('.label');
 
   labels.forEach(label => {
-    transForm = label.getAttribute('transform').split(' ');
-    let labelX = parseFloat(transForm[0].substring(10));
-    let labelY = parseFloat(transForm[1].split(')')[0]);
+    transform = label.getAttribute('transform').split(' ');
+    let labelX = parseFloat(transform[0].substring(10));
+    let labelY = parseFloat(transform[1].split(')')[0]);
+    let newX = parseFloat(((((labelX - imgX) / preScale) * curScale) + imgX).toFixed(2));
+    let newY = parseFloat(((((labelY - imgY) / preScale) * curScale) + imgY).toFixed(2));
 
-    // let newX = parseFloat((labelX / preScale * curScale).toFixed(1));
-    // let newY = parseFloat((labelY / preScale * curScale).toFixed(1));
-    // let newX = parseFloat((((labelX / preScale) - imgX) * curScale).toFixed(1));
-    // let newY = parseFloat((((labelY / preScale) - imgY) * curScale).toFixed(1));
-    let newX = parseFloat((((labelX - imgX) / preScale) * curScale).toFixed(1));
-    let newY = parseFloat((((labelY - imgY) / preScale) * curScale).toFixed(1));
-
-    let degree = parseInt(transForm[3].substring(7));
-    let rotX = parseFloat(transForm[4]);
-    let rotY = parseFloat(transForm[5].split(')')[0]);
-
-    let width = parseFloat(label.firstChild.getAttribute('width'));
-    let height = parseFloat(label.firstChild.getAttribute('height'));
+    let degree = parseInt(transform[3].substring(7));
+    let rotX = parseFloat(transform[4]);
+    let rotY = parseFloat(transform[5].split(')')[0]);
     
     label.setAttribute('transform', 'translate('+newX+' '+newY+') scale('+curScale+') rotate('+degree+' '+rotX+' '+rotY+')');
-    label.dataset.xCoordinate0 = newX;
-    label.dataset.yCoordinate0 = newY;
-    label.dataset.xCoordinate1 = (newX + width).toFixed(1);
-    label.dataset.yCoordinate1 = newY;
-    label.dataset.xCoordinate2 = (newX + width).toFixed(1);
-    label.dataset.yCoordinate2 = (newY + height).toFixed(1);
-    label.dataset.xCoordinate3 = newX;
-    label.dataset.yCoordinate3 = (newY + height).toFixed(1);
   });
 
-  updateIds();
-  _props.updateAll(img, labels, selectedLabelIds);
+  _props.updateImgLabels(img, labels);
 }
+
+
+const svgMousewheelEvent = e => {
+  console.log('svgMousewheelEvent');
+  e.preventDefault();
+
+  if((curScale <= 0.1 && e.deltaY > 0) || (curScale >= 2 && e.deltaY < 0)) {
+    return;
+  }
+
+  let preScale = curScale;
+  e.deltaY > 0 ? curScale = parseFloat((curScale - 0.1).toFixed(1)) : curScale = parseFloat((curScale + 0.1).toFixed(1));
+
+  let scaler = document.querySelector('.scaler-range');
+  scaler.style.background = 'linear-gradient(to right, #333333 0%, #333333 ' + curScale*50 + '%, #dedede ' + curScale*50 + '%, #dedede 100%)';
+  _setScale(curScale);
+  
+  let img = document.querySelector('#img');
+  let transform = img.getAttribute('transform').split(' ');
+  let imgX = parseFloat(transform[0].substring(10));
+  let imgY = parseFloat(transform[1].split(')')[0]);
+  img.setAttribute('transform', 'translate('+imgX+' '+imgY+') scale('+curScale+')');
+
+  let labels = document.querySelectorAll('.label');
+
+  labels.forEach(label => {
+    transform = label.getAttribute('transform').split(' ');
+    let labelX = parseFloat(transform[0].substring(10));
+    let labelY = parseFloat(transform[1].split(')')[0]);
+    let newX = parseFloat(((((labelX - imgX) / preScale) * curScale) + imgX).toFixed(2));
+    let newY = parseFloat(((((labelY - imgY) / preScale) * curScale) + imgY).toFixed(2));
+
+    let degree = parseInt(transform[3].substring(7));
+    let rotX = parseFloat(transform[4]);
+    let rotY = parseFloat(transform[5].split(')')[0]);
+    
+    label.setAttribute('transform', 'translate('+newX+' '+newY+') scale('+curScale+') rotate('+degree+' '+rotX+' '+rotY+')');
+  });
+
+  _props.updateImgLabels(img, labels);
+}
+
 
 const svgMousedownEvent = e => {
   console.log('svg mousedown');
@@ -322,26 +553,32 @@ const svgMousedownEvent = e => {
     dragImg(e);
   }
   else if(mode === LABEL_CREATE_MODE) {
+    // 마우스 왼쪽 클릭이 아니면
+    if (e.button !== 0) {
+      return;
+    }
     isDrawing = true;
     initializeLabel(e);
   }
   else if(mode === LABEL_SELECT_MODE) {
+    if (document.querySelectorAll('.selected').length === 0) {
+      return;
+    }
     deleteAnchors();
-    updateIds();
-    _props.selectLabels(selectedLabelIds);
-    
+    _props.selectLabels(updateAndGetIds());
   }
 }
+
 
 const dragImg = e => {
   startX = e.offsetX;
   startY = e.offsetY;
 
-  let transForm = document.querySelector('#img').getAttribute('transform').split(' ');
-  preX = parseFloat(transForm[0].substring(10));
-  preY = parseFloat(transForm[1].split(')')[0]);
+  let transform = document.querySelector('#img').getAttribute('transform').split(' ');
+  preX = parseFloat(transform[0].substring(10));
+  preY = parseFloat(transform[1].split(')')[0]);
 
-  let _allLabelsInfo = [];
+  let _allLblsInfo = [];
   document.querySelectorAll('.label').forEach(label => {
     let transform = label.getAttribute('transform').split(' ');
     let x = parseFloat(transform[0].substring(10));
@@ -349,9 +586,9 @@ const dragImg = e => {
     let deg = parseInt(transform[3].substring(7));
     let rotX = parseFloat(transform[4]);
     let rotY = parseFloat(transform[5].split(')')[0]);
-    _allLabelsInfo.push({id: label.dataset.id, preX: x, preY: y, preDegree: deg, preRotX: rotX, preRotY: rotY});
+    _allLblsInfo.push({id: label.dataset.id, preX: x, preY: y, preDegree: deg, preRotX: rotX, preRotY: rotY});
   })
-  allLabelsInfo = _allLabelsInfo;
+  allLblsInfo = _allLblsInfo;
 }
 
 
@@ -378,15 +615,22 @@ const initializeLabel = e => {
 
 
 const labelBodyMouseDownEvent = e => {
-  if(mode === LABEL_CREATE_MODE || isPushingSpacebar) {
+  if (e.button !== 0 && e.button !== 2) {
     return;
   }
+
+  curLabel = e.target.parentNode;
+
+  if (mode === LABEL_CREATE_MODE || isPushingSpacebar) {
+    return;
+  }
+
   console.log('labelBodyMouseDownEvent');
   e.stopPropagation();
 
   isDragging = true;
   selectedHandlerNo = 8;
-  curLabel = selectedLabel = e.target.parentNode;
+  curLabel = selLbl = e.target.parentNode;
   startX = e.offsetX;
   startY = e.offsetY;
 
@@ -396,7 +640,7 @@ const labelBodyMouseDownEvent = e => {
   deleteAnchors();
 
   // 선택된 레이블들의 이전 정보 세팅
-  let _selectedLabelsInfo = [];
+  let _selLblsInfo = [];
   document.querySelectorAll('.selected').forEach(label => {
     let transform = label.getAttribute('transform').split(' ');
     let x = parseFloat(transform[0].substring(10));
@@ -404,13 +648,12 @@ const labelBodyMouseDownEvent = e => {
     let deg = parseInt(transform[3].substring(7));
     let rotX = parseFloat(transform[4]);
     let rotY = parseFloat(transform[5].split(')')[0]);
-    _selectedLabelsInfo.push({id: label.dataset.id, preX: x, preY: y, preDegree: deg, preRotX: rotX, preRotY: rotY});
+    _selLblsInfo.push({id: label.dataset.id, preX: x, preY: y, preDegree: deg, preRotX: rotX, preRotY: rotY});
   });
-  selectedLabelsInfo = _selectedLabelsInfo;
+  selLblsInfo = _selLblsInfo;
 }
 
 const svgMousemoveEvent = e => {
-
   if (isDragging && isPushingSpacebar) {
     let endX = e.offsetX;
     let endY = e.offsetY;
@@ -419,9 +662,9 @@ const svgMousemoveEvent = e => {
     document.querySelector('#img').setAttribute('transform', 'translate('+imgX+' '+imgY+') scale('+curScale+')');
 
     document.querySelectorAll('.label').forEach(label => {
-      let info = allLabelsInfo.find(_label => _label.id === label.dataset.id);
-      let labelX = (info.preX + endX - startX).toFixed(1);
-      let labelY = (info.preY + endY - startY).toFixed(1);
+      let info = allLblsInfo.find(_label => _label.id === label.dataset.id);
+      let labelX = (info.preX + endX - startX).toFixed(2);
+      let labelY = (info.preY + endY - startY).toFixed(2);
       label.setAttribute('transform', 'translate('+labelX+' '+labelY+') scale('+curScale+') rotate('+info.preDegree+' '+info.preRotX+' '+info.preRotY+')');
     });
   }
@@ -436,8 +679,8 @@ const svgMousemoveEvent = e => {
     let height = startY > endY ? startY - endY : endY - startY;
     
     curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate(0 '+width*.5+' '+height*.5+')');
-    curLabel.firstChild.setAttribute('width', parseInt(width/curScale));
-    curLabel.firstChild.setAttribute('height', parseInt(height/curScale));
+    curLabel.firstChild.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
+    curLabel.firstChild.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
   }
   else if (isDragging && mode === LABEL_SELECT_MODE) {
     console.log('LABEL_SELECT_MODE mousemove');
@@ -447,15 +690,15 @@ const svgMousemoveEvent = e => {
     let x, y, width, height;
     let labelBody = curLabel.firstChild;
 
-    switch(selectedHandlerNo) {
+    switch (selectedHandlerNo) {
       case 0:
         x = preX + preWidth > endX ? endX : preX + preWidth;
         y = preY + preHeight > endY ? endY : preY + preHeight;
         width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
         height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
         curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseInt(width/curScale));
-        labelBody.setAttribute('height', parseInt(height/curScale));
+        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
+        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
         break;
       case 1:
         x = preX;
@@ -463,7 +706,7 @@ const svgMousemoveEvent = e => {
         width = preWidth;
         height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
         curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('height', parseInt(height/curScale));
+        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
         break;
       case 2:
         x = preX < endX ? preX : endX;
@@ -471,8 +714,8 @@ const svgMousemoveEvent = e => {
         width = preX > endX ? preX - endX : endX - preX;
         height = preY + preHeight > endY ? preY + preHeight - endY : endY - (preY + preHeight);
         curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseInt(width/curScale));
-        labelBody.setAttribute('height', parseInt(height/curScale));
+        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
+        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
         break;
       case 3:
         x = preX < endX ? preX : endX;
@@ -480,7 +723,7 @@ const svgMousemoveEvent = e => {
         width = preX > endX ? preX - endX : endX - preX;
         height = preHeight;
         curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseInt(width/curScale));
+        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
         break;
       case 4:
         x = preX < endX ? preX : endX;
@@ -488,8 +731,8 @@ const svgMousemoveEvent = e => {
         width = preX > endX ? preX - endX : endX - preX;
         height = preY > endY ? preY - endY : endY - preY;
         curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseInt(width/curScale));
-        labelBody.setAttribute('height', parseInt(height/curScale));
+        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
+        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
         break;
       case 5:
         x = preX;
@@ -497,7 +740,7 @@ const svgMousemoveEvent = e => {
         width = preWidth;
         height = preY > endY ? preY - endY : endY - preY;
         curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('height', parseInt(height/curScale));
+        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
         break;
       case 6:
         x = preX + preWidth > endX ? endX : preX + preWidth;
@@ -505,8 +748,8 @@ const svgMousemoveEvent = e => {
         width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
         height = preY > endY ? preY - endY : endY - preY;
         curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseInt(width/curScale));
-        labelBody.setAttribute('height', parseInt(height/curScale));
+        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
+        labelBody.setAttribute('height', parseFloat((height/curScale).toFixed(2)));
         break;
       case 7:
         x = preX + preWidth > endX ? endX : preX + preWidth;
@@ -514,13 +757,13 @@ const svgMousemoveEvent = e => {
         width = preX + preWidth > endX ? preX + preWidth - endX : endX - (preX + preWidth);
         height = preHeight;
         curLabel.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+preDegree+' '+width*.5+' '+height*.5+')');
-        labelBody.setAttribute('width', parseInt(width/curScale));
+        labelBody.setAttribute('width', parseFloat((width/curScale).toFixed(2)));
         break;
       case 8:
         document.querySelectorAll('.selected').forEach(label => {
-          let info = selectedLabelsInfo.find(selLabel => selLabel.id === label.dataset.id);
-          x = (info.preX + endX - startX).toFixed(1);
-          y = (info.preY + endY - startY).toFixed(1);
+          let info = selLblsInfo.find(selLabel => selLabel.id === label.dataset.id);
+          x = (info.preX + endX - startX).toFixed(2);
+          y = (info.preY + endY - startY).toFixed(2);
           label.setAttribute('transform', 'translate('+x+' '+y+') scale('+curScale+') rotate('+info.preDegree+' '+info.preRotX+' '+info.preRotY+')');
         });
         break;
@@ -535,40 +778,36 @@ const svgMousemoveEvent = e => {
   }
 }
 
+
 const documentMouseupEvent = e => {
   console.log('document mouseup');
 
   if (isDragging && isPushingSpacebar) {
-    updateIds();
-    updateLabel('.label');
-    _props.updateAll(document.querySelector('#img'), document.querySelectorAll('.label'), selectedLabelIds);
+    _props.updateImgLabels(document.querySelector('#img'), document.querySelectorAll('.label'));
   }
   else if (isDrawing && mode === LABEL_CREATE_MODE) {
-    createLabel();
+    if(createLabel()) {
+      _props.createLabels([curLabel]);
+    }
   }
   else if (isDragging && mode === LABEL_SELECT_MODE) {
-    updateIds();
-    updateLabel('.selected');
-    _props.updateLabels(document.querySelectorAll('.label'), selectedLabelIds);
+    _props.updateLabels(document.querySelectorAll('.label'), updateAndGetIds());
   }
   
   isDrawing = false;
   isDragging = false;
 }
 
+
 const createLabel = () => {
   let labelBody = curLabel.firstChild;
 
-  if(labelBody.getAttribute('width') < 10 || labelBody.getAttribute('height') < 10) {
+  if(labelBody.getAttribute('width') < 10 && labelBody.getAttribute('height') < 10) {
     svg.removeChild(curLabel);
-    return;
+    return false;
   }
 
-  let transform = curLabel.getAttribute('transform').split(' ');
-  let _x = parseFloat(transform[0].substring(10));
-  let _y = parseFloat(transform[1].split(')')[0]);
-  let width = parseInt(labelBody.getAttribute('width'));
-  let height = parseInt(labelBody.getAttribute('height'));
+  let width = parseFloat(labelBody.getAttribute('width'));
 
   let inputWrapper = document.createElementNS(svgNS, "foreignObject");
   inputWrapper.setAttribute('x', width + 20);
@@ -588,49 +827,18 @@ const createLabel = () => {
       labelBody.parentNode.dataset.name = e.target.value;
       labelBody.parentNode.removeChild(inputWrapper);
 
-      updateIds();
-      _props.updateLabels(document.querySelectorAll('.label'), selectedLabelIds);
+      _props.updateLabels(document.querySelectorAll('.label'), updateAndGetIds());
     }
   });
   
   curLabel.dataset.id = curId++;
 
-  // coordinates
-  // 0 1
-  // 3 2
-  curLabel.dataset.xCoordinate0 = _x;
-  curLabel.dataset.yCoordinate0 = _y;
-  curLabel.dataset.xCoordinate1 = (_x + width).toFixed(1);
-  curLabel.dataset.yCoordinate1 = _y;
-  curLabel.dataset.xCoordinate2 = (_x + width).toFixed(1);
-  curLabel.dataset.yCoordinate2 = (_y + height).toFixed(1);
-  curLabel.dataset.xCoordinate3 = _x;
-  curLabel.dataset.yCoordinate3 = (_y + height).toFixed(1);
-
   inputWrapper.appendChild(input);
   curLabel.appendChild(inputWrapper);
 
-  labelBody.parentNode.dataset.name = '';
-  _props.createLabel(labelBody.parentNode);
-}
+  curLabel.dataset.name = '';
 
-const updateLabel = target => {
-  document.querySelectorAll(target).forEach(label => {
-    let transform = label.getAttribute('transform').split(' ');
-    let x = parseFloat(transform[0].substring(10));
-    let y = parseFloat(transform[1].split(')')[0]);
-    let width = parseInt(label.firstChild.getAttribute('width'));
-    let height = parseInt(label.firstChild.getAttribute('height'));
-
-    label.dataset.xCoordinate0 = x;
-    label.dataset.yCoordinate0 = y;
-    label.dataset.xCoordinate1 = (x + width).toFixed(1);
-    label.dataset.yCoordinate1 = y;
-    label.dataset.xCoordinate2 = (x + width).toFixed(1);
-    label.dataset.yCoordinate2 = (y + height).toFixed(1);
-    label.dataset.xCoordinate3 = x;
-    label.dataset.yCoordinate3 = (y + height).toFixed(1);
-  });
+  return true;
 }
 
 
@@ -660,24 +868,31 @@ const createAnchors = label => {
   circle.setAttribute('stroke', '#5c6dda');
   circle.setAttribute('stroke-width', 3);
   circle.addEventListener('mousedown', e => {
-    if(mode === LABEL_CREATE_MODE || isPushingSpacebar) {
+    if (e.button !== 0 && e.button !== 2) {
       return;
     }
+  
+    curLabel = e.target.parentNode;
+  
+    if (mode === LABEL_CREATE_MODE || isPushingSpacebar) {
+      return;
+    }
+    
     console.log('anchor mousedown');
     e.stopPropagation();
 
     isDragging = true;
-    curLabel = selectedLabel = e.target.parentNode;
+    curLabel = selLbl = e.target.parentNode;
     selectedHandlerNo = 9;
 
     startX = e.offsetX;
     startY = e.offsetY;
 
-    let transForm = curLabel.getAttribute('transform').split(' ');
-    preX = parseFloat(transForm[0].substring(10));
-    preY = parseFloat(transForm[1].split(')')[0]);
-    preRotX = parseFloat(transForm[4]);
-    preRotY = parseFloat(transForm[5].split(')')[0]);
+    let transform = curLabel.getAttribute('transform').split(' ');
+    preX = parseFloat(transform[0].substring(10));
+    preY = parseFloat(transform[1].split(')')[0]);
+    preRotX = parseFloat(transform[4]);
+    preRotY = parseFloat(transform[5].split(')')[0]);
     
     deleteAnchors();
   });
@@ -698,22 +913,29 @@ const createAnchors = label => {
     anchor.setAttribute('stroke', '#5c6dda');
     anchor.setAttribute('stroke-width', 3);
     anchor.addEventListener('mousedown', e => {
-      if(mode === LABEL_CREATE_MODE || isPushingSpacebar) {
+      if (e.button !== 0 && e.button !== 2) {
         return;
       }
+    
+      curLabel = e.target.parentNode;
+    
+      if (mode === LABEL_CREATE_MODE || isPushingSpacebar) {
+        return;
+      }
+
       console.log('anchor mousedown');
       e.stopPropagation();
 
       isDragging = true;
-      curLabel = selectedLabel = e.target.parentNode;
+      curLabel = selLbl = e.target.parentNode;
       selectedHandlerNo = i;
       
-      let transForm = curLabel.getAttribute('transform').split(' ');
-      preX = parseFloat(transForm[0].substring(10));
-      preY = parseFloat(transForm[1].split(')')[0]);
-      preDegree = parseFloat(transForm[3].substring(7));
-      preWidth = parseInt(curLabel.firstChild.getAttribute('width') * curScale);
-      preHeight = parseInt(curLabel.firstChild.getAttribute('height') * curScale);
+      let transform = curLabel.getAttribute('transform').split(' ');
+      preX = parseFloat(transform[0].substring(10));
+      preY = parseFloat(transform[1].split(')')[0]);
+      preDegree = parseFloat(transform[3].substring(7));
+      preWidth = parseFloat((curLabel.firstChild.getAttribute('width') * curScale).toFixed(2));
+      preHeight = parseFloat((curLabel.firstChild.getAttribute('height') * curScale).toFixed(2));
 
       deleteAnchors();
     });
@@ -722,10 +944,10 @@ const createAnchors = label => {
   }
 }
 
-const updateAnchors = labelBody => {
 
-  const width = labelBody.getAttribute('width');
-  const height = labelBody.getAttribute('height');
+const updateAnchors = labelBody => {
+  const width = parseFloat(labelBody.getAttribute('width'));
+  const height = parseFloat(labelBody.getAttribute('height'));
 
   let anchorPosXList = [-7, width*.5-5, width-3, width-3, width-3, width*.5-5, -7, -7];
   let anchorPosYList = [-7, -7, -7, height*.5-5, height-3, height-3, height-3, height*.5-5];
@@ -745,66 +967,68 @@ const updateAnchors = labelBody => {
       labelBody.setAttribute('y', anchorPosYList[i]);
       i++;
     }
+    else if(labelBody.tagName === 'foreignObject') {
+      labelBody.setAttribute('x', width + 20);
+    }
   }
 }
-
 
 
 const deleteAnchors = () => {
   console.log('deleteAnchors\nmode: ', mode, '\nisPushingCtrl: ', isPushingCtrl);
 
   if(isPushingCtrl) {
-    selectedLabel = null;
+    selLbl = null;
     return;
   }
 
   document.querySelectorAll('.selected').forEach(label => {
-    if(label === selectedLabel) {
+    if(label === selLbl) {
       return true;
     }
 
     label.classList.remove('selected');
 
     let j = 0;
-    if([...label.childNodes].find(node => node.tagName === 'foreignObject')) {
-      j = 1;
-    }
+    // if([...label.childNodes].find(node => node.tagName === 'foreignObject')) {
+    //   j = 1;
+    // }
 
-    for(let i = label.childNodes.length - 1; i > j; i--) {
+    for (let i = label.childNodes.length - 1; i > j; i--) {
       label.removeChild(label.childNodes[i]);
     }
   });
 
   // 하나도 선택된게 없는 상태
-  if(selectedLabel === null) {
-    selectedLabelsInfo = [];
-  }// 딱 한개만 선택된 상태
+  if (!selLbl) {
+    selLblsInfo = [];
+  }// 한개만 선택된 상태
   else {
-    let transform = selectedLabel.getAttribute('transform').split(' ');
+    let transform = selLbl.getAttribute('transform').split(' ');
     let x = parseFloat(transform[0].substring(10));
     let y = parseFloat(transform[1].split(')')[0]);
     let deg = parseInt(transform[3].substring(7));
     let rotX = parseFloat(transform[4]);
     let rotY = parseFloat(transform[5].split(')')[0]);
-    selectedLabelsInfo = [{id: selectedLabel.dataset.id, preX: x, preY: y, preDegree: deg, preRotX: rotX, preRotY: rotY}];
+    selLblsInfo = [{id: selLbl.dataset.id, preX: x, preY: y, preDegree: deg, preRotX: rotX, preRotY: rotY}];
   }
 
-  selectedLabel = null;
+  selLbl = null;
 }
 
 
-const updateIds = () => {
+const updateAndGetIds = () => {
   let _ids = [];
 
   document.querySelectorAll('.selected').forEach(label => {
     _ids.push(label.dataset.id);
   });
 
-  selectedLabelIds = _ids;
+  return selLblIds = _ids;
 }
 
 
-function throttle(func, wait, options) {
+function throttle (func, wait, options) {
   var context, args, result;
   var timeout = null;
   var previous = 0;

@@ -1,7 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import { LABEL_CREATE_MODE, LABEL_SELECT_MODE } from '../modules/annotator';
 
+
 export default function LabelMode(props) {
+    const [mode, setMode] = useState(props.mode);
+
 
     useEffect(() => {
         console.log('LabelMode useEffect: [props.mode]');
@@ -11,22 +14,27 @@ export default function LabelMode(props) {
         });
     }, [props.mode]);
 
+
     const clickBtn = e => {
-        let _mode;
+        let clickedMode = e.currentTarget.id;
+        
+        if(mode === clickedMode) {
+            return;
+        }
 
         document.querySelector('.label-mode').childNodes.forEach(modeBtn => {
-            if(e.currentTarget.id === modeBtn.id) {
+            if(clickedMode === modeBtn.id) {
                 modeBtn.classList.add('active');
-                _mode = modeBtn.id;
             }
             else {
                 modeBtn.classList.remove('active');
             }
-        })
-
-        props.changeMode(_mode);
+        });
+        setMode(clickedMode);
+        props.changeMode(clickedMode);
     }
 
+    
     return (
         <div className="label-mode">
             <button id={LABEL_SELECT_MODE} className="btn label-mode-btn active" type="button" onClick={clickBtn}>

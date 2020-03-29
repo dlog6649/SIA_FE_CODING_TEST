@@ -1,167 +1,185 @@
 const VIEW_IMAGE = 'annotator/VIEW_IMAGE';
 const CHANGE_MODE = 'annotator/CHANGE_MODE';
 const SELECT_LABELS = 'annotator/SELECT_LABELS';
-const CREATE_LABEL = 'annotator/CREATE_LABEL';
-const UPDATE_IMAGE = 'annotator/UPDATE_IMAGE';
+const CREATE_LABELS = 'annotator/CREATE_LABELS';
 const UPDATE_LABELS = 'annotator/UPDATE_LABELS';
-const UPDATE_ALL = 'annotator/UPDATE_ALL';
+const UPDATE_IMG_LABELS = 'annotator/UPDATE_IMG_LABELS';
 const DELETE_LABELS = 'annotator/DELETE_LABELS';
+
 
 export const LABEL_SELECT_MODE = 'LABEL_SELECT_MODE';
 export const LABEL_CREATE_MODE = 'LABEL_CREATE_MODE';
 
+
 export const viewImage = (url, title) => ({ type: VIEW_IMAGE, url, title });
 export const changeMode = mode => ({ type: CHANGE_MODE, mode });
 export const selectLabels = ids => ({ type: SELECT_LABELS, ids });
-export const createLabel = label => ({ type: CREATE_LABEL, label });
-export const updateImage = image => ({ type: UPDATE_IMAGE, image });
-export const updateLabels = (labels, ids) => ({ type: UPDATE_LABELS, labels, ids });
-export const updateAll = (image, labels, ids) => ({ type: UPDATE_ALL, image, labels, ids });
+export const createLabels = lbls => ({ type: CREATE_LABELS, lbls });
+export const updateLabels = (lbls, ids) => ({ type: UPDATE_LABELS, lbls, ids });
+export const updateImgLabels = (img, lbls) => ({ type: UPDATE_IMG_LABELS, img, lbls });
 export const deleteLabels = ids => ({ type: DELETE_LABELS, ids });
 
 
 const initialState = {
     mode: LABEL_SELECT_MODE
     ,curImgURL: ''
-    ,curImgTitle: ''
-    ,images: []
-    ,labels: []
-    ,selectedLabelIds: []
+    ,imgs: {}
+    ,lbls: {}
+    ,selLblIds: []
 };
 
 
-export default function annotator(state = initialState, action) {
-    switch(action.type) {
-        case VIEW_IMAGE:
+export default function annotator (state = initialState, action) {
 
-            if(state.images.find(image => image.url === action.url)) {
-                var _images = [...state.images];
+    switch (action.type) {
+        case VIEW_IMAGE:
+            var _imgs;
+
+            if (state.imgs[action.url]) {
+                _imgs = {...state.imgs};
             }
             else {
-                var _images = [...state.images, {url: action.url, title: action.title, x: 0, y: 0, scale: 1}];
+                _imgs = {...state.imgs, [action.url]: {title: action.title, x: 0, y: 0, scale: 1}};
             }
 
             return {
-                ...state,
-                mode: LABEL_SELECT_MODE,
-                images: _images,
-                curImgURL: action.url,
-                curImgTitle: action.title,
-                selectedLabelIds: [],
+                ...state
+                ,mode: LABEL_SELECT_MODE
+                ,imgs: _imgs
+                ,curImgURL: action.url
+                ,selLblIds: []
             };
         case CHANGE_MODE:
-            return {
-                ...state,
-                mode: action.mode,
-                selectedLabelIds: [],
-            };
+            var newState =  {...state, mode: action.mode};
+
+            if (state.selLblIds.length !== 0) {
+                newState = {...newState, selLblIds: []};
+            }
+            return newState;
         case SELECT_LABELS:
             return {
-                ...state,
-                selectedLabelIds: action.ids,
+                ...state
+                ,selLblIds: action.ids
             };
-        case CREATE_LABEL:
+        case CREATE_LABELS:
+            // 최초 생성시 초기화
+            var preLbls = state.lbls[state.curImgURL] === undefined ? [] : [...state.lbls[state.curImgURL]];
 
-            var _coordinates = [];
-            _coordinates.push({x: action.label.dataset.xCoordinate0, y: action.label.dataset.yCoordinate0});
-            _coordinates.push({x: action.label.dataset.xCoordinate1, y: action.label.dataset.yCoordinate1});
-            _coordinates.push({x: action.label.dataset.xCoordinate2, y: action.label.dataset.yCoordinate2});
-            _coordinates.push({x: action.label.dataset.xCoordinate3, y: action.label.dataset.yCoordinate3});
+            for (let lbl of action.lbls) {
+                var _id = lbl.dataset.id;
+                var _name = lbl.dataset.name;
+                var transform = lbl.getAttribute('transform').split(' ');
+                var _x = parseFloat(transform[0].substring(10));
+                var _y = parseFloat(transform[1].split(')')[0]);
+                var _w = parseFloat(lbl.firstChild.getAttribute('width'));
+                var _h = parseFloat(lbl.firstChild.getAttribute('height'));
 
-            var _labels = state.labels.concat({url: state.curImgURL, id: action.label.dataset.id, name: action.label.dataset.name, coordinates: _coordinates});
+                // coordinates
+                // 0 1
+                // 3 2
+                var _coordinates = [];
+                _coordinates.push({x: _x, y: _y});
+                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: _y});
+                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: parseFloat((_y + _h).toFixed(2))});
+                _coordinates.push({x: _x, y: parseFloat((_y + _h).toFixed(2))});
+
+                preLbls.push({id: _id, name: _name, coordinates: _coordinates});
+            }
+
+            var _lbls = {...state.lbls, [state.curImgURL]: preLbls};
             
             return {
-                ...state,
-                labels: _labels,
-            };
-        case UPDATE_IMAGE:
-            var _images = Array.from(state.images);
-
-            var transForm = action.image.getAttribute('transform').split(' ');
-            var _x = parseFloat(transForm[0].substring(10));
-            var _y = parseFloat(transForm[1].split(')')[0]);
-            var _scale = parseFloat(transForm[2].substring(6).split(')')[0]);
-
-            var index = _images.findIndex(img => img.url === state.curImgURL);
-            if(index !== -1) {
-                _images[index] = {url: state.curImgURL, title: state.curImgTitle, x: _x, y: _y, scale: _scale};
-            }
-
-            return {
-                ...state,
-                images: _images,
+                ...state
+                ,lbls: _lbls
             };
         case UPDATE_LABELS:
-            var _labels = Array.from(state.labels);
+            var _lbls = {...state.lbls};
+            var updLbls = [];
 
-            action.labels.forEach(label => {
-                var index = _labels.findIndex(_label => _label.url === state.curImgURL && _label.id === label.dataset.id);
-                if(index === -1) {
-                    return true;
-                }
+            for (let lbl of action.lbls) {
+                var _id = lbl.dataset.id;
+                var _name = lbl.dataset.name;
 
+                var transform = lbl.getAttribute('transform').split(' ');
+                var _x = parseFloat(transform[0].substring(10));
+                var _y = parseFloat(transform[1].split(')')[0]);
+                var _w = parseFloat(lbl.firstChild.getAttribute('width'));
+                var _h = parseFloat(lbl.firstChild.getAttribute('height'));
+
+                // coordinates
+                // 0 1
+                // 3 2
                 var _coordinates = [];
-                _coordinates.push({x: label.dataset.xCoordinate0, y: label.dataset.yCoordinate0});
-                _coordinates.push({x: label.dataset.xCoordinate1, y: label.dataset.yCoordinate1});
-                _coordinates.push({x: label.dataset.xCoordinate2, y: label.dataset.yCoordinate2});
-                _coordinates.push({x: label.dataset.xCoordinate3, y: label.dataset.yCoordinate3});
+                _coordinates.push({x: _x, y: _y});
+                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: _y});
+                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: parseFloat((_y + _h).toFixed(2))});
+                _coordinates.push({x: _x, y: parseFloat((_y + _h).toFixed(2))});
 
-                _labels[index] = {url: state.curImgURL, id: label.dataset.id, name: label.dataset.name, coordinates: _coordinates}
-            });
-
-            return {
-                ...state,
-                labels: _labels,
-                selectedLabelIds: action.ids,
-            };
-        case UPDATE_ALL:
-
-            var _images = Array.from(state.images);
-
-            var transForm = action.image.getAttribute('transform').split(' ');
-            var _x = parseFloat(transForm[0].substring(10));
-            var _y = parseFloat(transForm[1].split(')')[0]);
-            var _scale = parseFloat(transForm[2].substring(6).split(')')[0]);
-
-            var index = _images.findIndex(img => img.url === state.curImgURL);
-            if(index !== -1) {
-                _images[index] = {url: state.curImgURL, title: state.curImgTitle, x: _x, y: _y, scale: _scale};
+                updLbls.push({id: _id, name: _name, coordinates: _coordinates});
             }
 
-            var _labels = Array.from(state.labels);
-
-            action.labels.forEach(label => {
-                index = _labels.findIndex(_label => _label.url === state.curImgURL && _label.id === label.dataset.id);
-                if(index === -1) {
-                    return true;
-                }
-
-                var _coordinates = [];
-                _coordinates.push({x: label.dataset.xCoordinate0, y: label.dataset.yCoordinate0});
-                _coordinates.push({x: label.dataset.xCoordinate1, y: label.dataset.yCoordinate1});
-                _coordinates.push({x: label.dataset.xCoordinate2, y: label.dataset.yCoordinate2});
-                _coordinates.push({x: label.dataset.xCoordinate3, y: label.dataset.yCoordinate3});
-
-                _labels[index] = {url: state.curImgURL, id: label.dataset.id, name: label.dataset.name, coordinates: _coordinates}
-            });
+            _lbls[state.curImgURL] = updLbls;
 
             return {
-                ...state,
-                images: _images,
-                labels: _labels,
-                selectedLabelIds: action.ids,
+                ...state
+                ,lbls: _lbls
+                ,selLblIds: action.ids
+            };
+        case UPDATE_IMG_LABELS:
+            var _title = state.imgs[state.curImgURL].title;
+            var transForm = action.img.getAttribute('transform').split(' ');
+            var imgX = parseFloat(transForm[0].substring(10));
+            var imgY = parseFloat(transForm[1].split(')')[0]);
+            var _scale = parseFloat(transForm[2].substring(6).split(')')[0]);
+            var _imgs = {...state.imgs, [state.curImgURL]: {title: _title, x: imgX, y: imgY, scale: _scale}};
+
+            var updLbls = [];
+
+            for (let lbl of action.lbls) {
+                var _id = lbl.dataset.id;
+                var _name = lbl.dataset.name;
+
+                var transform = lbl.getAttribute('transform').split(' ');
+                var _x = parseFloat(transform[0].substring(10));
+                var _y = parseFloat(transform[1].split(')')[0]);
+                var _w = parseFloat(lbl.firstChild.getAttribute('width'));
+                var _h = parseFloat(lbl.firstChild.getAttribute('height'));
+
+                // coordinates
+                // 0 1
+                // 3 2
+                var _coordinates = [];
+                _coordinates.push({x: _x, y: _y});
+                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: _y});
+                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: parseFloat((_y + _h).toFixed(2))});
+                _coordinates.push({x: _x, y: parseFloat((_y + _h).toFixed(2))});
+
+                updLbls.push({id: _id, name: _name, coordinates: _coordinates});
+            }
+
+            var _lbls = {...state.lbls};
+            _lbls[state.curImgURL] = updLbls;
+
+            return {
+                ...state
+                ,imgs: _imgs
+                ,lbls: _lbls
             };
         case DELETE_LABELS:
-            var _labels = Array.from(state.labels);
+            var _lbls = {...state.lbls};
+            var _lblsArray = [..._lbls[state.curImgURL]];
 
-            action.ids.forEach(id => {
-                _labels.splice(_labels.findIndex(_label => _label.url === state.curImgURL && _label.id === id), 1);
-            });
+            for(let id of action.ids) {
+                let idx = _lblsArray.findIndex(_lbl => _lbl.id === id);
+                _lblsArray.splice(idx, 1);
+            }
+
+            _lbls[state.curImgURL] = _lblsArray;
 
             return {
-                ...state,
-                labels: _labels,
-                selectedLabelIds: [],
+                ...state
+                ,lbls: _lbls
+                ,selLblIds: []
             };
         default:
             return state;

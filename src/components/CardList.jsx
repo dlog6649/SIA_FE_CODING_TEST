@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 
 export default function CardList(props) {
     
+    
     useEffect(() => {
         console.log('CardList useEffect');
 
@@ -23,6 +24,7 @@ export default function CardList(props) {
             })
             .catch(error => alert('fetch failed\nerror: ' + error));
     },[]);
+
 
     const viewImg = e => {
         if(e.target.classList.value === 'thumbnail') {
