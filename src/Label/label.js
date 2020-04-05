@@ -44,6 +44,7 @@ const labelNS = {
   ,allLabelsInfo: []
   ,cloneLabels: []
   ,selectedHandler: null
+  ,anchor: null
 }
 const menuNm = {
   EDIT: 'edit'
@@ -691,12 +692,25 @@ const dragLabel = e => {
   let y;
   let w;
   let h;
+  let qp_x;
+  let qp_y;
   let labelBody = labelNS.curLabel.firstChild;
 
   switch (labelNS.selectedHandler) {
     case LABEL_RESIZE:
-      let qp_x = labelNS.qp0_x + (endX - labelNS.qp0_x);
-      let qp_y = labelNS.qp0_y + (endY - labelNS.qp0_y);
+      if (labelNS.anchor === CURSOR_LIST[1] || labelNS.anchor === CURSOR_LIST[5]) {
+        qp_x = labelNS.qp0_x;
+        qp_y = labelNS.qp0_y + (endY - labelNS.qp0_y);
+      }
+      else if (labelNS.anchor === CURSOR_LIST[3] || labelNS.anchor === CURSOR_LIST[7]) {
+        qp_x = labelNS.qp0_x + (endX - labelNS.qp0_x);
+        qp_y = labelNS.qp0_y;
+      }
+      else {
+        qp_x = labelNS.qp0_x + (endX - labelNS.qp0_x);
+        qp_y = labelNS.qp0_y + (endY - labelNS.qp0_y);
+      }
+      
       let cp_x = (qp_x + labelNS.pp_x) * .5;
       let cp_y = (qp_y + labelNS.pp_y) * .5;
 
@@ -709,10 +723,24 @@ const dragLabel = e => {
       let p_x = ((labelNS.pp_x - cp_x) * cos_mt - (labelNS.pp_y - cp_y) * sin_mt) + cp_x;
       let p_y = ((labelNS.pp_x - cp_x) * sin_mt + (labelNS.pp_y - cp_y) * cos_mt) + cp_y;
 
-      w = p_x - q_x;
-      h = p_y - q_y;
-      x = q_x;
-      y = q_y;
+      if (labelNS.anchor === CURSOR_LIST[1] || labelNS.anchor === CURSOR_LIST[5]) {
+        w = labelNS.preWidth;
+        h = p_y - q_y;
+        x = labelNS.preX;
+        y = q_y;
+      }
+      else if (labelNS.anchor === CURSOR_LIST[3] || labelNS.anchor === CURSOR_LIST[7]) {
+        w = p_x - q_x;
+        h = labelNS.preHeight;
+        x = q_x;
+        y = labelNS.preY;
+      }
+      else {
+        w = p_x - q_x;
+        h = p_y - q_y;
+        x = q_x;
+        y = q_y;
+      }
 
       if(w < 0) {
         w *= -1;
@@ -903,7 +931,8 @@ const createAnchors = label => {
 
       labelNS.isDragging = true;
       labelNS.curLabel = labelNS.selectedLabel = e.target.parentNode;
-      labelNS.selectedHandler = LABEL_RESIZE;//CURSOR_LIST[i];
+      labelNS.selectedHandler = LABEL_RESIZE;
+      labelNS.anchor = CURSOR_LIST[i];
 
       const {x, y, deg, rotX, rotY, w, h} = parseTransform(labelNS.curLabel);
       labelNS.preX = x;
