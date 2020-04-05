@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import * as label from '../label';
+import * as label from '../Label/label';
 
 export var _props;
 export var _setScale;
@@ -34,42 +34,42 @@ export default function LabelBoard(props) {
 
 
     useEffect(() => {
-        console.log('LabelBoard useEffect: [props.img]: ', props.img);
+        console.log('LabelBoard useEffect: [props.image]: ', props.image);
 
-        if(label.compareImage(props.img)) {
-            console.log('LabelBoard useEffect: [props.img]: returned');
+        if(label.compareImage(props.image)) {
+            console.log('LabelBoard useEffect: [props.image]: returned');
             return;
         }
 
-        label.redrawImage(props.curImgURL, props.img);
+        label.redrawImage(props.currentImgURL, props.image);
 
-    }, [props.img]);
+    }, [props.image]);
 
 
     useEffect(() => {
-        console.log('LabelBoard useEffect: [props.lbls]: ', props.lbls);
+        console.log('LabelBoard useEffect: [props.labels]: ');
         
-        if(label.compareLabels(props.lbls)) {
-            console.log('LabelBoard useEffect: [props.lbls]: returned');
+        if(label.compareLabels(props.labels)) {
+            console.log('LabelBoard useEffect: [props.labels]: returned');
             return;
         }
 
-        label.redrawLabels(props.lbls, props.selLblIds);
+        label.redrawLabels(props.labels, props.selectedLabelsIds);
 
-    }, [props.lbls]);
+    }, [props.labels]);
 
 
     useEffect(() => {
-        console.log('LabelBoard useEffect: [props.selLblIds]: ', props.selLblIds);
+        console.log('LabelBoard useEffect: [props.selectedLabelsIds]: ');
 
-        if(label.compareIds(props.selLblIds)) {
-            console.log('LabelBoard useEffect: [props.selLblIds]: returned');
+        if(label.compareIds(props.selectedLabelsIds)) {
+            console.log('LabelBoard useEffect: [props.selectedLabelsIds]: returned');
             return;
         }
 
-        label.setSelLblIds(props.selLblIds);
+        label.setSelectedLabelIds(props.selectedLabelsIds);
 
-    }, [props.selLblIds]);
+    }, [props.selectedLabelsIds]);
 
 
     const changeScale = e => {
@@ -88,7 +88,7 @@ export default function LabelBoard(props) {
 
     return (
         <div className="label-board">
-            <svg id="svg" width="100%" height="100%">
+            <svg id="svg" width="100%" height="100%" data-testid="testSvg">
             <defs>
                 <filter id="f1">
                     <feDropShadow dx="-1" dy="1" stdDeviation="2.5" floodColor="gray"/>
@@ -99,7 +99,7 @@ export default function LabelBoard(props) {
             </svg>
             <div className="label-board-scaler">
                 <img className="scaler-plus btn-img" src={require('../asset/images/plus.png')} alt="+"/>
-                <input className="scaler-range" type="range" orient="vertical" value={scale} onInput={changeSliderCSS} onChange={changeScale} min="0.1" max="2" step="0.1" />
+                <input className="scaler-range" type="range" data-testid="testScaler" orient="vertical" value={scale} onInput={changeSliderCSS} onChange={changeScale} min="0.1" max="2" step="0.1" />
                 <img className="scaler-minus btn-img" src={require('../asset/images/minus.png')} alt="-"/>
             </div>
             <div className="label-contextmenu">

@@ -1,3 +1,5 @@
+import { parseTransform } from '../asset/js/common';
+
 const VIEW_IMAGE = 'annotator/VIEW_IMAGE';
 const CHANGE_MODE = 'annotator/CHANGE_MODE';
 const SELECT_LABELS = 'annotator/SELECT_LABELS';
@@ -13,175 +15,198 @@ export const LABEL_CREATE_MODE = 'LABEL_CREATE_MODE';
 
 export const viewImage = (url, title) => ({ type: VIEW_IMAGE, url, title });
 export const changeMode = mode => ({ type: CHANGE_MODE, mode });
-export const selectLabels = ids => ({ type: SELECT_LABELS, ids });
-export const createLabels = lbls => ({ type: CREATE_LABELS, lbls });
-export const updateLabels = (lbls, ids) => ({ type: UPDATE_LABELS, lbls, ids });
-export const updateImgLabels = (img, lbls) => ({ type: UPDATE_IMG_LABELS, img, lbls });
-export const deleteLabels = ids => ({ type: DELETE_LABELS, ids });
+export const selectLabels = selectedLabelsIds => ({ type: SELECT_LABELS, selectedLabelsIds });
+export const createLabels = labels => ({ type: CREATE_LABELS, labels });
+export const updateLabels = (labels, selectedLabelsIds) => ({ type: UPDATE_LABELS, labels, selectedLabelsIds });
+export const updateImgLabels = (image, labels) => ({ type: UPDATE_IMG_LABELS, image, labels });
+export const deleteLabels = selectedLabelsIds => ({ type: DELETE_LABELS, selectedLabelsIds });
 
 
 const initialState = {
     mode: LABEL_SELECT_MODE
-    ,curImgURL: ''
-    ,imgs: {}
-    ,lbls: {}
-    ,selLblIds: []
+    ,currentImgURL: ''
+    ,images: {}
+    ,labels: {}
+    ,selectedLabelsIds: []
 };
 
 
 export default function annotator (state = initialState, action) {
+    let _images;
+    let _labels;
+    let _title;
+    let _id;
+    let _name;
+    let tf;
+    let _data
+    let _coordinates;
+    let updatedLabels;
 
     switch (action.type) {
         case VIEW_IMAGE:
-            var _imgs;
-
-            if (state.imgs[action.url]) {
-                _imgs = {...state.imgs};
+            if (state.images[action.url]) {
+                _images = {...state.images};
             }
             else {
-                _imgs = {...state.imgs, [action.url]: {title: action.title, x: 0, y: 0, scale: 1}};
+                _images = {...state.images, [action.url]: {title: action.title, x: 0, y: 0, scale: 1}};
             }
 
             return {
                 ...state
                 ,mode: LABEL_SELECT_MODE
-                ,imgs: _imgs
-                ,curImgURL: action.url
-                ,selLblIds: []
+                ,images: _images
+                ,currentImgURL: action.url
+                ,selectedLabelsIds: []
             };
         case CHANGE_MODE:
-            var newState =  {...state, mode: action.mode};
+            let newState =  {...state, mode: action.mode};
 
-            if (state.selLblIds.length !== 0) {
-                newState = {...newState, selLblIds: []};
+            if (state.selectedLabelsIds.length !== 0) {
+                newState = {...newState, selectedLabelsIds: []};
             }
             return newState;
         case SELECT_LABELS:
             return {
                 ...state
-                ,selLblIds: action.ids
+                ,selectedLabelsIds: action.selectedLabelsIds
             };
         case CREATE_LABELS:
             // 최초 생성시 초기화
-            var preLbls = state.lbls[state.curImgURL] === undefined ? [] : [...state.lbls[state.curImgURL]];
+            let preLabels = state.labels[state.currentImgURL] === undefined ? [] : [...state.labels[state.currentImgURL]];
 
-            for (let lbl of action.lbls) {
-                var _id = lbl.dataset.id;
-                var _name = lbl.dataset.name;
-                var transform = lbl.getAttribute('transform').split(' ');
-                var _x = parseFloat(transform[0].substring(10));
-                var _y = parseFloat(transform[1].split(')')[0]);
-                var _w = parseFloat(lbl.firstChild.getAttribute('width'));
-                var _h = parseFloat(lbl.firstChild.getAttribute('height'));
+            for (let label of action.labels) {
+                _id = parseInt(label.dataset.id);
+                _name = label.dataset.name;
+
+                tf = parseTransform(label);
+                
+                _data = {x: tf.x, y: tf.y, w: tf.w, h: tf.h, deg: tf.deg};
 
                 // coordinates
                 // 0 1
                 // 3 2
-                var _coordinates = [];
-                _coordinates.push({x: _x, y: _y});
-                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: _y});
-                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: parseFloat((_y + _h).toFixed(2))});
-                _coordinates.push({x: _x, y: parseFloat((_y + _h).toFixed(2))});
+                _coordinates = [];
+                _coordinates.push({x: tf.x, y: tf.y});
+                _coordinates.push({x: tf.x + tf.w, y: tf.y});
+                _coordinates.push({x: tf.x + tf.w, y: tf.y + tf.h});
+                _coordinates.push({x: tf.x, y: tf.y + tf.h});
 
-                preLbls.push({id: _id, name: _name, coordinates: _coordinates});
+                preLabels.push({id: _id, name: _name, coordinates: _coordinates, data: _data});
             }
 
-            var _lbls = {...state.lbls, [state.curImgURL]: preLbls};
+            _labels = {...state.labels, [state.currentImgURL]: preLabels};
             
             return {
                 ...state
-                ,lbls: _lbls
+                ,labels: _labels
             };
         case UPDATE_LABELS:
-            var _lbls = {...state.lbls};
-            var updLbls = [];
+            _labels = {...state.labels};
+            updatedLabels = [];
 
-            for (let lbl of action.lbls) {
-                var _id = lbl.dataset.id;
-                var _name = lbl.dataset.name;
-
-                var transform = lbl.getAttribute('transform').split(' ');
-                var _x = parseFloat(transform[0].substring(10));
-                var _y = parseFloat(transform[1].split(')')[0]);
-                var _w = parseFloat(lbl.firstChild.getAttribute('width'));
-                var _h = parseFloat(lbl.firstChild.getAttribute('height'));
-
-                // coordinates
-                // 0 1
-                // 3 2
-                var _coordinates = [];
-                _coordinates.push({x: _x, y: _y});
-                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: _y});
-                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: parseFloat((_y + _h).toFixed(2))});
-                _coordinates.push({x: _x, y: parseFloat((_y + _h).toFixed(2))});
-
-                updLbls.push({id: _id, name: _name, coordinates: _coordinates});
+            for (let label of action.labels) {
+                updatedLabels.push(getLabelState(label));
             }
 
-            _lbls[state.curImgURL] = updLbls;
+            _labels[state.currentImgURL] = updatedLabels;
 
             return {
                 ...state
-                ,lbls: _lbls
-                ,selLblIds: action.ids
+                ,labels: _labels
+                ,selectedLabelsIds: action.selectedLabelsIds
             };
         case UPDATE_IMG_LABELS:
-            var _title = state.imgs[state.curImgURL].title;
-            var transForm = action.img.getAttribute('transform').split(' ');
-            var imgX = parseFloat(transForm[0].substring(10));
-            var imgY = parseFloat(transForm[1].split(')')[0]);
-            var _scale = parseFloat(transForm[2].substring(6).split(')')[0]);
-            var _imgs = {...state.imgs, [state.curImgURL]: {title: _title, x: imgX, y: imgY, scale: _scale}};
+            _title = state.images[state.currentImgURL].title;
+            tf = parseTransform(action.image);
+            _images = {...state.images, [state.currentImgURL]: {title: _title, x: tf.x, y: tf.y, scale: tf.scale}};
 
-            var updLbls = [];
+            updatedLabels = [];
 
-            for (let lbl of action.lbls) {
-                var _id = lbl.dataset.id;
-                var _name = lbl.dataset.name;
-
-                var transform = lbl.getAttribute('transform').split(' ');
-                var _x = parseFloat(transform[0].substring(10));
-                var _y = parseFloat(transform[1].split(')')[0]);
-                var _w = parseFloat(lbl.firstChild.getAttribute('width'));
-                var _h = parseFloat(lbl.firstChild.getAttribute('height'));
-
-                // coordinates
-                // 0 1
-                // 3 2
-                var _coordinates = [];
-                _coordinates.push({x: _x, y: _y});
-                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: _y});
-                _coordinates.push({x: parseFloat((_x + _w).toFixed(2)), y: parseFloat((_y + _h).toFixed(2))});
-                _coordinates.push({x: _x, y: parseFloat((_y + _h).toFixed(2))});
-
-                updLbls.push({id: _id, name: _name, coordinates: _coordinates});
+            for (let label of action.labels) {
+                updatedLabels.push(getLabelState(label));
             }
 
-            var _lbls = {...state.lbls};
-            _lbls[state.curImgURL] = updLbls;
+            _labels = {...state.labels};
+            _labels[state.currentImgURL] = updatedLabels;
 
             return {
                 ...state
-                ,imgs: _imgs
-                ,lbls: _lbls
+                ,images: _images
+                ,labels: _labels
             };
         case DELETE_LABELS:
-            var _lbls = {...state.lbls};
-            var _lblsArray = [..._lbls[state.curImgURL]];
+            _labels = {...state.labels};
+            let _curImgLabels = [..._labels[state.currentImgURL]];
 
-            for(let id of action.ids) {
-                let idx = _lblsArray.findIndex(_lbl => _lbl.id === id);
-                _lblsArray.splice(idx, 1);
+            for(let id of action.selectedLabelsIds) {
+                let idx = _curImgLabels.findIndex(_label => parseInt(_label.id) === parseInt(id));
+                if (idx === -1) {
+                    continue;
+                }
+                _curImgLabels.splice(idx, 1);
             }
 
-            _lbls[state.curImgURL] = _lblsArray;
+            _labels[state.currentImgURL] = _curImgLabels;
 
             return {
                 ...state
-                ,lbls: _lbls
-                ,selLblIds: []
+                ,labels: _labels
+                ,selectedLabelsIds: []
             };
         default:
             return state;
     }
+}
+
+
+const getLabelState = label => {
+    let _id = parseInt(label.dataset.id);
+    let _name = label.dataset.name;
+    let tf = parseTransform(label);
+    let _data = {x: tf.x, y: tf.y, w: tf.w, h: tf.h, deg: tf.deg};
+
+    let theta = (Math.PI / 180) * tf.deg;
+    let cos_t = Math.cos(theta);
+    let sin_t = Math.sin(theta);
+
+    let c_x = tf.x + tf.rotX;
+    let c_y = tf.y + tf.rotY;
+
+    let nw_x = tf.x;
+    let nw_y = tf.y;
+    let ne_x = tf.x + tf.w;
+    let ne_y = tf.y;
+    let se_x = tf.x + tf.w;
+    let se_y = tf.y + tf.h;
+    let sw_x = tf.x;
+    let sw_y = tf.y + tf.h;
+
+    let nw_xp = (nw_x - c_x) * cos_t - (nw_y - c_y) * sin_t + c_x;
+    let nw_yp = (nw_x - c_x) * sin_t + (nw_y - c_y) * cos_t + c_y;
+    let ne_xp = (ne_x - c_x) * cos_t - (ne_y - c_y) * sin_t + c_x;
+    let ne_yp = (ne_x - c_x) * sin_t + (ne_y - c_y) * cos_t + c_y;
+    let se_xp = (se_x - c_x) * cos_t - (se_y - c_y) * sin_t + c_x;
+    let se_yp = (se_x - c_x) * sin_t + (se_y - c_y) * cos_t + c_y;
+    let sw_xp = (sw_x - c_x) * cos_t - (sw_y - c_y) * sin_t + c_x;
+    let sw_yp = (sw_x - c_x) * sin_t + (sw_y - c_y) * cos_t + c_y;
+
+    nw_xp = parseFloat(nw_xp.toFixed(2));
+    nw_yp = parseFloat(nw_yp.toFixed(2));
+    ne_xp = parseFloat(ne_xp.toFixed(2));
+    ne_yp = parseFloat(ne_yp.toFixed(2));
+    se_xp = parseFloat(se_xp.toFixed(2));
+    se_yp = parseFloat(se_yp.toFixed(2));
+    sw_xp = parseFloat(sw_xp.toFixed(2));
+    sw_yp = parseFloat(sw_yp.toFixed(2));
+
+    // coordinates
+    // 0 1
+    // 3 2
+    let _coordinates = [];
+    _coordinates.push({x: nw_xp, y: nw_yp});
+    _coordinates.push({x: ne_xp, y: ne_yp});
+    _coordinates.push({x: se_xp, y: se_yp});
+    _coordinates.push({x: sw_xp, y: sw_yp});
+
+    return {id: _id, name: _name, coordinates: _coordinates, data: _data};
 }

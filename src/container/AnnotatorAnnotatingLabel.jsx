@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 
 
 const mapStateToProps = state => {
-    let _title = state.annotator.imgs[state.annotator.curImgURL] === undefined ? '' : state.annotator.imgs[state.annotator.curImgURL].title;
+    let _title = state.annotator.images[state.annotator.currentImgURL] === undefined ? '' : state.annotator.images[state.annotator.currentImgURL].title;
     return {
-        //title: state.annotator.imgs[state.annotator.curImgURL].title
-        title: _title // test
+        title: _title
     };
 }
-
 
 export default connect(mapStateToProps)(AnnotatorAnnotatingLabel);

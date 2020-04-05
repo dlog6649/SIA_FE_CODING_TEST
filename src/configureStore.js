@@ -18,18 +18,6 @@ export default function configureStore(preloadedState) {
     ),
   )
 
-  // Hot reloading
-  // if (module.hot) {
-  //   // Enable Webpack hot module replacement for reducers
-  //   module.hot.accept('./modules', () => {
-  //     store.replaceReducer(rootReducer(history));
-  //   });
-  // }
-
   return store
 }
 
-
-//const devTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
-// const store = createStore(rootReducer, devTools);
-// export default store;

@@ -9,12 +9,10 @@ const mapStateToProps = state => {
     };
 }
 
-
 const mapDispatchToProps = dispatch => {
     return {
         changeMode: mode => dispatch(changeMode(mode))
     };
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(LabelMode);

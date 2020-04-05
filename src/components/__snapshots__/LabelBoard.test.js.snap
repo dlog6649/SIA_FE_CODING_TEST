@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LabelBoard 라벨링툴 테스트 시작 렌더링이 된 결과가 기존 스냅샷과 비교해서 일치해야 한다. 1`] = `
+<body>
+  <div>
+    <div
+      class="label-board"
+    >
+      <svg
+        data-testid="testSvg"
+        height="100%"
+        id="svg"
+        width="100%"
+      >
+        <defs>
+          <filter
+            id="f1"
+          >
+            <fedropshadow
+              dx="-1"
+              dy="1"
+              flood-color="gray"
+              stdDeviation="2.5"
+            />
+          </filter>
+        </defs>
+        <image
+          alt="sampleImg"
+          data-testid="testImg"
+          href="http://sample.png"
+          id="img"
+          transform="translate(0 0) scale(1)"
+        />
+        <g
+          class="label"
+          data-id="0"
+          data-name="sea"
+          data-testid="testLabel"
+          transform="translate(0 0) scale(1) rotate(0 25 25)"
+        >
+          <rect
+            cursor="move"
+            fill="#5c6dda"
+            fill-opacity="0.2"
+            height="50"
+            stroke="#5c6dda"
+            stroke-width="3"
+            width="50"
+          />
+        </g>
+        <g
+          class="label"
+          data-id="1"
+          data-name="woods"
+          data-testid="testLabel"
+          transform="translate(50 0) scale(1) rotate(0 25 25)"
+        >
+          <rect
+            cursor="move"
+            fill="#5c6dda"
+            fill-opacity="0.2"
+            height="50"
+            stroke="#5c6dda"
+            stroke-width="3"
+            width="50"
+          />
+        </g>
+        <g
+          class="label"
+          data-id="2"
+          data-name="building"
+          data-testid="testLabel"
+          transform="translate(0 50) scale(1) rotate(0 25 25)"
+        >
+          <rect
+            cursor="move"
+            fill="#5c6dda"
+            fill-opacity="0.2"
+            height="50"
+            stroke="#5c6dda"
+            stroke-width="3"
+            width="50"
+          />
+        </g>
+      </svg>
+      <div
+        class="label-board-scaler"
+      >
+        <img
+          alt="+"
+          class="scaler-plus btn-img"
+          src="plus.png"
+        />
+        <input
+          class="scaler-range"
+          data-testid="testScaler"
+          max="2"
+          min="0.1"
+          orient="vertical"
+          step="0.1"
+          type="range"
+          value="1"
+        />
+        <img
+          alt="-"
+          class="scaler-minus btn-img"
+          src="minus.png"
+        />
+      </div>
+      <div
+        class="label-contextmenu"
+      >
+        <div
+          class="item edit"
+          id="edit"
+        >
+          <span
+            class="item-name"
+          >
+            Edit Class
+          </span>
+          <span
+            class="item-shortcut"
+          >
+            (TBD)
+          </span>
+        </div>
+        <div
+          class="item cut"
+          id="cut"
+        >
+          <span
+            class="item-name"
+          >
+            Cut
+          </span>
+          <span
+            class="item-shortcut"
+          >
+            Ctrl + X
+          </span>
+        </div>
+        <div
+          class="item copy"
+          id="copy"
+        >
+          <span
+            class="item-name"
+          >
+            Copy
+          </span>
+          <span
+            class="item-shortcut"
+          >
+            Ctrl + C
+          </span>
+        </div>
+        <div
+          class="item paste"
+          id="paste"
+        >
+          <span
+            class="item-name"
+          >
+            Paste
+          </span>
+          <span
+            class="item-shortcut"
+          >
+            Ctrl + V
+          </span>
+        </div>
+        <div
+          class="item delete"
+          id="delete"
+        >
+          <span
+            class="item-name"
+          >
+            Delete
+          </span>
+          <span
+            class="item-shortcut"
+          >
+            Del
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

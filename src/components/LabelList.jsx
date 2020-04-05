@@ -1,19 +1,30 @@
-import React, {useEffect} from 'react';
-import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from '../modules/annotator';
+import React, { useEffect, useRef } from 'react';
+import { LABEL_CREATE_MODE } from '../modules/annotator';
 
 
 export default function LabelList(props) {
 
+    const refLabelList = useRef(null);
+
 
     useEffect(() => {
-        console.log('LabelList useEffect [props.lbls]');
-        
-        let lbls = props.lbls;
-        if (!lbls) {
-            lbls = [];
+        console.log('LabelList useEffect [props.labels]');
+        updateLabelList(props.labels);
+    }, [props.labels]);
+
+
+    useEffect(() => {
+        console.log('LabelList useEffect [props.selectedLabelsIds]');
+        updateSelectedLabelList(props.selectedLabelsIds);
+    }, [props.selectedLabelsIds]);
+
+    
+    const updateLabelList = labels => {
+        if (!labels) {
+            labels = [];
         }
 
-        let labelListRoot = document.querySelector('.label-list-root');
+        let labelListRoot = refLabelList.current.lastChild;
 
         while(labelListRoot.firstChild) {
             labelListRoot.removeChild(labelListRoot.firstChild);
@@ -21,8 +32,8 @@ export default function LabelList(props) {
 
         let labelList = '';
 
-        lbls.forEach(label => {
-            if(props.selLblIds.find(id => id === label.id)) {
+        labels.forEach(label => {
+            if(props.selectedLabelsIds.includes(parseInt(label.id))) {
                 labelList += `<li class="label-info btn active"`;
             }
             else {
@@ -33,7 +44,7 @@ export default function LabelList(props) {
             // 0 1
             // 3 2
             labelList += `
-                data-id="${label.id}"
+                data-id="${label.id}" data-testid="testLabelInfo"
             >
                 <p class="label-class">${label.name}</p>
                 <p class="label-coordinate">
@@ -46,43 +57,39 @@ export default function LabelList(props) {
             `;
         });
 
-        labelListRoot.innerHTML = labelList;
+        labelListRoot.insertAdjacentHTML('afterbegin', labelList);
+    }
 
-    }, [props.lbls]);
 
-
-    useEffect(() => {
-        console.log('LabelList useEffect [props.selLblIds]');
-        
-        if(compareIds(props.selLblIds)) {
-            console.log('LabelList useEffect [props.selLblIds] returned');
+    const updateSelectedLabelList = selectedLabelsIds => {
+        if(compareIds(selectedLabelsIds)) {
+            console.log('LabelList useEffect [props.selectedLabelsIds] returned');
             return;
         }
 
         document.querySelectorAll('.label-info').forEach(labelInfo => {
             labelInfo.classList.remove('active');
 
-            props.selLblIds.forEach(id => {
-                if(labelInfo.dataset.id === id) {
+            selectedLabelsIds.forEach(id => {
+                if(parseInt(labelInfo.dataset.id) === parseInt(id)) {
                     labelInfo.classList.add('active');
                 }
             });
         });
+    }
 
-    }, [props.selLblIds]);
 
-
-    const compareIds = (propsIds) => {
+    const compareIds = (_ids) => {
         let ids = [];
         document.querySelectorAll('.label-info.active').forEach(labelInfo => {
-            ids.push(labelInfo.dataset.id);
+            ids.push(parseInt(labelInfo.dataset.id));
         });
-        if(ids.length !== propsIds.length) {
+        if (ids.length !== _ids.length) {
             return false;
         }
-        for(let i = 0; i < propsIds.length; i++) {
-            if(!ids.includes(propsIds[i])) {
-            return false;
+        for (let i = 0; i < _ids.length; i++) {
+            if (parseInt(_ids[i]) !== parseInt(ids[i])) {
+                return false;
             }
         }
         return true;
@@ -92,19 +99,23 @@ export default function LabelList(props) {
     const toggleLabelList = () => {
         let controller = document.querySelector('.label-list-controller');
         let img = document.querySelector('.label-list-btn-img');
-        let labelList = document.querySelector('.label-list-root');
+        let labelListRoot = document.querySelector('.label-list-root');
 
-        if(labelList.style.display === 'block') {
+        if (labelListRoot.style.display === 'block') {
             controller.firstChild.style.display = 'none';
             controller.style.minWidth = '38px';
+            controller.style.borderRight = '1px solid lightgray';
             img.src = require('../asset/images/arrow-right.png');
-            labelList.style.display = 'none';
+            labelListRoot.style.display = 'none';
+            labelListRoot.parentNode.style.borderRight = 'none';
         }
         else {
             controller.firstChild.style.display = 'block';
             controller.style.minWidth = '300px';
+            controller.style.borderRight = 'none';
             img.src = require('../asset/images/arrow-left.png');
-            labelList.style.display = 'block';
+            labelListRoot.style.display = 'block';
+            labelListRoot.parentNode.style.borderRight = '1px solid lightgray';
         }
     };
     
@@ -115,7 +126,7 @@ export default function LabelList(props) {
         }
         
         let _labelInfo;
-        _labelInfo = e.target.classList.value.indexOf('label-info') !== -1 ? e.target : e.target.parentNode;
+        _labelInfo = e.target.classList.contains('label-info') ? e.target : e.target.parentNode;
         _labelInfo.classList.add('active');
 
         if(!e.ctrlKey) {
@@ -129,7 +140,7 @@ export default function LabelList(props) {
 
         let ids = [];
         document.querySelectorAll('.label-info.active').forEach(labelInfo => {
-            ids.push(labelInfo.dataset.id);
+            ids.push(parseInt(labelInfo.dataset.id));
         });
 
         props.selectLabels(ids);
@@ -137,7 +148,7 @@ export default function LabelList(props) {
 
 
     return (
-        <div className="label-list">
+        <div className="label-list" ref={refLabelList}>
             <div className="label-list-controller">
                 <span>Labels</span>
                 <button className="btn label-list-btn" onClick={toggleLabelList} type="button">
@@ -149,3 +160,5 @@ export default function LabelList(props) {
         </div>
     );
 }
+
+

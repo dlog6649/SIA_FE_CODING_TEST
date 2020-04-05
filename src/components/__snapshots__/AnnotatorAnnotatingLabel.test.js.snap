@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AnnotatorAnnotatingLabel 테스트 시작 렌더링된 스냅샷이 기존과 일치해야 한다. 1`] = `
+<div
+  className="viewer"
+>
+  <Link
+    replace={false}
+    to="/"
+  >
+    <img
+      alt="home"
+      src="arrow-left.png"
+    />
+  </Link>
+  <div
+    className="viewer-title"
+  >
+    Lorem ipsum
+  </div>
+  <div
+    className="viewer-content"
+  >
+    <Connect(LabelMode) />
+    <Connect(LabelList) />
+    <Connect(LabelBoard) />
+  </div>
+</div>
+`;

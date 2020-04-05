@@ -1,0 +1,288 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CardList 테스트 시작 렌더링된 스냅샷이 기존과 일치해야 한다. 그리고 썸네일을 클릭 시 해당 정보가 디스패치돼야 한다. 1`] = `
+<body>
+  <div>
+    <div>
+      <div
+        class="card-list"
+        data-testid="testCardList"
+      >
+        
+                        
+        <div
+          class="card"
+        >
+          
+                            
+          <div
+            class="card-thumbnail"
+          >
+            
+                                
+            <img
+              class="thumbnail"
+              data-testid="testThumbnail"
+              data-title="accusamus beatae ad facilis cum similique qui sunt"
+              data-url="https://via.placeholder.com/600/92c952"
+              src="https://via.placeholder.com/150/92c952"
+            />
+            
+                            
+          </div>
+          
+                            
+          <div
+            class="card-title"
+            title="accusamus beatae ad facilis cum similique qui sunt"
+          >
+            accusamus beatae ad facilis cum similique qui sunt
+          </div>
+          
+                        
+        </div>
+        
+                    
+                        
+        <div
+          class="card"
+        >
+          
+                            
+          <div
+            class="card-thumbnail"
+          >
+            
+                                
+            <img
+              class="thumbnail"
+              data-testid="testThumbnail"
+              data-title="reprehenderit est deserunt velit ipsam"
+              data-url="https://via.placeholder.com/600/771796"
+              src="https://via.placeholder.com/150/771796"
+            />
+            
+                            
+          </div>
+          
+                            
+          <div
+            class="card-title"
+            title="reprehenderit est deserunt velit ipsam"
+          >
+            reprehenderit est deserunt velit ipsam
+          </div>
+          
+                        
+        </div>
+        
+                    
+                        
+        <div
+          class="card"
+        >
+          
+                            
+          <div
+            class="card-thumbnail"
+          >
+            
+                                
+            <img
+              class="thumbnail"
+              data-testid="testThumbnail"
+              data-title="officia porro iure quia iusto qui ipsa ut modi"
+              data-url="https://via.placeholder.com/600/24f355"
+              src="https://via.placeholder.com/150/24f355"
+            />
+            
+                            
+          </div>
+          
+                            
+          <div
+            class="card-title"
+            title="officia porro iure quia iusto qui ipsa ut modi"
+          >
+            officia porro iure quia iusto qui ipsa ut modi
+          </div>
+          
+                        
+        </div>
+        
+                    
+                        
+        <div
+          class="card"
+        >
+          
+                            
+          <div
+            class="card-thumbnail"
+          >
+            
+                                
+            <img
+              class="thumbnail"
+              data-testid="testThumbnail"
+              data-title="culpa odio esse rerum omnis laboriosam voluptate repudiandae"
+              data-url="https://via.placeholder.com/600/d32776"
+              src="https://via.placeholder.com/150/d32776"
+            />
+            
+                            
+          </div>
+          
+                            
+          <div
+            class="card-title"
+            title="culpa odio esse rerum omnis laboriosam voluptate repudiandae"
+          >
+            culpa odio esse rerum omnis laboriosam voluptate repudiandae
+          </div>
+          
+                        
+        </div>
+        
+                    
+                        
+        <div
+          class="card"
+        >
+          
+                            
+          <div
+            class="card-thumbnail"
+          >
+            
+                                
+            <img
+              class="thumbnail"
+              data-testid="testThumbnail"
+              data-title="natus nisi omnis corporis facere molestiae rerum in"
+              data-url="https://via.placeholder.com/600/f66b97"
+              src="https://via.placeholder.com/150/f66b97"
+            />
+            
+                            
+          </div>
+          
+                            
+          <div
+            class="card-title"
+            title="natus nisi omnis corporis facere molestiae rerum in"
+          >
+            natus nisi omnis corporis facere molestiae rerum in
+          </div>
+          
+                        
+        </div>
+        
+                    
+                        
+        <div
+          class="card"
+        >
+          
+                            
+          <div
+            class="card-thumbnail"
+          >
+            
+                                
+            <img
+              class="thumbnail"
+              data-testid="testThumbnail"
+              data-title="accusamus ea aliquid et amet sequi nemo"
+              data-url="https://via.placeholder.com/600/56a8c2"
+              src="https://via.placeholder.com/150/56a8c2"
+            />
+            
+                            
+          </div>
+          
+                            
+          <div
+            class="card-title"
+            title="accusamus ea aliquid et amet sequi nemo"
+          >
+            accusamus ea aliquid et amet sequi nemo
+          </div>
+          
+                        
+        </div>
+        
+                    
+                        
+        <div
+          class="card"
+        >
+          
+                            
+          <div
+            class="card-thumbnail"
+          >
+            
+                                
+            <img
+              class="thumbnail"
+              data-testid="testThumbnail"
+              data-title="officia delectus consequatur vero aut veniam explicabo molestias"
+              data-url="https://via.placeholder.com/600/b0f7cc"
+              src="https://via.placeholder.com/150/b0f7cc"
+            />
+            
+                            
+          </div>
+          
+                            
+          <div
+            class="card-title"
+            title="officia delectus consequatur vero aut veniam explicabo molestias"
+          >
+            officia delectus consequatur vero aut veniam explicabo molestias
+          </div>
+          
+                        
+        </div>
+        
+                    
+                        
+        <div
+          class="card"
+        >
+          
+                            
+          <div
+            class="card-thumbnail"
+          >
+            
+                                
+            <img
+              class="thumbnail"
+              data-testid="testThumbnail"
+              data-title="aut porro officiis laborum odit ea laudantium corporis"
+              data-url="https://via.placeholder.com/600/54176f"
+              src="https://via.placeholder.com/150/54176f"
+            />
+            
+                            
+          </div>
+          
+                            
+          <div
+            class="card-title"
+            title="aut porro officiis laborum odit ea laudantium corporis"
+          >
+            aut porro officiis laborum odit ea laudantium corporis
+          </div>
+          
+                        
+        </div>
+        
+                    
+      </div>
+    </div>
+  </div>
+</body>
+`;

@@ -10,24 +10,25 @@ export default function CardList(props) {
             .then(response => response.json())
             .then(json => {
                 const cardList = document.querySelector('.card-list');
-
+                let cards = '';
                 for(let i = 0; i < 8; i++) {
-                    cardList.innerHTML += `
+                    cards += `
                         <div class="card">
                             <div class="card-thumbnail">
-                                <img class="thumbnail" src="${json[i].thumbnailUrl}" data-url="${json[i].url}" data-title="${json[i].title}">
+                                <img class="thumbnail" data-testid="testThumbnail" src="${json[i].thumbnailUrl}" data-url="${json[i].url}" data-title="${json[i].title}">
                             </div>
                             <div class="card-title" title="${json[i].title}">${json[i].title}</div>
                         </div>
                     `;
                 }
+                cardList.insertAdjacentHTML('afterbegin', cards);
             })
             .catch(error => alert('fetch failed\nerror: ' + error));
     },[]);
 
 
     const viewImg = e => {
-        if(e.target.classList.value === 'thumbnail') {
+        if(e.target.className === 'thumbnail') {
             props.viewImage(e.target.dataset.url, e.target.dataset.title);
         }
     };
@@ -35,7 +36,7 @@ export default function CardList(props) {
 
     return (
         <div>
-            <div className="card-list" onClick={viewImg}>
+            <div className="card-list" onClick={viewImg} data-testid="testCardList">
             </div>
         </div>
     );

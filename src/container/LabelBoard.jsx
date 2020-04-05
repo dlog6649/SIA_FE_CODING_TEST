@@ -6,23 +6,21 @@ import { selectLabels, createLabels, updateLabels, updateImgLabels, deleteLabels
 const mapStateToProps = state => {
     return {
         mode: state.annotator.mode
-        ,curImgURL: state.annotator.curImgURL
-        ,selLblIds: state.annotator.selLblIds
-        ,img: state.annotator.imgs[state.annotator.curImgURL]
-        ,lbls: state.annotator.lbls[state.annotator.curImgURL]
+        ,currentImgURL: state.annotator.currentImgURL
+        ,selectedLabelsIds: state.annotator.selectedLabelsIds
+        ,image: state.annotator.images[state.annotator.currentImgURL]
+        ,labels: state.annotator.labels[state.annotator.currentImgURL]
     };
 }
-
 
 const mapDispatchToProps = dispatch => {
     return {
-        selectLabels: ids => dispatch(selectLabels(ids))
-        ,createLabels: lbls => dispatch(createLabels(lbls))
-        ,updateLabels: (lbls, ids) => dispatch(updateLabels(lbls, ids))
-        ,updateImgLabels: (img, lbls) => dispatch(updateImgLabels(img, lbls))
-        ,deleteLabels: ids => dispatch(deleteLabels(ids))
+        selectLabels: selectedLabelsIds => dispatch(selectLabels(selectedLabelsIds))
+        ,createLabels: labels => dispatch(createLabels(labels))
+        ,updateLabels: (labels, selectedLabelsIds) => dispatch(updateLabels(labels, selectedLabelsIds))
+        ,updateImgLabels: (image, labels) => dispatch(updateImgLabels(image, labels))
+        ,deleteLabels: selectedLabelsIds => dispatch(deleteLabels(selectedLabelsIds))
     };
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(LabelBoard);

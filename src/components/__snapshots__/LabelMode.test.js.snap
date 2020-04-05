@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LabelMode 테스트 시작 렌더링된 스냅샷이 기존과 일치해야 한다. 1`] = `
+<body>
+  <div>
+    <div
+      class="label-mode"
+    >
+      <button
+        class="btn label-mode-btn active"
+        id="LABEL_SELECT_MODE"
+        type="button"
+      >
+        <img
+          alt="label_select_mode"
+          class="btn-img"
+          src="label_select_mode.png"
+        />
+      </button>
+      <button
+        class="btn label-mode-btn"
+        id="LABEL_CREATE_MODE"
+        type="button"
+      >
+        <img
+          alt="label_create_mode"
+          class="btn-img"
+          src="label_create_mode.png"
+        />
+      </button>
+    </div>
+  </div>
+</body>
+`;
