@@ -428,7 +428,7 @@ const buildContextmenu = () => {
 }
 
 
-const editLabelName = () => {console.log('h');
+const editLabelName = () => {
   let child = labelNS.curLabel.firstChild;
   while (child) {
     if (child.tagName === tagNm.FOREIGNOBJECT) {
@@ -684,8 +684,6 @@ const drawLabel = e => {
 
 
 const dragLabel = e => {
-  console.log('dragging');
-
   let endX = e.offsetX;
   let endY = e.offsetY;
   let x;
@@ -845,8 +843,6 @@ const createInputBox = labelBody => {
 
 
 const createAnchors = label => {
-  console.log('createAnchors');
-
   label.classList.add('selected');
 
   let width = parseFloat(label.firstChild.getAttribute('width'));
