@@ -1,4 +1,4 @@
-# labeling-tool
+### labeling-tool
 
 ## Available Scripts
 
