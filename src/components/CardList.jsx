@@ -1,12 +1,17 @@
 import React, {useEffect} from 'react';
 
+
+const url = 'https://jsonplaceholder.typicode.com/photos';
+const proxyurl = "https://cors-anywhere.herokuapp.com/";
+
+
 export default function CardList(props) {
     
     
     useEffect(() => {
         console.log('CardList useEffect');
 
-        fetch('https://jsonplaceholder.typicode.com/photos')
+        fetch(proxyurl + url)
             .then(response => response.json())
             .then(json => {
                 const cardList = document.querySelector('.card-list');
