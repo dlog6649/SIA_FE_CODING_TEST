@@ -2,24 +2,30 @@ import React, { useEffect, useRef } from 'react';
 import { LABEL_CREATE_MODE } from '../modules/annotator';
 
 
+const compareIds = (_ids) => {
+    let ids = [];
+    document.querySelectorAll('.label-info.active').forEach(labelInfo => {
+        ids.push(parseInt(labelInfo.dataset.id));
+    });
+    if (ids.length !== _ids.length) {
+        return false;
+    }
+    for (let i = 0; i < _ids.length; i++) {
+        if (parseInt(_ids[i]) !== parseInt(ids[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 export default function LabelList(props) {
 
     const refLabelList = useRef(null);
 
-
     useEffect(() => {
         console.log('LabelList useEffect [props.labels]');
-        updateLabelList(props.labels);
-    }, [props.labels]);
-
-
-    useEffect(() => {
-        console.log('LabelList useEffect [props.selectedLabelsIds]');
-        updateSelectedLabelList(props.selectedLabelsIds);
-    }, [props.selectedLabelsIds]);
-
-    
-    const updateLabelList = labels => {
+        let labels = props.labels;
         if (!labels) {
             labels = [];
         }
@@ -33,36 +39,28 @@ export default function LabelList(props) {
         let labelList = '';
 
         labels.forEach(label => {
-            if(props.selectedLabelsIds.includes(parseInt(label.id))) {
-                labelList += `<li class="label-info btn active"`;
-            }
-            else {
-                labelList += `<li class="label-info btn"`;
-            }
-
-            // coordinates
-            // 0 1
-            // 3 2
             labelList += `
-                data-id="${label.id}" data-testid="testLabelInfo"
-            >
-                <p class="label-class">${label.name}</p>
-                <p class="label-coordinate">
-                    (${parseInt(label.coordinates[0].x)}, ${parseInt(label.coordinates[0].y)})
-                    (${parseInt(label.coordinates[1].x)}, ${parseInt(label.coordinates[1].y)})
-                    (${parseInt(label.coordinates[2].x)}, ${parseInt(label.coordinates[2].y)})
-                    (${parseInt(label.coordinates[3].x)}, ${parseInt(label.coordinates[3].y)})
-                </p>
-            </li>
+                <li class="label-info btn" data-id="${label.id}" data-testid="testLabelInfo">
+                    <p class="label-class">${label.name}</p>
+                    <p class="label-coordinate">
+                        (${parseInt(label.coordinates[0].x)}, ${parseInt(label.coordinates[0].y)})
+                        (${parseInt(label.coordinates[1].x)}, ${parseInt(label.coordinates[1].y)})
+                        (${parseInt(label.coordinates[2].x)}, ${parseInt(label.coordinates[2].y)})
+                        (${parseInt(label.coordinates[3].x)}, ${parseInt(label.coordinates[3].y)})
+                    </p>
+                </li>
             `;
         });
 
         labelListRoot.insertAdjacentHTML('afterbegin', labelList);
-    }
+        
+    }, [props.labels]);
 
 
-    const updateSelectedLabelList = selectedLabelsIds => {
-        if(compareIds(selectedLabelsIds)) {
+    useEffect(() => {
+        console.log('LabelList useEffect [props.selectedLabelsIds]');
+
+        if(compareIds(props.selectedLabelsIds)) {
             console.log('LabelList useEffect [props.selectedLabelsIds] returned');
             return;
         }
@@ -70,30 +68,14 @@ export default function LabelList(props) {
         document.querySelectorAll('.label-info').forEach(labelInfo => {
             labelInfo.classList.remove('active');
 
-            selectedLabelsIds.forEach(id => {
+            props.selectedLabelsIds.forEach(id => {
                 if(parseInt(labelInfo.dataset.id) === parseInt(id)) {
                     labelInfo.classList.add('active');
                 }
             });
         });
-    }
 
-
-    const compareIds = (_ids) => {
-        let ids = [];
-        document.querySelectorAll('.label-info.active').forEach(labelInfo => {
-            ids.push(parseInt(labelInfo.dataset.id));
-        });
-        if (ids.length !== _ids.length) {
-            return false;
-        }
-        for (let i = 0; i < _ids.length; i++) {
-            if (parseInt(_ids[i]) !== parseInt(ids[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
+    }, [props.selectedLabelsIds]);
 
 
     const toggleLabelList = () => {

@@ -27,90 +27,94 @@ exports[`LabelList 테스트 시작 렌더링된 스냅샷이 기존과 일치�
         class="label-list-root"
         style="display: block;"
       >
+        
+                
         <li
           class="label-info btn"
           data-id="0"
           data-testid="testLabelInfo"
         >
           
-                
+                    
           <p
             class="label-class"
           >
             sea
           </p>
           
-                
+                    
           <p
             class="label-coordinate"
           >
             
-                    (10, 20)
-                    (110, 20)
-                    (110, 70)
-                    (10, 70)
-                
+                        (10, 20)
+                        (110, 20)
+                        (110, 70)
+                        (10, 70)
+                    
           </p>
           
-            
+                
         </li>
         
             
+                
         <li
           class="label-info btn active"
           data-id="1"
           data-testid="testLabelInfo"
         >
           
-                
+                    
           <p
             class="label-class"
           >
             woods
           </p>
           
-                
+                    
           <p
             class="label-coordinate"
           >
             
-                    (10, 20)
-                    (110, 20)
-                    (110, 70)
-                    (10, 70)
-                
+                        (10, 20)
+                        (110, 20)
+                        (110, 70)
+                        (10, 70)
+                    
           </p>
           
-            
+                
         </li>
         
             
+                
         <li
           class="label-info btn"
           data-id="2"
           data-testid="testLabelInfo"
         >
           
-                
+                    
           <p
             class="label-class"
           >
             building
           </p>
           
-                
+                    
           <p
             class="label-coordinate"
           >
             
-                    (10, 20)
-                    (110, 20)
-                    (110, 70)
-                    (10, 70)
-                
+                        (10, 20)
+                        (110, 20)
+                        (110, 70)
+                        (10, 70)
+                    
           </p>
           
-            
+                
         </li>
         
             

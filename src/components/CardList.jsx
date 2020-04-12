@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect, useRef } from 'react';
 
 
 const url = 'https://jsonplaceholder.typicode.com/photos';
@@ -7,6 +7,7 @@ const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 export default function CardList(props) {
     
+    let refCardList = useRef(null);
     
     useEffect(() => {
         console.log('CardList useEffect');
@@ -14,7 +15,7 @@ export default function CardList(props) {
         fetch(proxyurl + url)
             .then(response => response.json())
             .then(json => {
-                const cardList = document.querySelector('.card-list');
+                const cardList = refCardList.current;
                 let cards = '';
                 for(let i = 0; i < 8; i++) {
                     cards += `
@@ -41,7 +42,7 @@ export default function CardList(props) {
 
     return (
         <div>
-            <div className="card-list" onClick={viewImg} data-testid="testCardList">
+            <div className="card-list" onClick={viewImg} data-testid="testCardList" ref={refCardList} >
             </div>
         </div>
     );

@@ -5,7 +5,6 @@ import LabelBoard from '../container/LabelBoard';
 import { Link } from 'react-router-dom'
 
 export default function AnnotatorAnnotatingLabel(props) {
-    
 
     useEffect(() => {
         console.log('AnnotatorAnnotatingLabel useEffect');
