@@ -156,7 +156,7 @@ const documentMouseupEvent = e => {
 
     if (labelNS.isDragging && labelNS.isPushingSpacebar) {
         let labels = [...labelNS.svg.childNodes].filter(node => node.classList.contains('label'));
-        _props.updateImgLabels(document.querySelector('#img'), labels);
+        _props.updateImgLabels(document.querySelector('#img'), labels, getSelectedLabelsIds());
     }
     else if (labelNS.isDrawing && labelNS.mode === LABEL_CREATE_MODE) {
         if (createLabel()) {
@@ -293,7 +293,7 @@ const controlZoom = preScale => {
         label.setAttribute('transform', 'translate(' + newX + ' ' + newY + ') scale(' + labelNS.curScale + ') rotate(' + deg + ' ' + rotX + ' ' + rotY + ')');
     });
 
-    _props.updateImgLabels(img, labels);
+    _props.updateImgLabels(img, labels, getSelectedLabelsIds());
 }
 
 

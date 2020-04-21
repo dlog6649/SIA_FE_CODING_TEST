@@ -18,7 +18,7 @@ const mapDispatchToProps = dispatch => {
         selectLabels: selectedLabelsIds => dispatch(selectLabels(selectedLabelsIds))
         ,createLabels: labels => dispatch(createLabels(labels))
         ,updateLabels: (labels, selectedLabelsIds) => dispatch(updateLabels(labels, selectedLabelsIds))
-        ,updateImgLabels: (image, labels) => dispatch(updateImgLabels(image, labels))
+        ,updateImgLabels: (image, labels, selectedLabelsIds) => dispatch(updateImgLabels(image, labels, selectedLabelsIds))
         ,deleteLabels: selectedLabelsIds => dispatch(deleteLabels(selectedLabelsIds))
     };
 }

@@ -18,7 +18,7 @@ export const changeMode = mode => ({ type: CHANGE_MODE, mode });
 export const selectLabels = selectedLabelsIds => ({ type: SELECT_LABELS, selectedLabelsIds });
 export const createLabels = labels => ({ type: CREATE_LABELS, labels });
 export const updateLabels = (labels, selectedLabelsIds) => ({ type: UPDATE_LABELS, labels, selectedLabelsIds });
-export const updateImgLabels = (image, labels) => ({ type: UPDATE_IMG_LABELS, image, labels });
+export const updateImgLabels = (image, labels, selectedLabelsIds) => ({ type: UPDATE_IMG_LABELS, image, labels, selectedLabelsIds });
 export const deleteLabels = selectedLabelsIds => ({ type: DELETE_LABELS, selectedLabelsIds });
 
 
@@ -133,6 +133,7 @@ export default function annotator (state = initialState, action) {
                 ...state
                 ,images: _images
                 ,labels: _labels
+                ,selectedLabelsIds: action.selectedLabelsIds
             };
         case DELETE_LABELS:
             _labels = {...state.labels};
