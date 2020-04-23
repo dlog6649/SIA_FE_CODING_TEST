@@ -12,7 +12,7 @@ describe('annotator 테스트 시작', () => {
                                 , { type: 'annotator/SELECT_LABELS', selectedLabelsIds: [] }
                                 , { type: 'annotator/CREATE_LABELS', labels: {} }
                                 , { type: 'annotator/UPDATE_LABELS', labels: {}, selectedLabelsIds: [] }
-                                , { type: 'annotator/UPDATE_IMG_LABELS', image: {}, labels: {} }
+                                , { type: 'annotator/UPDATE_IMG_LABELS', image: {}, labels: {}, selectedLabelsIds: [] }
                                 , { type: 'annotator/DELETE_LABELS', selectedLabelsIds: [] }
                         ];
                         const actions = [
@@ -21,7 +21,7 @@ describe('annotator 테스트 시작', () => {
                                 , annotatorActions.selectLabels([])
                                 , annotatorActions.createLabels({})
                                 , annotatorActions.updateLabels({}, [])
-                                , annotatorActions.updateImgLabels({}, {})
+                                , annotatorActions.updateImgLabels({}, {}, [])
                                 , annotatorActions.deleteLabels([])
                         ];
                         expect(actions).toEqual(expectedActions);
@@ -104,9 +104,10 @@ describe('annotator 테스트 시작', () => {
                         let _coordinates = [{ x: 30, y: 30 }, { x: 180, y: 30 }, { x: 180, y: 180 }, { x: 30, y: 180 }]
                         let _data = {x: 30, y: 30, w: 150, h: 150, deg: 0};
 
-                        state = annotator(state, annotatorActions.updateImgLabels(image, [label]));
+                        state = annotator(state, annotatorActions.updateImgLabels(image, [label], [0, 1, 3]));
                         expect(state).toHaveProperty('images', { 'http://sample.png': { title: 'Lorem ipsum', x: 150, y: 300, scale: 1 } });
                         expect(state).toHaveProperty('labels', { 'http://sample.png': [{ id: 0, name: 'sun', coordinates: _coordinates, data: _data }] });
+                        expect(state).toHaveProperty('selectedLabelsIds', [0, 1, 3]);
                 });
                 it('deleteLabels가 제대로 수행되어야 한다.', () => {
                         state = annotator(state, annotatorActions.deleteLabels([0]));
