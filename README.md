@@ -12,9 +12,6 @@
 - Redux 4.0.5
 - Visual Studio Code 1.43.2
 - Chrome 80.0.3987.149
-- JavaScript
-- CSS
-- SVG
 
 ## 개발 환경 실행 
 
