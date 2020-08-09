@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import CardList from '../container/CardList';
 
 export default function AnnotatorHome() {
-
     
     useEffect(() => {
         console.log('AnotatorHome useEffect');

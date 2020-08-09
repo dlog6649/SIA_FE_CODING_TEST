@@ -10,7 +10,7 @@ const tagNm = {
 }
 
 
-export const parseTransform = obj => {
+export const parseTransform = (obj) => {
     if (obj.tagName === tagNm.IMAGE) {
       let transform = obj.getAttribute('transform').split(' ');
       let x = parseFloat(transform[0].substring(10));
@@ -66,7 +66,7 @@ export function throttle(func, wait, options) {
 }
 
 
-export const pauseEvent = e => {
+export const pauseEvent = (e) => {
   if(e.stopPropagation) e.stopPropagation();
   if(e.preventDefault) e.preventDefault();
   e.cancelBubble=true;

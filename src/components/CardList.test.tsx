@@ -4,7 +4,7 @@ import CardList from './CardList';
 
 
 describe('CardList 테스트 시작', () => {
-  let wrapper = null;
+  let wrapper: any = null;
   const mockViewImage = jest.fn();
   jest.setTimeout(30000);
 

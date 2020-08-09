@@ -4,7 +4,7 @@ import AnnotatorHome from './AnnotatorHome';
 
 
 describe('AnnotatorHome 테스트 시작', () => {
-  let wrapper = null;
+  let wrapper: any = null;
 
   it('렌더링된 스냅샷이 기존과 일치해야 한다.', () => {
     wrapper = shallow(<AnnotatorHome />);

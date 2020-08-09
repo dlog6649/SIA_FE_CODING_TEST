@@ -4,13 +4,16 @@ import LabelBoard from './LabelBoard';
 import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from '../modules/annotator';
 import { parseTransform } from '../asset/js/common';
 
+type Labels = {
+  id: number, name: string, coordinates: {x:number, y: number,}[], data: {x: number, y: number, w: number, h: number, deg: number}
+}[]
 
 describe('LabelBoard 라벨링툴 테스트 시작', () => {
-  let wrapper = null;
-  const _currentImgURL = 'http://sample.png';
-  const _selectedLabelsIds = [];
-  const _image = {title: 'Lorem ipsum', x: 0, y: 0, scale: 1};
-  const _labels = [
+  let wrapper: any = null;
+  const _currentImgURL: string = 'http://sample.png';
+  const _selectedLabelsIds: number[] = [];
+  const _image: {title: string, x: number, y: number, scale: number} = {title: 'Lorem ipsum', x: 0, y: 0, scale: 1};
+  const _labels: Labels = [
     {id: 0, name: 'sea', coordinates: [{x: 0, y: 0}, {x: 50, y: 0}, {x: 50, y: 50}, {x: 0, y: 50}], data: {x: 0, y: 0, w: 50, h: 50, deg: 0}}
     ,{id: 1, name: 'woods', coordinates: [{x: 50, y: 0}, {x: 100, y: 0}, {x: 100, y: 50}, {x: 50, y: 50}], data: {x: 50, y: 0, w: 50, h: 50, deg: 0}}
     ,{id: 2, name: 'building', coordinates: [{x: 0, y: 50}, {x: 50, y: 50}, {x: 50, y: 100}, {x: 0, y: 50}], data: {x: 0, y: 50, w: 50, h: 50, deg: 0}}
@@ -173,7 +176,7 @@ describe('LabelBoard 라벨링툴 테스트 시작', () => {
       );
       let labelingBoard = wrapper.getByTestId('testSvg');
       let testLabels = wrapper.getAllByTestId('testLabel');
-      let beforeLabel = parseTransform(testLabels[0]);
+      let beforeLabel: {x: number, y: number, scale: number, deg: number, rotX: number, rotY: number, w: number, h: number} = parseTransform(testLabels[0]);
       expect(beforeLabel.x).toBe(0);
       expect(beforeLabel.y).toBe(0);
   

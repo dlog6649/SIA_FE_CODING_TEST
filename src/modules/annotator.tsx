@@ -13,31 +13,55 @@ export const LABEL_SELECT_MODE = 'LABEL_SELECT_MODE';
 export const LABEL_CREATE_MODE = 'LABEL_CREATE_MODE';
 
 
-export const viewImage = (url, title) => ({ type: VIEW_IMAGE, url, title });
-export const changeMode = mode => ({ type: CHANGE_MODE, mode });
-export const selectLabels = selectedLabelsIds => ({ type: SELECT_LABELS, selectedLabelsIds });
-export const createLabels = labels => ({ type: CREATE_LABELS, labels });
-export const updateLabels = (labels, selectedLabelsIds) => ({ type: UPDATE_LABELS, labels, selectedLabelsIds });
-export const updateImgLabels = (image, labels, selectedLabelsIds) => ({ type: UPDATE_IMG_LABELS, image, labels, selectedLabelsIds });
-export const deleteLabels = selectedLabelsIds => ({ type: DELETE_LABELS, selectedLabelsIds });
+export const viewImage = (url: string, title: string): {type: string, url: string, title: string} => ({ type: VIEW_IMAGE, url, title });
+export const changeMode = (mode: string) => ({ type: CHANGE_MODE, mode });
+export const selectLabels = (selectedLabelsIds: number[]) => ({ type: SELECT_LABELS, selectedLabelsIds });
+export const createLabels = (labels: Labels) => ({ type: CREATE_LABELS, labels });
+export const updateLabels = (labels: Labels, selectedLabelsIds: number[]) => ({ type: UPDATE_LABELS, labels, selectedLabelsIds });
+export const updateImgLabels = (image: any, labels: Labels, selectedLabelsIds: number[]) => ({ type: UPDATE_IMG_LABELS, image, labels, selectedLabelsIds });
+export const deleteLabels = (selectedLabelsIds: number[]) => ({ type: DELETE_LABELS, selectedLabelsIds });
 
 
-const initialState = {
+interface Labels {
+    id: number, 
+    name: string, 
+    coordinates: {x:number, y: number}[], 
+    data: {x: number, y: number, w: number, h: number, deg: number}
+}
+
+interface State {
+    mode: string,
+    currentImgURL: string,
+    images: any,
+    labels: any,
+    selectedLabelsIds: number[],
+}
+
+interface Data {
+    x: number; y: number; scale: number; deg: number; rotX: number; rotY: number; w: number; h: number;
+    // x: number
+    // y: number
+    // w: number
+    // h: number
+    // deg: number
+}
+
+const initialState: State = {
     mode: LABEL_SELECT_MODE
     ,currentImgURL: ''
     ,images: {}
-    ,labels: {}
+    ,labels: {} //{id: 0, name: '', coordinates: [], data: {x: 0, y: 0, w: 0, h: 0, deg: 0}}
     ,selectedLabelsIds: []
 };
 
 
-export default function annotator (state = initialState, action) {
+export default function annotator (state = initialState, action: any) {
     let _images;
     let _labels;
     let _title;
     let _id;
     let _name;
-    let tf;
+    let tf: Data;
     let _data
     let _coordinates;
     let updatedLabels;
@@ -78,7 +102,7 @@ export default function annotator (state = initialState, action) {
                 _id = parseInt(label.dataset.id);
                 _name = label.dataset.name;
 
-                tf = parseTransform(label);
+                tf = parseTransform(label) as Data;
                 
                 _data = {x: tf.x, y: tf.y, w: tf.w, h: tf.h, deg: tf.deg};
 
@@ -117,7 +141,7 @@ export default function annotator (state = initialState, action) {
             };
         case UPDATE_IMG_LABELS:
             _title = state.images[state.currentImgURL].title;
-            tf = parseTransform(action.image);
+            tf = parseTransform(action.image) as Data;
             _images = {...state.images, [state.currentImgURL]: {title: _title, x: tf.x, y: tf.y, scale: tf.scale}};
 
             updatedLabels = [];
@@ -160,10 +184,10 @@ export default function annotator (state = initialState, action) {
 }
 
 
-const getLabelState = label => {
+const getLabelState = (label: any) => {
     let _id = parseInt(label.dataset.id);
     let _name = label.dataset.name;
-    let tf = parseTransform(label);
+    let tf = parseTransform(label) as Data;
     let _data = {x: tf.x, y: tf.y, w: tf.w, h: tf.h, deg: tf.deg};
 
     let theta = (Math.PI / 180) * tf.deg;

@@ -4,8 +4,8 @@ import AnnotatorAnnotatingLabel from './AnnotatorAnnotatingLabel';
 
 
 describe('AnnotatorAnnotatingLabel 테스트 시작', () => {
-  let wrapper = null;
-  const _title = 'Lorem ipsum';
+  let wrapper: any = null;
+  const _title: string = 'Lorem ipsum';
 
   it('렌더링된 스냅샷이 기존과 일치해야 한다.', () => {
     // title 프로퍼티 전달

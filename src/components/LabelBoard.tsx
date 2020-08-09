@@ -4,12 +4,24 @@ import * as LabelMain from '../labeling-tool/LabelMain';
 import { redrawImage, redrawLabels } from '../labeling-tool/LabelCreator';
 import { compareImage, compareLabels, compareIds } from '../labeling-tool/LabelCompare';
 
-export var _props;
-export var _setScale;
+interface Props {
+    mode: string
+    image: any
+    currentImgURL: string
+    labels: {id: number, name: string, coordinates: {x:number, y: number,}[], data: {x: number, y: number, w: number, h: number, deg: number}}[]
+    //{x: number, y: number, scale: number, deg: number, rotX: number, rotY: number, w: number, h: number}[]
+    selectedLabelsIds: number[]
+}
 
 
-export default function LabelBoard(props) {
+export var _props: Props;
+export var _setScale: React.Dispatch<React.SetStateAction<number>>;
+
+
+export default function LabelBoard(props: Props) {
     const [scale, setScale] = useState(1);
+
+    
 
     useEffect(() => {
         console.log('LabelBoard useEffect: []');
@@ -75,19 +87,18 @@ export default function LabelBoard(props) {
     }, [props.selectedLabelsIds]);
 
 
-    const changeScale = e => {
-        setScale(parseFloat(e.target.value));
+    const changeScale = (evt: any): void => {
+        setScale(parseFloat(evt.target.value));
     }
 
 
-    const changeSliderCSS = e => {
-        let val = e.target.value;
-        if (val <= 0.1) {
-            val = 0;
+    const changeSliderCSS = (evt: any): void => {
+        let value = evt.target.value;
+        if (value <= 0.1) {
+            value = 0;
         }
-        e.target.style.background = 'linear-gradient(to right, #333333 0%, #333333 ' + val * 50 + '%, #dedede ' + val * 50 + '%, #dedede 100%)';
+        evt.target.style.background = 'linear-gradient(to right, #333333 0%, #333333 ' + value * 50 + '%, #dedede ' + value * 50 + '%, #dedede 100%)';
     }
-
 
     return (
         <div className="label-board">
@@ -100,7 +111,7 @@ export default function LabelBoard(props) {
             </svg>
             <div className="label-board-scaler">
                 <img className="scaler-plus btn-img" src={require('../asset/images/plus.png')} alt="+" />
-                <input className="scaler-range" type="range" data-testid="testScaler" orient="vertical" value={scale} onInput={changeSliderCSS} onChange={changeScale} min="0.1" max="2" step="0.1" />
+                <input className="scaler-range" orient="vertical" type="range" data-testid="testScaler" value={scale} onInput={changeSliderCSS} onChange={changeScale} min="0.1" max="2" step="0.1" />
                 <img className="scaler-minus btn-img" src={require('../asset/images/minus.png')} alt="-" />
             </div>
             <LabelCtxMenu />

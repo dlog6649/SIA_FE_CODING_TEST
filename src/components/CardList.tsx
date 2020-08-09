@@ -1,11 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 
 
-const url = 'https://jsonplaceholder.typicode.com/photos';
-const proxyurl = "https://cors-anywhere.herokuapp.com/";
+const url: string = 'https://jsonplaceholder.typicode.com/photos';
+const proxyurl: string = "https://cors-anywhere.herokuapp.com/";
 
+interface Props {
+    viewImage: any
+}
 
-export default function CardList(props) {
+export default function CardList(props: Props) {
     
     let refCardList = useRef(null);
     
@@ -15,8 +18,8 @@ export default function CardList(props) {
         fetch(proxyurl + url)
             .then(response => response.json())
             .then(json => {
-                const cardList = refCardList.current;
-                let cards = '';
+                const cardList: any = refCardList.current;
+                let cards: string = '';
                 for(let i = 0; i < 8; i++) {
                     cards += `
                         <div class="card">
@@ -33,7 +36,7 @@ export default function CardList(props) {
     },[]);
 
 
-    const viewImg = e => {
+    const viewImg = (e: any) => {
         if(e.target.className === 'thumbnail') {
             props.viewImage(e.target.dataset.url, e.target.dataset.title);
         }

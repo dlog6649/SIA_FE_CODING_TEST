@@ -4,12 +4,14 @@ import LabelList from '../container/LabelList';
 import LabelBoard from '../container/LabelBoard';
 import { Link } from 'react-router-dom'
 
-export default function AnnotatorAnnotatingLabel(props) {
+interface Props {
+    title: string
+}
 
+export default function AnnotatorAnnotatingLabel(props: Props) {
     useEffect(() => {
         console.log('AnnotatorAnnotatingLabel useEffect');
     });
-
     
     return (
         <div className="viewer">
