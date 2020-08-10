@@ -1,9 +1,12 @@
 import LabelList from '../components/LabelList';
 import { connect } from 'react-redux';
-import { selectLabels } from '../modules/annotator';
+import { selectLabels, State } from '../modules/annotator';
 
+interface annotatorState {
+    annotator: State
+}
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: annotatorState) => {
     return {
         mode: state.annotator.mode
         ,labels: state.annotator.labels[state.annotator.currentImgURL]
@@ -11,9 +14,9 @@ const mapStateToProps = state => {
     };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
-        selectLabels: selectedLabelsIds => dispatch(selectLabels(selectedLabelsIds))
+        selectLabels: (selectedLabelsIds: Array<number>) => dispatch(selectLabels(selectedLabelsIds))
     };
 }
 

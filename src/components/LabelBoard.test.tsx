@@ -8,6 +8,19 @@ type Labels = {
   id: number, name: string, coordinates: {x:number, y: number,}[], data: {x: number, y: number, w: number, h: number, deg: number}
 }[]
 
+interface Props {
+  mode: string
+  image: any
+  currentImgURL: string
+  labels: {id: number, name: string, coordinates: {x:number, y: number,}[], data: {x: number, y: number, w: number, h: number, deg: number}}[]
+  //{x: number, y: number, scale: number, deg: number, rotX: number, rotY: number, w: number, h: number}[]
+  selectedLabelsIds: number[]
+}
+
+interface Data {
+  x: number; y: number; scale: number; deg: number; rotX: number; rotY: number; w: number; h: number;
+}
+
 describe('LabelBoard 라벨링툴 테스트 시작', () => {
   let wrapper: any = null;
   const _currentImgURL: string = 'http://sample.png';
@@ -176,7 +189,7 @@ describe('LabelBoard 라벨링툴 테스트 시작', () => {
       );
       let labelingBoard = wrapper.getByTestId('testSvg');
       let testLabels = wrapper.getAllByTestId('testLabel');
-      let beforeLabel: {x: number, y: number, scale: number, deg: number, rotX: number, rotY: number, w: number, h: number} = parseTransform(testLabels[0]);
+      let beforeLabel: {x: number, y: number, scale: number, deg: number, rotX: number, rotY: number, w: number, h: number} = parseTransform(testLabels[0]) as Data;
       expect(beforeLabel.x).toBe(0);
       expect(beforeLabel.y).toBe(0);
   
@@ -187,7 +200,7 @@ describe('LabelBoard 라벨링툴 테스트 시작', () => {
   
       let updateLabelsEventByMouseDown = mockUpdateLabels.mock.calls;
       let [labels, selectedLabelsIds] = updateLabelsEventByMouseDown[0];
-      let afterLabel = parseTransform(labels[0]);
+      let afterLabel = parseTransform(labels[0]) as Data;
       expect(afterLabel.x).toBe(200);
       expect(afterLabel.y).toBe(200);
     });
@@ -252,23 +265,23 @@ describe('LabelBoard 라벨링툴 테스트 시작', () => {
       testScaler.value = 1.5;
       fireEvent.change(testScaler);
   
-      let beforeTestImg = parseTransform(testImg);
-      let beforeTestLabel = parseTransform(testLabels[0]);
+      let beforeTestImg = parseTransform(testImg) as Data;
+      let beforeTestLabel = parseTransform(testLabels[0]) as Data;
       expect(beforeTestImg.scale).toBe(1.5);
       expect(beforeTestLabel.scale).toBe(1.5);
   
       // 라벨링보드에서 마우스휠 회전
       fireEvent(labelingBoard, new MouseEvent('mousewheel', {deltaY: -100}));
   
-      let afterTestImg = parseTransform(testImg);
-      let afterTestLabel = parseTransform(testLabels[0]);
+      let afterTestImg = parseTransform(testImg) as Data;
+      let afterTestLabel = parseTransform(testLabels[0]) as Data;
       expect(afterTestImg.scale).toBe(1.6);
       expect(afterTestLabel.scale).toBe(1.6);
   
       let updateImgLabelsEventByMouseWheel = mockUpdateImgLabels.mock.calls;
       let [img, labels] = updateImgLabelsEventByMouseWheel[1];
-      let afterImg = parseTransform(img);
-      let afterLabel = parseTransform(labels[0]);
+      let afterImg = parseTransform(img) as Data;
+      let afterLabel = parseTransform(labels[0]) as Data;
       expect(afterImg.scale).toBe(1.6);
       expect(afterLabel.scale).toBe(1.6);
     });
@@ -289,8 +302,8 @@ describe('LabelBoard 라벨링툴 테스트 시작', () => {
       let labelingBoard = wrapper.getByTestId('testSvg');
       let testImg = wrapper.getByTestId('testImg');
       let testLabels = wrapper.getAllByTestId('testLabel');
-      let beforeImg = parseTransform(testImg);
-      let beforeLabel = parseTransform(testLabels[0]);
+      let beforeImg = parseTransform(testImg) as Data;
+      let beforeLabel = parseTransform(testLabels[0]) as Data;
       expect(beforeImg.x).toBe(0);
       expect(beforeImg.y).toBe(0);
       expect(beforeLabel.x).toBe(0);
@@ -304,8 +317,8 @@ describe('LabelBoard 라벨링툴 테스트 시작', () => {
   
       let updateImgLabelsEventByMouseUp = mockUpdateImgLabels.mock.calls;
       let [img, labels] = updateImgLabelsEventByMouseUp[0];
-      let afterImg = parseTransform(img);
-      let afterLabel = parseTransform(labels[0]);
+      let afterImg = parseTransform(img) as Data;
+      let afterLabel = parseTransform(labels[0]) as Data;
       expect(afterImg.x).toBe(200);
       expect(afterImg.y).toBe(200);
       expect(afterLabel.x).toBe(200);

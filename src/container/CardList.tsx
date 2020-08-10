@@ -4,9 +4,10 @@ import { viewImage } from '../modules/annotator';
 import { push } from 'connected-react-router';
 
 
-const mapDispatchToProps = dispatch => {
+
+const mapDispatchToProps = (dispatch: any) => {
     return {
-        viewImage:(url, title) => {
+        viewImage:(url: string, title: string) => {
             dispatch(viewImage(url, title));
             dispatch(push('/view'));
         }

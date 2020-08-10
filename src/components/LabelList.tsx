@@ -2,51 +2,60 @@ import React, { useEffect, useRef } from 'react';
 import { LABEL_CREATE_MODE } from '../modules/annotator';
 
 
-const compareIds = (_ids) => {
-    let ids = [];
-    document.querySelectorAll('.label-info.active').forEach(labelInfo => {
-        ids.push(parseInt(labelInfo.dataset.id));
+const compareIds = (_ids: Array<number | string>) => {
+    let ids = [] as Array<number>;
+    document.querySelectorAll('.label-info.active').forEach((labelInfo) => {
+        const info: HTMLElement = labelInfo as HTMLElement;
+        ids.push(Number(info.dataset.id));
     });
     if (ids.length !== _ids.length) {
         return false;
     }
     for (let i = 0; i < _ids.length; i++) {
-        if (parseInt(_ids[i]) !== parseInt(ids[i])) {
+        if (Number(_ids[i]) !== Number(ids[i])) {
             return false;
         }
     }
     return true;
 }
 
+interface Label {
+    id: number, 
+    name: string, 
+    coordinates: Array<{x:number, y: number}>, 
+    data: {x: number, y: number, w: number, h: number, deg: number}
+}
 
-export default function LabelList(props) {
+interface Props {
+    mode: string;
+    labels: Array<Label>;
+    selectedLabelsIds: Array<number>;
+    selectLabels: (selectedLabelsIds: Array<number>) => void;
+}
 
-    const refLabelList = useRef(null);
+export default function LabelList(props: Props) {
+    const refLabelList: React.MutableRefObject<any> = useRef(null);
 
     useEffect(() => {
         console.log('LabelList useEffect [props.labels]');
         let labels = props.labels;
         if (!labels) {
-            labels = [];
+            labels = [] as Array<Label>;
         }
-
         let labelListRoot = refLabelList.current.lastChild;
-
         while(labelListRoot.firstChild) {
             labelListRoot.removeChild(labelListRoot.firstChild);
         }
-
         let labelList = '';
-
         labels.forEach(label => {
             labelList += `
                 <li class="label-info btn" data-id="${label.id}" data-testid="testLabelInfo">
                     <p class="label-class">${label.name}</p>
                     <p class="label-coordinate">
-                        (${parseInt(label.coordinates[0].x)}, ${parseInt(label.coordinates[0].y)})
-                        (${parseInt(label.coordinates[1].x)}, ${parseInt(label.coordinates[1].y)})
-                        (${parseInt(label.coordinates[2].x)}, ${parseInt(label.coordinates[2].y)})
-                        (${parseInt(label.coordinates[3].x)}, ${parseInt(label.coordinates[3].y)})
+                        (${Number(label.coordinates[0].x)}, ${Number(label.coordinates[0].y)})
+                        (${Number(label.coordinates[1].x)}, ${Number(label.coordinates[1].y)})
+                        (${Number(label.coordinates[2].x)}, ${Number(label.coordinates[2].y)})
+                        (${Number(label.coordinates[3].x)}, ${Number(label.coordinates[3].y)})
                     </p>
                 </li>
             `;
@@ -65,12 +74,13 @@ export default function LabelList(props) {
             return;
         }
 
-        document.querySelectorAll('.label-info').forEach(labelInfo => {
-            labelInfo.classList.remove('active');
+        document.querySelectorAll('.label-info').forEach((labelInfo) => {
+            const info: HTMLElement = labelInfo as HTMLElement
+            info.classList.remove('active');
 
             props.selectedLabelsIds.forEach(id => {
-                if(parseInt(labelInfo.dataset.id) === parseInt(id)) {
-                    labelInfo.classList.add('active');
+                if(Number(info.dataset.id) === Number(id)) {
+                    info.classList.add('active');
                 }
             });
         });
@@ -79,35 +89,35 @@ export default function LabelList(props) {
 
 
     const toggleLabelList = () => {
-        let controller = document.querySelector('.label-list-controller');
-        let img = document.querySelector('.label-list-btn-img');
-        let labelListRoot = document.querySelector('.label-list-root');
+        let controller = document.querySelector('.label-list-controller') as HTMLElement;
+        let img = document.querySelector('.label-list-btn-img') as HTMLImageElement;
+        let labelListRoot = document.querySelector('.label-list-root') as HTMLElement;
 
         if (labelListRoot.style.display === 'block') {
-            controller.firstChild.style.display = 'none';
+            (controller.firstChild as HTMLElement).style.display = 'none';
             controller.style.minWidth = '38px';
             controller.style.borderRight = '1px solid lightgray';
             img.src = require('../asset/images/arrow-right.png');
             labelListRoot.style.display = 'none';
-            labelListRoot.parentNode.style.borderRight = 'none';
+            (labelListRoot.parentNode as HTMLElement).style.borderRight = 'none';
         }
         else {
-            controller.firstChild.style.display = 'block';
+            (controller.firstChild as HTMLElement).style.display = 'block';
             controller.style.minWidth = '300px';
             controller.style.borderRight = 'none';
             img.src = require('../asset/images/arrow-left.png');
             labelListRoot.style.display = 'block';
-            labelListRoot.parentNode.style.borderRight = '1px solid lightgray';
+            (labelListRoot.parentNode as HTMLElement).style.borderRight = '1px solid lightgray';
         }
     };
     
 
-    const selectLabel = e => {
+    const selectLabel = (e: any): void => {
         if(props.mode === LABEL_CREATE_MODE) {
             return;
         }
         
-        let _labelInfo;
+        let _labelInfo: HTMLElement;
         _labelInfo = e.target.classList.contains('label-info') ? e.target : e.target.parentNode;
         _labelInfo.classList.add('active');
 
@@ -120,9 +130,10 @@ export default function LabelList(props) {
             });
         }
 
-        let ids = [];
+        let ids: number[] = [];
         document.querySelectorAll('.label-info.active').forEach(labelInfo => {
-            ids.push(parseInt(labelInfo.dataset.id));
+            const info: HTMLElement = labelInfo as HTMLElement
+            ids.push(parseInt(info.dataset.id as string));
         });
 
         props.selectLabels(ids);

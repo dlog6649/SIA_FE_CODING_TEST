@@ -3,6 +3,7 @@ import annotator, * as annotatorActions from './annotator';
 
 describe('annotator 테스트 시작', () => {
         const svgNS = 'http://www.w3.org/2000/svg';
+        let svgImage = document.createElementNS(svgNS, 'image');
 
         describe('actions', () => {
                 it('액션 생성 함수의 파라미터가 잘 전달되어야 한다.', () => {
@@ -10,18 +11,18 @@ describe('annotator 테스트 시작', () => {
                                 { type: 'annotator/VIEW_IMAGE', url: 'http://sample.png', title: 'Lorem ipsum' }
                                 , { type: 'annotator/CHANGE_MODE', mode: 'LABEL_SELECT_MODE' }
                                 , { type: 'annotator/SELECT_LABELS', selectedLabelsIds: [] }
-                                , { type: 'annotator/CREATE_LABELS', labels: {} }
-                                , { type: 'annotator/UPDATE_LABELS', labels: {}, selectedLabelsIds: [] }
-                                , { type: 'annotator/UPDATE_IMG_LABELS', image: {}, labels: {}, selectedLabelsIds: [] }
+                                , { type: 'annotator/CREATE_LABELS', labels: [] }
+                                , { type: 'annotator/UPDATE_LABELS', labels: [], selectedLabelsIds: [] }
+                                , { type: 'annotator/UPDATE_IMG_LABELS', image: svgImage, labels: [], selectedLabelsIds: [] }
                                 , { type: 'annotator/DELETE_LABELS', selectedLabelsIds: [] }
                         ];
                         const actions = [
                                 annotatorActions.viewImage('http://sample.png', 'Lorem ipsum')
                                 , annotatorActions.changeMode('LABEL_SELECT_MODE')
                                 , annotatorActions.selectLabels([])
-                                , annotatorActions.createLabels({})
-                                , annotatorActions.updateLabels({}, [])
-                                , annotatorActions.updateImgLabels({}, {}, [])
+                                , annotatorActions.createLabels([])
+                                , annotatorActions.updateLabels([], [])
+                                , annotatorActions.updateImgLabels(svgImage, [], [])
                                 , annotatorActions.deleteLabels([])
                         ];
                         expect(actions).toEqual(expectedActions);
@@ -56,11 +57,11 @@ describe('annotator 테스트 시작', () => {
                         let label = document.createElementNS(svgNS, "g");
                         label.setAttribute('transform', 'translate(10 20) scale(1) rotate(0 0 0)');
                         label.classList.add('label');
-                        label.dataset.id = 0;
+                        label.dataset.id = '0';
                         label.dataset.name = 'sea';
                         let labelBody = document.createElementNS(svgNS, "rect");
-                        labelBody.setAttribute('width', 100);
-                        labelBody.setAttribute('height', 50);
+                        labelBody.setAttribute('width', '100');
+                        labelBody.setAttribute('height', '50');
                         label.appendChild(labelBody);
 
                         let _coordinates = [{ x: 10, y: 20 }, { x: 110, y: 20 }, { x: 110, y: 70 }, { x: 10, y: 70 }];
@@ -73,11 +74,11 @@ describe('annotator 테스트 시작', () => {
                         let label = document.createElementNS(svgNS, "g");
                         label.setAttribute('transform', 'translate(10 20) scale(1) rotate(0 0 0)');
                         label.classList.add('label');
-                        label.dataset.id = 0;
+                        label.dataset.id = '0';
                         label.dataset.name = 'woods';
                         let labelBody = document.createElementNS(svgNS, "rect");
-                        labelBody.setAttribute('width', 100);
-                        labelBody.setAttribute('height', 50);
+                        labelBody.setAttribute('width', '100');
+                        labelBody.setAttribute('height', '50');
                         label.appendChild(labelBody);
                         let selectedLabelsIds = [0];
 
@@ -94,11 +95,11 @@ describe('annotator 테스트 시작', () => {
                         let label = document.createElementNS(svgNS, "g");
                         label.setAttribute('transform', 'translate(30 30) scale(1) rotate(0 0 0)');
                         label.classList.add('label');
-                        label.dataset.id = 0;
+                        label.dataset.id = '0';
                         label.dataset.name = 'sun';
                         let labelBody = document.createElementNS(svgNS, "rect");
-                        labelBody.setAttribute('width', 150);
-                        labelBody.setAttribute('height', 150);
+                        labelBody.setAttribute('width', '150');
+                        labelBody.setAttribute('height', '150');
                         label.appendChild(labelBody);
 
                         let _coordinates = [{ x: 30, y: 30 }, { x: 180, y: 30 }, { x: 180, y: 180 }, { x: 30, y: 180 }]

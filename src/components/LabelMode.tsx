@@ -1,29 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LABEL_CREATE_MODE, LABEL_SELECT_MODE } from '../modules/annotator';
 
+interface Props {
+    mode: string
+    changeMode: (mode: string) => void
+}
 
-export default function LabelMode(props) {
+export default function LabelMode(props: Props) {
     const [mode, setMode] = useState(props.mode);
 
-    const refModeBtnList = useRef(null);
+    const refModeBtnList: React.MutableRefObject<any> = useRef(null);
 
     useEffect(() => {
         console.log('LabelMode useEffect: [props.mode]');
 
-        refModeBtnList.current.childNodes.forEach(modeBtn => {
+        refModeBtnList.current.childNodes.forEach((modeBtn: HTMLElement) => {
             props.mode === modeBtn.id ? modeBtn.classList.add('active') : modeBtn.classList.remove('active');
         });
     }, [props.mode]);
 
 
-    const clickBtn = e => {
-        let clickedMode = e.currentTarget.id;
+    const clickBtn = (evt: React.FormEvent<HTMLButtonElement>) => {
+        let clickedMode: string = evt.currentTarget.id;
         
         if(mode === clickedMode) {
             return;
         }
 
-        refModeBtnList.current.childNodes.forEach(modeBtn => {
+        refModeBtnList.current.childNodes.forEach((modeBtn: HTMLElement) => {
             if(clickedMode === modeBtn.id) {
                 modeBtn.classList.add('active');
             }
