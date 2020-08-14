@@ -1,4 +1,4 @@
-import { parseTransform } from '../asset/js/common';
+import { parseTransform } from '../util/common';
 
 const VIEW_IMAGE = 'annotator/VIEW_IMAGE';
 const CHANGE_MODE = 'annotator/CHANGE_MODE';

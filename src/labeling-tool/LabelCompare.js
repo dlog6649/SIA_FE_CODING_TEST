@@ -1,4 +1,4 @@
-import { parseTransform } from '../asset/js/common';
+import { parseTransform } from '../util/common';
 import * as LabelMain from './LabelMain';
 import labelNS from './labelNS';
 

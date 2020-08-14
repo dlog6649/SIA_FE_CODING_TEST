@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 
-
 const url: string = 'https://jsonplaceholder.typicode.com/photos';
 const proxyurl: string = "https://cors-anywhere.herokuapp.com/";
 
@@ -9,15 +8,12 @@ interface Props {
 }
 
 export default function CardList(props: Props) {
-    
     let refCardList = useRef(null);
-    
     useEffect(() => {
         console.log('CardList useEffect');
-
         fetch(proxyurl + url)
-            .then(response => response.json())
-            .then(json => {
+            .then((response) => response.json())
+            .then((json) => {
                 const cardList: any = refCardList.current;
                 let cards: string = '';
                 for(let i = 0; i < 8; i++) {
@@ -35,13 +31,11 @@ export default function CardList(props: Props) {
             .catch(error => alert('fetch failed\nerror: ' + error));
     },[]);
 
-
     const viewImg = (e: any) => {
         if(e.target.className === 'thumbnail') {
             props.viewImage(e.target.dataset.url, e.target.dataset.title);
         }
     };
-
 
     return (
         <div>

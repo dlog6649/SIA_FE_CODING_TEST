@@ -8,25 +8,20 @@ interface Props {
 
 export default function LabelMode(props: Props) {
     const [mode, setMode] = useState(props.mode);
-
     const refModeBtnList: React.MutableRefObject<any> = useRef(null);
 
     useEffect(() => {
         console.log('LabelMode useEffect: [props.mode]');
-
         refModeBtnList.current.childNodes.forEach((modeBtn: HTMLElement) => {
             props.mode === modeBtn.id ? modeBtn.classList.add('active') : modeBtn.classList.remove('active');
         });
     }, [props.mode]);
 
-
     const clickBtn = (evt: React.FormEvent<HTMLButtonElement>) => {
-        let clickedMode: string = evt.currentTarget.id;
-        
+        const clickedMode: string = evt.currentTarget.id;
         if(mode === clickedMode) {
             return;
         }
-
         refModeBtnList.current.childNodes.forEach((modeBtn: HTMLElement) => {
             if(clickedMode === modeBtn.id) {
                 modeBtn.classList.add('active');
@@ -38,7 +33,6 @@ export default function LabelMode(props: Props) {
         setMode(clickedMode);
         props.changeMode(clickedMode);
     }
-
     
     return (
         <div className="label-mode" ref={refModeBtnList}>

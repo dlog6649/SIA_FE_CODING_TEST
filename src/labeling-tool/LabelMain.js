@@ -1,6 +1,6 @@
 import { _props, _setScale } from '../components/LabelBoard';
 import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from '../modules/annotator';
-import { parseTransform, throttle, pauseEvent } from '../asset/js/common';
+import { parseTransform, throttle, pauseEvent } from '../util/common';
 import { initializeLabel, createLabel, createInputBox, createAnchors, labelBodyMouseDownEvent } from './LabelCreator';
 import { hideDefaultContextmenu, hideContextmenu, buildContextmenu, showContextmenu } from './LabelMenu';
 import labelNS from './labelNS';

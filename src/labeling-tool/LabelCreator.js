@@ -1,6 +1,6 @@
 import { _props } from '../components/LabelBoard';
 import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from '../modules/annotator';
-import { parseTransform } from '../asset/js/common';
+import { parseTransform } from '../util/common';
 import * as LabelMain from './LabelMain';
 import labelNS from './labelNS';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from "@testing-library/react";
 import LabelBoard from './LabelBoard';
 import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from '../modules/annotator';
-import { parseTransform } from '../asset/js/common';
+import { parseTransform } from '../util/js/common';
 
 type Labels = {
   id: number, name: string, coordinates: {x:number, y: number,}[], data: {x: number, y: number, w: number, h: number, deg: number}

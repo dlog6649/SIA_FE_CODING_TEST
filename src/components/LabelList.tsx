@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { LABEL_CREATE_MODE } from '../modules/annotator';
 
 
-const compareIds = (_ids: Array<number | string>) => {
+const compareIds = (_ids: Array<number>) => {
     let ids = [] as Array<number>;
-    document.querySelectorAll('.label-info.active').forEach((labelInfo) => {
-        const info: HTMLElement = labelInfo as HTMLElement;
+    document.querySelectorAll('.label-info.active').forEach((labelInfo: Element) => {
+        const info: HTMLLIElement = labelInfo as HTMLLIElement;
         ids.push(Number(info.dataset.id));
     });
     if (ids.length !== _ids.length) {
@@ -38,11 +39,12 @@ export default function LabelList(props: Props) {
 
     useEffect(() => {
         console.log('LabelList useEffect [props.labels]');
-        let labels = props.labels;
+        let labels: Array<Label> = props.labels;
         if (!labels) {
             labels = [] as Array<Label>;
         }
-        let labelListRoot = refLabelList.current.lastChild;
+        const curRefLabelList = refLabelList.current;
+        const labelListRoot = curRefLabelList.lastChild;
         while(labelListRoot.firstChild) {
             labelListRoot.removeChild(labelListRoot.firstChild);
         }
@@ -65,34 +67,27 @@ export default function LabelList(props: Props) {
         
     }, [props.labels]);
 
-
     useEffect(() => {
         console.log('LabelList useEffect [props.selectedLabelsIds]');
-
         if(compareIds(props.selectedLabelsIds)) {
             console.log('LabelList useEffect [props.selectedLabelsIds] returned');
             return;
         }
-
         document.querySelectorAll('.label-info').forEach((labelInfo) => {
             const info: HTMLElement = labelInfo as HTMLElement
             info.classList.remove('active');
-
             props.selectedLabelsIds.forEach(id => {
                 if(Number(info.dataset.id) === Number(id)) {
                     info.classList.add('active');
                 }
             });
         });
-
     }, [props.selectedLabelsIds]);
 
-
     const toggleLabelList = () => {
-        let controller = document.querySelector('.label-list-controller') as HTMLElement;
-        let img = document.querySelector('.label-list-btn-img') as HTMLImageElement;
-        let labelListRoot = document.querySelector('.label-list-root') as HTMLElement;
-
+        const controller = document.querySelector('.label-list-controller') as HTMLDivElement;
+        const img = document.querySelector('.label-list-btn-img') as HTMLImageElement;
+        const labelListRoot = document.querySelector('.label-list-root') as HTMLUListElement;
         if (labelListRoot.style.display === 'block') {
             (controller.firstChild as HTMLElement).style.display = 'none';
             controller.style.minWidth = '38px';
@@ -110,35 +105,28 @@ export default function LabelList(props: Props) {
             (labelListRoot.parentNode as HTMLElement).style.borderRight = '1px solid lightgray';
         }
     };
-    
 
-    const selectLabel = (e: any): void => {
+    const selectLabel = (evt: any): void => {
         if(props.mode === LABEL_CREATE_MODE) {
             return;
         }
-        
-        let _labelInfo: HTMLElement;
-        _labelInfo = e.target.classList.contains('label-info') ? e.target : e.target.parentNode;
+        const _labelInfo: HTMLLIElement = evt.target.classList.contains('label-info') ? evt.target : evt.target.parentNode;
         _labelInfo.classList.add('active');
-
-        if(!e.ctrlKey) {
-            document.querySelectorAll('.label-info.active').forEach(labelInfo => {
+        if(!evt.ctrlKey) {
+            document.querySelectorAll('.label-info.active').forEach((labelInfo: Element) => {
                 if(_labelInfo === labelInfo) {
                     return true;
                 }
                 labelInfo.classList.remove('active');
             });
         }
-
-        let ids: number[] = [];
-        document.querySelectorAll('.label-info.active').forEach(labelInfo => {
-            const info: HTMLElement = labelInfo as HTMLElement
+        let ids = [] as Array<number>;
+        document.querySelectorAll('.label-info.active').forEach((labelInfo: Element) => {
+            const info: HTMLLIElement = labelInfo as HTMLLIElement
             ids.push(parseInt(info.dataset.id as string));
         });
-
         props.selectLabels(ids);
     }
-
 
     return (
         <div className="label-list" ref={refLabelList}>

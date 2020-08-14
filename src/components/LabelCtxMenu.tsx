@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 
-
 export default function LabelCtxMenu() {
     useEffect(() => {
         console.log('LabelCtxMenu useEffect');
     });
-
 
     return (
         <div className="label-contextmenu">
