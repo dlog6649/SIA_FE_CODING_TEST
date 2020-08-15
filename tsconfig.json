@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "outDir": "dist",
+    "target": "es6",
     "lib": [
       "dom",
       "dom.iterable",
@@ -22,5 +23,9 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "src/stories",
+    "node_modules"
   ]
 }

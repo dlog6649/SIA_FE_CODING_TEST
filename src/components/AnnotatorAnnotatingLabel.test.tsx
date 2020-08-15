@@ -1,19 +1,18 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import AnnotatorAnnotatingLabel from './AnnotatorAnnotatingLabel';
+import React from "react";
+import { shallow } from "enzyme";
+import AnnotatorAnnotatingLabel from "./AnnotatorAnnotatingLabel";
 
-
-describe('AnnotatorAnnotatingLabel 테스트 시작', () => {
+describe("AnnotatorAnnotatingLabel 테스트 시작", () => {
   let wrapper: any = null;
-  const _title: string = 'Lorem ipsum';
+  const title = "Lorem ipsum";
 
-  it('렌더링된 스냅샷이 기존과 일치해야 한다.', () => {
+  it("렌더링된 스냅샷이 기존과 일치해야 한다.", () => {
     // title 프로퍼티 전달
-    wrapper = shallow(<AnnotatorAnnotatingLabel title={_title} />);
+    wrapper = shallow(<AnnotatorAnnotatingLabel title={title} />);
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('전달한 타이틀이 잘 출력되어야 한다.', () => {
-    expect(wrapper.find('.viewer-title').text()).toEqual(_title);
+  it("전달한 타이틀이 잘 출력되어야 한다.", () => {
+    expect(wrapper.find(".viewer-title").text()).toEqual(title);
   });
 });
