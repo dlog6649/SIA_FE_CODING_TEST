@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LABEL_CREATE_MODE, LABEL_SELECT_MODE } from "../modules/annotator";
+import imgLabelSelectMode from "../asset/images/label_select_mode.png";
+import imgLabelCreateMode from "../asset/images/label_create_mode.png";
 
 interface Props {
   mode: string;
@@ -36,10 +38,10 @@ export default function LabelMode(props: Props) {
   return (
     <div className="label-mode" ref={refModeBtnList}>
       <button id={LABEL_SELECT_MODE} className="btn label-mode-btn active" type="button" onClick={clickBtn}>
-        <img className="btn-img" src={require("../asset/images/label_select_mode.png")} alt="label_select_mode" />
+        <img className="btn-img" src={imgLabelSelectMode} alt="label_select_mode" />
       </button>
       <button id={LABEL_CREATE_MODE} className="btn label-mode-btn" type="button" onClick={clickBtn}>
-        <img className="btn-img" src={require("../asset/images/label_create_mode.png")} alt="label_create_mode" />
+        <img className="btn-img" src={imgLabelCreateMode} alt="label_create_mode" />
       </button>
     </div>
   );

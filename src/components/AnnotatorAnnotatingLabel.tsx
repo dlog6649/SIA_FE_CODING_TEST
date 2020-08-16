@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import LabelBoard from "../container/LabelBoard";
 import LabelList from "../container/LabelList";
 import LabelMode from "../container/LabelMode";
-import arrowLeft from "../asset/images/arrow-left.png";
+import imgArrowLeft from "../asset/images/arrow-left.png";
 
 interface Props {
   title: string;
@@ -17,7 +17,7 @@ export default function AnnotatorAnnotatingLabel({ title }: Props) {
   return (
     <div className="viewer">
       <Link to="/">
-        <img src={arrowLeft} alt="home" />
+        <img src={imgArrowLeft} alt="home" />
       </Link>
       <div className="viewer-title">{title}</div>
       <div className="viewer-content">
