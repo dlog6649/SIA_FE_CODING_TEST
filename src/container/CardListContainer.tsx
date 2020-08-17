@@ -1,11 +1,11 @@
 import { connect } from "react-redux";
-import CardList from "../components/CardList";
-import { viewImage } from "../modules/annotator";
+import CardList from "../component/CardList";
+import { viewImage } from "../modules/annotator/actions";
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     viewImage: (url: string, title: string) => {
-      dispatch(viewImage(url, title));
+      dispatch(viewImage({ url: url, title: title }));
     },
   };
 };

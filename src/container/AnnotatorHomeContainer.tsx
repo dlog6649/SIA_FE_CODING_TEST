@@ -1,18 +1,16 @@
 import React, { useEffect } from "react";
-import CardList from "../container/CardList";
+import AnnotatorHome from "../component/AnnotatorHome";
+import CardListContainer from "./CardListContainer";
 
-export default function AnnotatorHome() {
+export default function AnnotatorHomeContainer() {
   useEffect(() => {
     console.log("AnotatorHome useEffect");
   });
-
   return (
     <div className="home">
-      <div className="home-title">
-        <h1>Annotator Home</h1>
-      </div>
+      <AnnotatorHome />
       <div className="home-content">
-        <CardList />
+        <CardListContainer />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import { _props } from "../components/LabelBoard";
-import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator";
+import { _props } from "../component/LabelBoard";
+import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator/types";
 import { parseTransform } from "../util/common";
 import * as LabelMain from "./LabelMain";
 import labelNS from "./labelNS";

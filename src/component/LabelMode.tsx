@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { LABEL_CREATE_MODE, LABEL_SELECT_MODE } from "../modules/annotator";
+import { LABEL_CREATE_MODE, LABEL_SELECT_MODE } from "../modules/annotator/types";
 import imgLabelSelectMode from "../asset/images/label_select_mode.png";
 import imgLabelCreateMode from "../asset/images/label_create_mode.png";
 

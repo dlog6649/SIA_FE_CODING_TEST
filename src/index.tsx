@@ -3,10 +3,20 @@ import ReactDOM from "react-dom";
 import "./asset/css/design.css";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
-import configureStore from "./configureStore";
+//import configureStore from "./configureStore";
 import App from "./App";
+import { combineReducers } from "redux";
+//import annotatorReducer from "./modules/annotator";
+import annotatorReducer from "./modules/annotator/reducer";
+import { applyMiddleware, compose, createStore } from "redux";
 
-const store = configureStore(/* provide initial state if any */);
+const rootReducer = combineReducers({
+  annotatorReducer,
+});
+
+const store = createStore(rootReducer, applyMiddleware());
+
+export type RootState = ReturnType<typeof rootReducer>;
 
 ReactDOM.render(
   <Provider store={store}>

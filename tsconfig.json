@@ -22,7 +22,8 @@
     "suppressImplicitAnyIndexErrors": true,
   },
   "include": [
-    "src"
+    "src",
+    "test/AnnotatorAnnotatingLabel.test.tsx"
   ],
   "exclude": [
     "src/stories",

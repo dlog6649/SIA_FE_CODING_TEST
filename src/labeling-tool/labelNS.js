@@ -1,4 +1,4 @@
-import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator";
+import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator/types";
 
 const labelNS = {
   //   9

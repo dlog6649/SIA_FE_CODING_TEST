@@ -1,6 +1,6 @@
 import React from "react";
 import { shallow } from "enzyme";
-import AnnotatorAnnotatingLabel from "./AnnotatorAnnotatingLabel";
+import AnnotatorAnnotatingLabel from "../src/component/AnnotatorAnnotatingLabel";
 
 describe("AnnotatorAnnotatingLabel 테스트 시작", () => {
   let wrapper: any = null;

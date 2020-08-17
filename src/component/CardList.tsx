@@ -44,9 +44,5 @@ export default function CardList({ viewImage }: Props) {
     history.push("/view");
   };
 
-  return (
-    <div>
-      <div className="card-list" onClick={viewImg} data-testid="testCardList" ref={refCardList} />
-    </div>
-  );
+  return <div className="card-list" onClick={viewImg} data-testid="testCardList" ref={refCardList} />;
 }

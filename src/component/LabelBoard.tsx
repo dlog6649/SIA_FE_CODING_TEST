@@ -97,7 +97,6 @@ export default function LabelBoard(props: Props) {
         <img className="scaler-plus btn-img" src={imgPlus} alt="+" />
         <input
           className="scaler-range"
-          orient="vertical"
           type="range"
           data-testid="testScaler"
           value={scale}
@@ -113,3 +112,4 @@ export default function LabelBoard(props: Props) {
     </div>
   );
 }
+//orient="vertical"
