@@ -1,12 +1,12 @@
 import { connect } from "react-redux";
 import AnnotatorAnnotatingLabel from "../components/AnnotatorAnnotatingLabel";
-import { State } from "../modules/annotator";
+import { AnnotatorState } from "../modules/annotator";
 
-interface annotatorState {
-  annotator: State;
+interface State {
+  annotator: AnnotatorState;
 }
 
-const mapStateToProps = (state: annotatorState) => {
+const mapStateToProps = (state: State) => {
   const _title =
     state.annotator.images[state.annotator.currentImgURL] === undefined ? "" : state.annotator.images[state.annotator.currentImgURL].title;
   return {

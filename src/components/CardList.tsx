@@ -5,11 +5,11 @@ const url = "https://jsonplaceholder.typicode.com/photos";
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 interface Props {
-  viewImage: any;
+  viewImage: (url: string, title: string) => void;
 }
 
-export default function CardList(props: Props) {
-  const refCardList = useRef(null);
+export default function CardList({ viewImage }: Props) {
+  const refCardList = useRef<HTMLDivElement>(null);
   const history = useHistory();
 
   useEffect(() => {
@@ -17,7 +17,10 @@ export default function CardList(props: Props) {
     fetch(proxyurl + url)
       .then((response) => response.json())
       .then((json) => {
-        const cardList: any = refCardList.current;
+        if (!refCardList.current) {
+          return;
+        }
+        const cardList = refCardList.current;
         let cards = "";
         for (let i = 0; i < 8; i++) {
           cards += `
@@ -36,7 +39,7 @@ export default function CardList(props: Props) {
 
   const viewImg = (evt: any) => {
     if (evt.target.className === "thumbnail") {
-      props.viewImage(evt.target.dataset.url, evt.target.dataset.title);
+      viewImage(evt.target.dataset.url, evt.target.dataset.title);
     }
     history.push("/view");
   };

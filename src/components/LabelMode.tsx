@@ -9,12 +9,17 @@ interface Props {
 }
 
 export default function LabelMode(props: Props) {
-  const [mode, setMode] = useState(props.mode);
-  const refModeBtnList: React.MutableRefObject<any> = useRef(null);
+  const [mode, setMode] = useState<string>(props.mode);
+  const refModeBtnList = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     console.log("LabelMode useEffect: [props.mode]");
-    refModeBtnList.current.childNodes.forEach((modeBtn: HTMLElement) => {
+    if (!refModeBtnList.current) {
+      return;
+    }
+    const refModeBtnDiv = refModeBtnList.current;
+    refModeBtnDiv.childNodes.forEach((modeBtnEle) => {
+      const modeBtn = modeBtnEle as HTMLButtonElement;
       props.mode === modeBtn.id ? modeBtn.classList.add("active") : modeBtn.classList.remove("active");
     });
   }, [props.mode]);
@@ -24,7 +29,12 @@ export default function LabelMode(props: Props) {
     if (mode === clickedMode) {
       return;
     }
-    refModeBtnList.current.childNodes.forEach((modeBtn: HTMLElement) => {
+    if (!refModeBtnList.current) {
+      return;
+    }
+    const refModeBtnDiv = refModeBtnList.current;
+    refModeBtnDiv.childNodes.forEach((modeBtnEle) => {
+      const modeBtn = modeBtnEle as HTMLButtonElement;
       if (clickedMode === modeBtn.id) {
         modeBtn.classList.add("active");
       } else {

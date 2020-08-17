@@ -1,15 +1,15 @@
 import { parseTransform } from "../util/common";
 
-const VIEW_IMAGE = "annotator/VIEW_IMAGE";
-const CHANGE_MODE = "annotator/CHANGE_MODE";
-const SELECT_LABELS = "annotator/SELECT_LABELS";
-const CREATE_LABELS = "annotator/CREATE_LABELS";
-const UPDATE_LABELS = "annotator/UPDATE_LABELS";
-const UPDATE_IMG_LABELS = "annotator/UPDATE_IMG_LABELS";
-const DELETE_LABELS = "annotator/DELETE_LABELS";
+const VIEW_IMAGE = "annotator/VIEW_IMAGE" as const;
+const CHANGE_MODE = "annotator/CHANGE_MODE" as const;
+const SELECT_LABELS = "annotator/SELECT_LABELS" as const;
+const CREATE_LABELS = "annotator/CREATE_LABELS" as const;
+const UPDATE_LABELS = "annotator/UPDATE_LABELS" as const;
+const UPDATE_IMG_LABELS = "annotator/UPDATE_IMG_LABELS" as const;
+const DELETE_LABELS = "annotator/DELETE_LABELS" as const;
 
-export const LABEL_SELECT_MODE = "LABEL_SELECT_MODE";
-export const LABEL_CREATE_MODE = "LABEL_CREATE_MODE";
+export const LABEL_SELECT_MODE = "LABEL_SELECT_MODE" as const;
+export const LABEL_CREATE_MODE = "LABEL_CREATE_MODE" as const;
 
 export const viewImage = (url: string, title: string) => ({ type: VIEW_IMAGE, url, title });
 export const changeMode = (mode: string) => ({ type: CHANGE_MODE, mode });
@@ -28,26 +28,33 @@ export const updateImgLabels = (image: SVGImageElement, labels: Array<SVGGElemen
 });
 export const deleteLabels = (selectedLabelsIds: number[]) => ({ type: DELETE_LABELS, selectedLabelsIds });
 
-interface Label {
-  id: number;
-  name: string;
-  coordinates: Array<{ x: number; y: number }>;
-  data: { x: number; y: number; w: number; h: number; deg: number };
+export type AnnotatorAction =
+  | ReturnType<typeof viewImage>
+  | ReturnType<typeof changeMode>
+  | ReturnType<typeof selectLabels>
+  | ReturnType<typeof createLabels>
+  | ReturnType<typeof updateLabels>
+  | ReturnType<typeof updateImgLabels>
+  | ReturnType<typeof deleteLabels>;
+
+export interface Labels {
+  currentImgURL: {
+    id: number;
+    name: string;
+    coordinates: Array<{ x: number; y: number }>;
+    data: { x: number; y: number; w: number; h: number; deg: number };
+  };
 }
 
-interface stateLabel {
-  currentImgURL: Label;
-}
-
-export interface State {
+export interface AnnotatorState {
   mode: string;
   currentImgURL: string;
-  images: Image;
-  labels: stateLabel;
+  images: Images;
+  labels: Labels;
   selectedLabelsIds: Array<number>;
 }
 
-interface Data {
+export interface Data {
   x: number;
   y: number;
   scale: number;
@@ -58,28 +65,26 @@ interface Data {
   h: number;
 }
 
-interface Image {
-  title: string;
-  x: number;
-  y: number;
-  scale: number;
+export interface Images {
+  currentImgURL: {
+    title: string;
+    x: number;
+    y: number;
+    scale: number;
+  };
 }
 
-interface stateImage {
-  currentImgURL: Image;
-}
-
-const initialState: State = {
+const initialState: AnnotatorState = {
   mode: LABEL_SELECT_MODE as string,
   currentImgURL: "" as string,
-  images: {} as Image,
-  labels: {} as stateLabel,
+  images: {} as Images,
+  labels: {} as Labels,
   selectedLabelsIds: [] as Array<number>,
 };
 
-export default function annotator(state = initialState, action: any) {
-  let _images: Image;
-  let _labels: stateLabel;
+export default function annotator(state: AnnotatorState = initialState, action: AnnotatorAction) {
+  let _images: Images;
+  let _labels: Labels;
   let _title: string;
   let _id: number;
   let _name: string;
@@ -120,8 +125,8 @@ export default function annotator(state = initialState, action: any) {
       const preLabels = state.labels[state.currentImgURL] === undefined ? [] : [...state.labels[state.currentImgURL]];
 
       for (const label of action.labels) {
-        _id = parseInt(label.dataset.id);
-        _name = label.dataset.name;
+        _id = Number(label.dataset.id);
+        _name = label.dataset.name as string;
 
         tf = parseTransform(label) as Data;
 
@@ -185,7 +190,7 @@ export default function annotator(state = initialState, action: any) {
       const _curImgLabels = [..._labels[state.currentImgURL]];
 
       for (const id of action.selectedLabelsIds) {
-        const idx = _curImgLabels.findIndex((_label) => parseInt(_label.id) === parseInt(id));
+        const idx = _curImgLabels.findIndex((_label) => Number(_label.id) === Number(id));
         if (idx === -1) {
           continue;
         }
@@ -204,11 +209,11 @@ export default function annotator(state = initialState, action: any) {
   }
 }
 
-const getLabelState = (label: HTMLElement) => {
-  const _id = Number(label.dataset.id);
-  const _name = label.dataset.name;
+const getLabelState = (label: SVGGElement) => {
+  const id = Number(label.dataset.id);
+  const name = label.dataset.name;
   const tf = parseTransform(label) as Data;
-  const _data = { x: tf.x, y: tf.y, w: tf.w, h: tf.h, deg: tf.deg };
+  const data = { x: tf.x, y: tf.y, w: tf.w, h: tf.h, deg: tf.deg };
 
   const theta = (Math.PI / 180) * tf.deg;
   const cos_t = Math.cos(theta);
@@ -247,11 +252,11 @@ const getLabelState = (label: HTMLElement) => {
   // coordinates
   // 0 1
   // 3 2
-  const _coordinates = [];
-  _coordinates.push({ x: nw_xp, y: nw_yp });
-  _coordinates.push({ x: ne_xp, y: ne_yp });
-  _coordinates.push({ x: se_xp, y: se_yp });
-  _coordinates.push({ x: sw_xp, y: sw_yp });
+  const coordinates = [];
+  coordinates.push({ x: nw_xp, y: nw_yp });
+  coordinates.push({ x: ne_xp, y: ne_yp });
+  coordinates.push({ x: se_xp, y: se_yp });
+  coordinates.push({ x: sw_xp, y: sw_yp });
 
-  return { id: _id, name: _name, coordinates: _coordinates, data: _data };
+  return { id: id, name: name, coordinates: coordinates, data: data };
 };

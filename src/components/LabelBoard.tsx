@@ -25,7 +25,7 @@ interface Props {
 }
 
 export default function LabelBoard(props: Props) {
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState<number>(1);
 
   useEffect(() => {
     console.log("LabelBoard useEffect: []");

@@ -1,12 +1,12 @@
 import { connect } from "react-redux";
 import LabelMode from "../components/LabelMode";
-import { changeMode, State } from "../modules/annotator";
+import { changeMode, AnnotatorState } from "../modules/annotator";
 
-interface annotatorState {
-  annotator: State;
+interface State {
+  annotator: AnnotatorState;
 }
 
-const mapStateToProps = (state: annotatorState) => {
+const mapStateToProps = (state: State) => {
   return {
     mode: state.annotator.mode,
   };

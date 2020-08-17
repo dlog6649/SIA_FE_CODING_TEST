@@ -28,7 +28,7 @@ describe("annotator 테스트 시작", () => {
     });
   });
   describe("reducer", () => {
-    let state = annotator(undefined, {});
+    let state = annotator(undefined, {} as annotatorActions.AnnotatorAction);
     it("store의 초기 상태값이 잘 생성되어야 한다.", () => {
       expect(state).toEqual({
         mode: "LABEL_SELECT_MODE",

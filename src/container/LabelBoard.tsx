@@ -1,12 +1,12 @@
 import { connect } from "react-redux";
 import LabelBoard from "../components/LabelBoard";
-import { selectLabels, createLabels, updateLabels, updateImgLabels, deleteLabels, State } from "../modules/annotator";
+import { selectLabels, createLabels, updateLabels, updateImgLabels, deleteLabels, AnnotatorState } from "../modules/annotator";
 
-interface annotatorState {
-  annotator: State;
+interface State {
+  annotator: AnnotatorState;
 }
 
-const mapStateToProps = (state: annotatorState) => {
+const mapStateToProps = (state: State) => {
   return {
     mode: state.annotator.mode,
     currentImgURL: state.annotator.currentImgURL,

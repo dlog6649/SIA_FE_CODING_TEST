@@ -36,7 +36,7 @@ interface Props {
 }
 
 export default function LabelList(props: Props) {
-  const refLabelList: React.MutableRefObject<any> = useRef(null);
+  const refLabelList = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     console.log("LabelList useEffect [props.labels]");
@@ -44,8 +44,11 @@ export default function LabelList(props: Props) {
     if (!labels) {
       labels = [] as Array<Label>;
     }
+    if (!refLabelList.current) {
+      return;
+    }
     const curRefLabelList = refLabelList.current;
-    const labelListRoot = curRefLabelList.lastChild;
+    const labelListRoot = curRefLabelList.lastChild as HTMLUListElement;
     while (labelListRoot.firstChild) {
       labelListRoot.removeChild(labelListRoot.firstChild);
     }
