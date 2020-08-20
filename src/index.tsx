@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./asset/css/design.css";
+import "./asset/css/design.scss";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
 //import configureStore from "./configureStore";
