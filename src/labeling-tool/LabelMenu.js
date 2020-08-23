@@ -1,7 +1,6 @@
-import { _props } from "../component/LabelBoard";
-import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator/types";
 import * as LabelMain from "./LabelMain";
 import labelNS from "./labelNS";
+import { LabelMode } from "../modules/annotator";
 
 export const hideDefaultContextmenu = (e) => {
   e.preventDefault();
@@ -14,7 +13,7 @@ export const hideContextmenu = () => {
 export const showContextmenu = (e) => {
   e.preventDefault();
 
-  if (labelNS.mode === LABEL_CREATE_MODE) {
+  if (labelNS.mode === LabelMode.CREATE) {
     return;
   }
 

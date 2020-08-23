@@ -8,7 +8,7 @@ describe("annotator 테스트 시작", () => {
     it("액션 생성 함수의 파라미터가 잘 전달되어야 한다.", () => {
       const expectedActions = [
         { type: "annotator/VIEW_IMAGE", url: "http://sample.png", title: "Lorem ipsum" },
-        { type: "annotator/CHANGE_MODE", mode: "LABEL_SELECT_MODE" },
+        { type: "annotator/CHANGE_MODE", mode: "LabelMode.SELECT" },
         { type: "annotator/SELECT_LABELS", selectedLabelsIds: [] },
         { type: "annotator/CREATE_LABELS", labels: [] },
         { type: "annotator/UPDATE_LABELS", labels: [], selectedLabelsIds: [] },
@@ -17,7 +17,7 @@ describe("annotator 테스트 시작", () => {
       ];
       const actions = [
         annotatorActions.viewImage("http://sample.png", "Lorem ipsum"),
-        annotatorActions.changeMode("LABEL_SELECT_MODE"),
+        annotatorActions.changeMode("LabelMode.SELECT"),
         annotatorActions.selectLabels([]),
         annotatorActions.createLabels([]),
         annotatorActions.updateLabels([], []),
@@ -31,7 +31,7 @@ describe("annotator 테스트 시작", () => {
     let state = annotator(undefined, {} as annotatorActions.AnnotatorAction);
     it("store의 초기 상태값이 잘 생성되어야 한다.", () => {
       expect(state).toEqual({
-        mode: "LABEL_SELECT_MODE",
+        mode: "LabelMode.SELECT",
         currentImgURL: "",
         images: {},
         labels: {},
@@ -44,8 +44,8 @@ describe("annotator 테스트 시작", () => {
       expect(state).toHaveProperty("images", { "http://sample.png": { title: "Lorem ipsum", x: 0, y: 0, scale: 1 } });
     });
     it("changeMode가 제대로 수행되어야 한다.", () => {
-      state = annotator(state, annotatorActions.changeMode("LABEL_CREATE_MODE"));
-      expect(state).toHaveProperty("mode", "LABEL_CREATE_MODE");
+      state = annotator(state, annotatorActions.changeMode("LabelMode.CREATE"));
+      expect(state).toHaveProperty("mode", "LabelMode.CREATE");
       expect(state).toHaveProperty("selectedLabelsIds", []);
     });
     it("selectLabels가 제대로 수행되어야 한다.", () => {

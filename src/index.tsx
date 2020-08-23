@@ -1,22 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./asset/css/design.scss";
-import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
-//import configureStore from "./configureStore";
 import App from "./App";
-import { combineReducers } from "redux";
-//import annotatorReducer from "./modules/annotator";
-import annotatorReducer from "./modules/annotator/reducer";
-import { applyMiddleware, compose, createStore } from "redux";
+import { Provider } from "react-redux";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import annotatorReducer from "./modules/annotator";
 
 const rootReducer = combineReducers({
   annotatorReducer,
 });
 
-const store = createStore(rootReducer, applyMiddleware());
+const store = configureStore({ reducer: rootReducer, devTools: true });
 
-export type RootState = ReturnType<typeof rootReducer>;
+export type RootState = ReturnType<typeof store.getState>;
 
 ReactDOM.render(
   <Provider store={store}>

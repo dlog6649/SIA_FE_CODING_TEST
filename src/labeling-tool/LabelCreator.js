@@ -1,8 +1,8 @@
-import { _props } from "../component/LabelBoard";
-import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator/types";
+import { dispatch } from "../container/LabelBoardContainer";
 import { parseTransform } from "../util/common";
 import * as LabelMain from "./LabelMain";
 import labelNS from "./labelNS";
+import { LabelMode, updateLabels } from "../modules/annotator";
 
 export const redrawImage = (url, image) => {
   if (document.querySelector("#img")) {
@@ -53,7 +53,7 @@ export const redrawLabels = (labels) => {
     labelBody.setAttribute("stroke-width", 3);
     labelBody.addEventListener("mousedown", labelBodyMouseDownEvent);
 
-    if (labelNS.mode === LABEL_SELECT_MODE) {
+    if (labelNS.mode === LabelMode.SELECT) {
       labelBody.setAttribute("cursor", "move");
     }
     newLabel.appendChild(labelBody);
@@ -86,7 +86,7 @@ export const labelBodyMouseDownEvent = (e) => {
     return;
   }
   labelNS.curLabel = e.target.parentNode;
-  if (labelNS.mode === LABEL_CREATE_MODE || labelNS.isPushingSpacebar) {
+  if (labelNS.mode === LabelMode.CREATE || labelNS.isPushingSpacebar) {
     return;
   }
   console.log("labelBodyMouseDownEvent");
@@ -157,7 +157,7 @@ export const createInputBox = (labelBody) => {
       labelBody.parentNode.dataset.name = e.target.value;
       labelBody.parentNode.removeChild(inputWrapper);
       const labels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("label"));
-      _props.updateLabels(labels, LabelMain.getSelectedLabelsIds());
+      dispatch(updateLabels({ labels: labels, selectedLabelsIds: LabelMain.getSelectedLabelsIds() }));
     }
   });
   inputWrapper.appendChild(input);
@@ -190,7 +190,7 @@ export const createAnchors = (label) => {
       return;
     }
     labelNS.curLabel = e.target.parentNode;
-    if (labelNS.mode === LABEL_CREATE_MODE || labelNS.isPushingSpacebar) {
+    if (labelNS.mode === LabelMode.CREATE || labelNS.isPushingSpacebar) {
       return;
     }
     console.log("anchor mousedown");
@@ -229,7 +229,7 @@ export const createAnchors = (label) => {
         return;
       }
       labelNS.curLabel = e.target.parentNode;
-      if (labelNS.mode === LABEL_CREATE_MODE || labelNS.isPushingSpacebar) {
+      if (labelNS.mode === LabelMode.CREATE || labelNS.isPushingSpacebar) {
         return;
       }
       console.log("anchor mousedown");

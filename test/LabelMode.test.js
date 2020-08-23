@@ -5,7 +5,7 @@ import LabelMode from "./LabelMode";
 describe("LabelMode 테스트 시작", () => {
   let wrapper = null;
   const mockChangeMode = jest.fn();
-  const _mode = "LABEL_SELECT_MODE";
+  const _mode = "LabelMode.SELECT";
 
   it("렌더링된 스냅샷이 기존과 일치해야 한다.", () => {
     wrapper = render(<LabelMode mode={_mode} changeMode={mockChangeMode} />);
@@ -24,6 +24,6 @@ describe("LabelMode 테스트 시작", () => {
 
     const changeModeEventByClick = mockChangeMode.mock.calls;
     const [mode] = changeModeEventByClick[0];
-    expect(mode).toEqual("LABEL_CREATE_MODE");
+    expect(mode).toEqual("LabelMode.CREATE");
   });
 });

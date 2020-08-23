@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { LABEL_CREATE_MODE } from "../modules/annotator";
+import { LabelMode } from "../modules/annotator";
 import imgArrowRight from "../asset/images/arrow-right.png";
 import imgArrowLeft from "../asset/images/arrow-left.png";
 
@@ -29,7 +29,7 @@ interface Label {
 }
 
 interface Props {
-  mode: string;
+  mode: LabelMode;
   labels: Array<Label>;
   selectedLabelsIds: Array<number>;
   selectLabels: (selectedLabelsIds: Array<number>) => void;
@@ -109,7 +109,7 @@ export default function LabelList(props: Props) {
   };
 
   const selectLabel = (evt: any): void => {
-    if (props.mode === LABEL_CREATE_MODE) {
+    if (props.mode === LabelMode.CREATE) {
       return;
     }
     const labelInfo: HTMLLIElement = evt.target.classList.contains("label-info") ? evt.target : evt.target.parentNode;

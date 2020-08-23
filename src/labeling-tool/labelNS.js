@@ -1,4 +1,4 @@
-import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator/types";
+import { LabelMode } from "../modules/annotator";
 
 const labelNS = {
   //   9
@@ -29,7 +29,7 @@ const labelNS = {
   svgNS: "http://www.w3.org/2000/svg",
   svg: null,
   contextmenu: null,
-  mode: LABEL_SELECT_MODE,
+  mode: LabelMode.SELECT,
   curId: 0,
   curScale: 1.0,
   isDrawing: false,

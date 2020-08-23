@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import AnnotatorAnnotatingLabel from "../component/AnnotatorAnnotatingLabel";
 import LabelBoardContainer from "../container/LabelBoardContainer";
 import LabelListContainer from "../container/LabelListContainer";
-import LabelModeContainer from "../container/LabelModeContainer";
+import LabelModeBoxContainer from "./LabelModeBoxContainer";
 import { RootState } from "../index";
 import imgArrowLeft from "../asset/images/arrow-left.png";
 import { Link, useHistory } from "react-router-dom";
@@ -21,7 +21,7 @@ export default function AnnotatorAnnotatingLabelContainer() {
       </Link>
       <AnnotatorAnnotatingLabel title={imgTitle} />
       <div className="viewer-content">
-        <LabelModeContainer />
+        <LabelModeBoxContainer />
         <LabelListContainer />
         <LabelBoardContainer />
       </div>

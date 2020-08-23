@@ -8,24 +8,24 @@ exports[`LabelMode 테스트 시작 렌더링된 스냅샷이 기존과 일치�
     >
       <button
         class="btn label-mode-btn active"
-        id="LABEL_SELECT_MODE"
+        id="LabelMode.SELECT"
         type="button"
       >
         <img
-          alt="label_select_mode"
+          alt="LabelMode.SELECT"
           class="btn-img"
-          src="label_select_mode.png"
+          src="LabelMode.SELECT.png"
         />
       </button>
       <button
         class="btn label-mode-btn"
-        id="LABEL_CREATE_MODE"
+        id="LabelMode.CREATE"
         type="button"
       >
         <img
-          alt="label_create_mode"
+          alt="LabelMode.CREATE"
           class="btn-img"
-          src="label_create_mode.png"
+          src="LabelMode.CREATE.png"
         />
       </button>
     </div>

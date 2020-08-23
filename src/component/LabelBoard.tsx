@@ -5,6 +5,7 @@ import { compareImage, compareLabels, compareIds } from "../labeling-tool/LabelC
 import LabelCtxMenu from "./LabelCtxMenu";
 import imgPlus from "../asset/images/plus.png";
 import imgMinus from "../asset/images/minus.png";
+import { LabelMode } from "../modules/annotator";
 
 export let _props: Props;
 export let _setScale: React.Dispatch<React.SetStateAction<number>>;
@@ -17,7 +18,7 @@ interface Label {
 }
 
 interface Props {
-  mode: string;
+  mode: LabelMode;
   image: any;
   currentImgURL: string;
   labels: Array<Label>;

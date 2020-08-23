@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 import LabelBoard from "./LabelBoard";
-import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator";
+import { LabelMode.SELECT, LabelMode.CREATE } from "../modules/annotator";
 import { parseTransform } from "../util/common";
 
 type Labels = {
@@ -80,7 +80,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
 
   it("렌더링이 된 결과가 기존 스냅샷과 비교해서 일치해야 한다.", () => {
     wrapper = render(
-      <LabelBoard mode={LABEL_SELECT_MODE} currentImgURL={_currentImgURL} selectedLabelsIds={_selectedLabelsIds} image={_image} labels={_labels} />,
+      <LabelBoard mode={LabelMode.SELECT} currentImgURL={_currentImgURL} selectedLabelsIds={_selectedLabelsIds} image={_image} labels={_labels} />,
     );
     expect(wrapper.baseElement).toMatchSnapshot();
   });
@@ -90,7 +90,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       const mockCreateLabels = jest.fn();
       wrapper = render(
         <LabelBoard
-          mode={LABEL_CREATE_MODE}
+          mode={LabelMode.CREATE}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}
@@ -119,7 +119,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       const mockUpdateLabels = jest.fn();
       wrapper = render(
         <LabelBoard
-          mode={LABEL_CREATE_MODE}
+          mode={LabelMode.CREATE}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}
@@ -151,7 +151,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       // 기본값으로 라벨 3개 전달
       wrapper = render(
         <LabelBoard
-          mode={LABEL_SELECT_MODE}
+          mode={LabelMode.SELECT}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}
@@ -177,7 +177,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       // 기본값으로 라벨 3개 전달
       wrapper = render(
         <LabelBoard
-          mode={LABEL_SELECT_MODE}
+          mode={LabelMode.SELECT}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}
@@ -207,7 +207,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       // 기본값으로 라벨 3개 전달
       wrapper = render(
         <LabelBoard
-          mode={LABEL_SELECT_MODE}
+          mode={LabelMode.SELECT}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}
@@ -241,7 +241,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       // 기본값으로 라벨 3개 전달
       wrapper = render(
         <LabelBoard
-          mode={LABEL_SELECT_MODE}
+          mode={LabelMode.SELECT}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}
@@ -282,7 +282,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       // 기본값으로 라벨 3개 전달
       wrapper = render(
         <LabelBoard
-          mode={LABEL_SELECT_MODE}
+          mode={LabelMode.SELECT}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}
@@ -327,7 +327,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       // 기본값으로 라벨 3개 전달
       wrapper = render(
         <LabelBoard
-          mode={LABEL_SELECT_MODE}
+          mode={LabelMode.SELECT}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}
@@ -377,7 +377,7 @@ describe("LabelBoard 라벨링툴 테스트 시작", () => {
       // 기본값으로 라벨 3개 전달
       wrapper = render(
         <LabelBoard
-          mode={LABEL_SELECT_MODE}
+          mode={LabelMode.SELECT}
           currentImgURL={_currentImgURL}
           selectedLabelsIds={[]}
           image={_image}

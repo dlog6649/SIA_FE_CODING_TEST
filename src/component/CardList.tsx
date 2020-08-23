@@ -1,16 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { viewImage } from "../modules/annotator";
 
 const url = "https://jsonplaceholder.typicode.com/photos";
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
-interface Props {
-  viewImage: (url: string, title: string) => void;
-}
-
-export default function CardList({ viewImage }: Props) {
+export default function CardList() {
   const refCardList = useRef<HTMLDivElement>(null);
   const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     console.log("CardList useEffect");
@@ -38,9 +37,12 @@ export default function CardList({ viewImage }: Props) {
   }, []);
 
   const viewImg = (evt: any) => {
-    if (evt.target.className === "thumbnail") {
-      viewImage(evt.target.dataset.url, evt.target.dataset.title);
+    if (evt.target.className !== "thumbnail") {
+      return;
     }
+    const url = evt.target.dataset.url;
+    const title = evt.target.dataset.title;
+    dispatch(viewImage({ url: url, title: title }));
     history.push("/view");
   };
 

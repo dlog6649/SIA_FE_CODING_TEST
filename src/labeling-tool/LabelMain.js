@@ -1,8 +1,8 @@
-import { _props, _setScale } from "../component/LabelBoard";
-import { LABEL_SELECT_MODE, LABEL_CREATE_MODE } from "../modules/annotator/types";
+import { dispatch, _setScale } from "../container/LabelBoardContainer";
 import { parseTransform, throttle, pauseEvent } from "../util/common";
 import { initializeLabel, createLabel, createInputBox, createAnchors, labelBodyMouseDownEvent } from "./LabelCreator";
 import { hideDefaultContextmenu, hideContextmenu, buildContextmenu, showContextmenu } from "./LabelMenu";
+import { LabelMode, selectLabels, createLabels, updateLabels, updateImgLabels, deleteLabels } from "../modules/annotator";
 import labelNS from "./labelNS";
 
 export const initialize = () => {
@@ -47,14 +47,12 @@ export const getMode = () => {
   return labelNS.mode;
 };
 
-export const setMode = (_mode) => {
-  labelNS.mode = _mode;
-
+export const setMode = (mode) => {
+  labelNS.mode = mode;
   const labels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("label"));
   labels.forEach((label) => {
-    labelNS.mode === LABEL_SELECT_MODE ? label.firstChild.setAttribute("cursor", "move") : label.firstChild.setAttribute("cursor", "auto");
+    labelNS.mode === LabelMode.SELECT ? label.firstChild.setAttribute("cursor", "move") : label.firstChild.setAttribute("cursor", "auto");
   });
-
   labelNS.selectedLabel = null;
   deleteAnchors();
 };
@@ -111,33 +109,34 @@ const documentKeyupEvent = (e) => {
 
 const svgMousedownEvent = (e) => {
   console.log("svg mousedown");
-
+  console.log(labelNS.mode === "CREATE");
   if (labelNS.isPushingSpacebar) {
     labelNS.isDragging = true;
     initImgForDrag(e);
-  } else if (labelNS.mode === LABEL_CREATE_MODE) {
+  } else if (labelNS.mode === LabelMode.CREATE) {
     // 마우스 왼쪽 클릭이 아니면
     if (e.button !== 0) {
       return;
     }
+    console.log("abc");
     labelNS.isDrawing = true;
     initializeLabel(e);
-  } else if (labelNS.mode === LABEL_SELECT_MODE) {
+  } else if (labelNS.mode === LabelMode.SELECT) {
     const selectedLabels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("selected"));
     if (!selectedLabels.length) {
       return;
     }
     deleteAnchors(e);
-    _props.selectLabels(getSelectedLabelsIds());
+    dispatch(selectLabels({ selectedLabelsIds: getSelectedLabelsIds() }));
   }
 };
 
 const svgMousemoveEvent = (e) => {
   if (labelNS.isDragging && labelNS.isPushingSpacebar) {
     moveImgAndLabels(e);
-  } else if (labelNS.isDrawing && labelNS.mode === LABEL_CREATE_MODE) {
+  } else if (labelNS.isDrawing && labelNS.mode === LabelMode.CREATE) {
     drawLabel(e);
-  } else if (labelNS.isDragging && labelNS.mode === LABEL_SELECT_MODE) {
+  } else if (labelNS.isDragging && labelNS.mode === LabelMode.SELECT) {
     dragLabel(e);
   }
 };
@@ -147,14 +146,14 @@ const documentMouseupEvent = (e) => {
 
   if (labelNS.isDragging && labelNS.isPushingSpacebar) {
     const labels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("label"));
-    _props.updateImgLabels(document.querySelector("#img"), labels, getSelectedLabelsIds());
-  } else if (labelNS.isDrawing && labelNS.mode === LABEL_CREATE_MODE) {
+    dispatch(updateImgLabels({ image: document.querySelector("#img"), labels: labels, selectedLabelsIds: getSelectedLabelsIds() }));
+  } else if (labelNS.isDrawing && labelNS.mode === LabelMode.CREATE) {
     if (createLabel()) {
-      _props.createLabels([labelNS.curLabel]);
+      dispatch(createLabels({ labels: [labelNS.curLabel] }));
     }
-  } else if (labelNS.isDragging && labelNS.mode === LABEL_SELECT_MODE) {
+  } else if (labelNS.isDragging && labelNS.mode === LabelMode.SELECT) {
     const labels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("label"));
-    _props.updateLabels(labels, getSelectedLabelsIds());
+    dispatch(updateLabels({ labels: labels, selectedLabelsIds: getSelectedLabelsIds() }));
   }
 
   labelNS.isDrawing = false;
@@ -231,7 +230,7 @@ export const pasteCopiedLabels = (isClickedMenu) => {
 
     labelNS.cloneLabels[i] = labelNS.cloneLabels[i].cloneNode(true);
   }
-  _props.createLabels(labelNS.cloneLabels);
+  dispatch(createLabels({ labels: labelNS.cloneLabels }));
 };
 
 export const deleteSelectedLabels = () => {
@@ -248,7 +247,7 @@ export const deleteSelectedLabels = () => {
     labelNS.svg.removeChild(label);
   }
 
-  _props.deleteLabels(deletedIds);
+  dispatch(deleteLabels({ selectedLabelsIds: deletedIds }));
 };
 
 function imgScaleSliderEvent() {
@@ -278,7 +277,7 @@ const controlZoom = (preScale) => {
     label.setAttribute("transform", `translate(${newX} ${newY}) scale(${labelNS.curScale}) rotate(${deg} ${rotX} ${rotY})`);
   });
 
-  _props.updateImgLabels(img, labels, getSelectedLabelsIds());
+  dispatch(updateImgLabels({ image: img, labels: labels, selectedLabelsIds: getSelectedLabelsIds() }));
 };
 
 const initImgForDrag = (e) => {
