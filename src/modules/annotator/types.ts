@@ -9,6 +9,13 @@ export interface Images {
   };
 }
 
+export interface Label {
+  id: number;
+  name: string;
+  coordinates: { x: number; y: number }[];
+  data: { x: number; y: number; w: number; h: number; deg: number };
+}
+
 export interface Labels {
   currentImgURL: {
     id: number;
@@ -16,17 +23,6 @@ export interface Labels {
     coordinates: { x: number; y: number }[];
     data: { x: number; y: number; w: number; h: number; deg: number };
   };
-}
-
-export interface Data {
-  x: number;
-  y: number;
-  scale: number;
-  deg: number;
-  rotX: number;
-  rotY: number;
-  w: number;
-  h: number;
 }
 
 export interface AnnotatorState {
