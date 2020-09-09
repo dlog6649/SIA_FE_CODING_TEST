@@ -1,14 +1,14 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import AnnotatorAnnotatingLabel from "../component/content-title/ContentTitle";
-import LabelBoardContainer from "../container/LabelBoardContainer";
-import LabelListContainer from "../container/LabelListContainer";
-import LabelModeBoxContainer from "./LabelModeBoxContainer";
-import { RootState } from "../index";
-import imgArrowLeft from "../asset/images/arrow-left.png";
-import { Link, useHistory } from "react-router-dom";
+import ContentTitle from "../../component/content-title/ContentTitle";
+import LabelBoardContainer from "../../container/LabelBoardContainer";
+import LabelListContainer from "../../container/LabelListContainer";
+import LabelModeBoxContainer from "../../container/LabelModeBoxContainer";
+import { RootState } from "../../index";
+import imgArrowLeft from "../../asset/images/arrow-left.png";
+import { Link } from "react-router-dom";
 
-export default function AnnotatorAnnotatingLabelContainer() {
+export default function LabelingView() {
   const imgTitle = useSelector((state: RootState) =>
     state.annotatorReducer.images[state.annotatorReducer.currentImgURL] === undefined
       ? ""
@@ -19,7 +19,7 @@ export default function AnnotatorAnnotatingLabelContainer() {
       <Link to="/">
         <img src={imgArrowLeft} alt="home" />
       </Link>
-      <AnnotatorAnnotatingLabel title={imgTitle} />
+      <ContentTitle title={imgTitle} />
       <div className="viewer-content">
         <LabelModeBoxContainer />
         <LabelListContainer />

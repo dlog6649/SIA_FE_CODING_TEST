@@ -1,16 +1,16 @@
 import React from "react";
 import { Route, Switch } from "react-router";
-import { BrowserRouter, HashRouter } from "react-router-dom";
-import AnnotatorHomeContainer from "./container/AnnotatorHomeContainer";
-import AnnotatorAnnotatingLabelContainer from "./container/AnnotatorAnnotatingLabelContainer";
+import { BrowserRouter } from "react-router-dom";
+import LabelingHome from "./page/labeling-home/LabelingHome";
+import LabelingView from "./page/labeling-view/LabelingView";
 
 export default function App() {
   return (
-    <div className="App">
+    <div className="app">
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" component={AnnotatorHomeContainer} />
-          <Route path="/view" component={AnnotatorAnnotatingLabelContainer} />
+          <Route exact path="/" component={LabelingHome} />
+          <Route path="/view" component={LabelingView} />
         </Switch>
       </BrowserRouter>
     </div>

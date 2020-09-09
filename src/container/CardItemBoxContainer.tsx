@@ -2,11 +2,12 @@ import React, { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { viewImage } from "../modules/annotator";
+// import CardItemBox from "../component/card-item-box/CardItemBox";
 
 const url = "https://jsonplaceholder.typicode.com/photos";
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
-export default function CardListContainer() {
+export default function CardItemBoxContainer() {
   const refCardList = useRef<HTMLDivElement>(null);
   const history = useHistory();
   const dispatch = useDispatch();

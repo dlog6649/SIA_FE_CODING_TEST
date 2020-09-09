@@ -4,10 +4,10 @@ interface Props {
   title: string;
 }
 
-export default function AnnotatorAnnotatingLabel({ title }: Props) {
+export default function ContentTitle({ title }: Props) {
   useEffect(() => {
     console.log("AnnotatorAnnotatingLabel useEffect");
   });
 
-  return <div className="viewer-title">{title}</div>;
+  return <div className="content-title">{title}</div>;
 }
