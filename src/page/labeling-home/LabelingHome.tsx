@@ -8,9 +8,9 @@ export default function LabelingHome() {
     console.log("Labeling useEffect");
   });
   return (
-    <div className="labeling-home">
-      <div className="title">{title}</div>
-      <div className="content">
+    <div className={"labeling-home"}>
+      <div className={"title"}>{title}</div>
+      <div className={"content"}>
         <CardItemBoxContainer />
       </div>
     </div>

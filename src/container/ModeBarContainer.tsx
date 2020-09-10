@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LabelMode, changeMode } from "../modules/annotator";
-import imgLabelSelectMode from "../asset/images/label_select_mode.png";
-import imgLabelCreateMode from "../asset/images/label_create_mode.png";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../index";
+import ModeBar from "../component/mode-bar/ModeBar";
+import imgLabelSelectMode from "../asset/images/label_select_mode.png";
+import imgLabelCreateMode from "../asset/images/label_create_mode.png";
 
-export default function LabelModeBoxContainer() {
+export default function ModeBarContainer() {
   const [mode, setMode] = useState<LabelMode>(LabelMode.SELECT);
   const refModeBtnList = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
@@ -13,10 +14,10 @@ export default function LabelModeBoxContainer() {
 
   useEffect(() => {
     console.log("LabelMode useEffect: [props.mode]");
-    if (!refModeBtnList.current) {
+    const refModeBtnDiv = refModeBtnList.current;
+    if (!refModeBtnDiv) {
       return;
     }
-    const refModeBtnDiv = refModeBtnList.current;
     refModeBtnDiv.childNodes.forEach((modeBtnEle) => {
       const modeBtn = modeBtnEle as HTMLButtonElement;
       labelMode === LabelMode[modeBtn.id] ? modeBtn.classList.add("active") : modeBtn.classList.remove("active");
@@ -28,10 +29,10 @@ export default function LabelModeBoxContainer() {
     if (mode === clickedMode) {
       return;
     }
-    if (!refModeBtnList.current) {
+    const refModeBtnDiv = refModeBtnList.current;
+    if (!refModeBtnDiv) {
       return;
     }
-    const refModeBtnDiv = refModeBtnList.current;
     refModeBtnDiv.childNodes.forEach((modeBtnEle) => {
       const modeBtn = modeBtnEle as HTMLButtonElement;
       if (clickedMode === modeBtn.id) {
@@ -44,14 +45,17 @@ export default function LabelModeBoxContainer() {
     dispatch(changeMode({ mode: LabelMode[clickedMode] }));
   };
 
-  return (
-    <div className="label-mode" ref={refModeBtnList}>
-      <button id={LabelMode.SELECT} className="btn label-mode-btn active" type="button" onClick={clickBtn}>
-        <img className="btn-img" src={imgLabelSelectMode} alt="SELECT" />
-      </button>
-      <button id={LabelMode.CREATE} className="btn label-mode-btn" type="button" onClick={clickBtn}>
-        <img className="btn-img" src={imgLabelCreateMode} alt="CREATE" />
-      </button>
-    </div>
-  );
+  const btns = [
+    {
+      btnId: LabelMode.SELECT,
+      btnClass: "btn label-mode-btn active",
+      onClick: clickBtn,
+      imgClass: "btn-img",
+      imgSrc: imgLabelSelectMode,
+      alt: "SELECT",
+    },
+    { btnId: LabelMode.CREATE, btnClass: "btn label-mode-btn", onClick: clickBtn, imgClass: "btn-img", imgSrc: imgLabelCreateMode, alt: "CREATE" },
+  ];
+
+  return <ModeBar mode={labelMode} clickBtn={clickBtn} btns={btns} />;
 }

@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+import "./ContentTitle.scss";
+
 interface Props {
   title: string;
 }

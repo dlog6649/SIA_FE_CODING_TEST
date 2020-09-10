@@ -4,6 +4,8 @@ import { BrowserRouter } from "react-router-dom";
 import LabelingHome from "./page/labeling-home/LabelingHome";
 import LabelingView from "./page/labeling-view/LabelingView";
 
+import "./style/layout.scss";
+
 export default function App() {
   return (
     <div className="app">

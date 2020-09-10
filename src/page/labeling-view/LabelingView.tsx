@@ -3,10 +3,12 @@ import { useSelector } from "react-redux";
 import ContentTitle from "../../component/content-title/ContentTitle";
 import LabelBoardContainer from "../../container/LabelBoardContainer";
 import LabelListContainer from "../../container/LabelListContainer";
-import LabelModeBoxContainer from "../../container/LabelModeBoxContainer";
+import ModeBarContainer from "../../container/ModeBarContainer";
 import { RootState } from "../../index";
 import imgArrowLeft from "../../asset/images/arrow-left.png";
 import { Link } from "react-router-dom";
+
+import "./LabelingView.scss";
 
 export default function LabelingView() {
   const imgTitle = useSelector((state: RootState) =>
@@ -15,13 +17,13 @@ export default function LabelingView() {
       : state.annotatorReducer.images[state.annotatorReducer.currentImgURL].title,
   );
   return (
-    <div className="viewer">
+    <div className={"viewer"}>
       <Link to="/">
-        <img src={imgArrowLeft} alt="home" />
+        <img src={imgArrowLeft} alt={"home"} />
       </Link>
       <ContentTitle title={imgTitle} />
-      <div className="viewer-content">
-        <LabelModeBoxContainer />
+      <div className={"viewer-content"}>
+        <ModeBarContainer />
         <LabelListContainer />
         <LabelBoardContainer />
       </div>

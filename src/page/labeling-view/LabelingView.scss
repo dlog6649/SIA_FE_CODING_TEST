@@ -1,6 +1,11 @@
 .viewer {
-  display: flex; flex-direction: column; height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
   >.viewer-content {
-    display: flex; flex-direction: row; flex: 1; overflow: auto;
+    flex: 1 1 0;
+    display: flex;
+    flex-flow: row nowrap;
+    overflow: auto;
   }
 }

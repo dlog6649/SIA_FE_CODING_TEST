@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import AnnotatorAnnotatingLabel from "../component/content-title/ContentTitle";
 import LabelBoardContainer from "../container/LabelBoardContainer";
 import LabelListContainer from "../container/LabelListContainer";
-import LabelModeBoxContainer from "./LabelModeBoxContainer";
+import LabelModeBoxContainer from "./ModeBarContainer";
 import { RootState } from "../index";
 import imgArrowLeft from "../asset/images/arrow-left.png";
 import { Link, useHistory } from "react-router-dom";
