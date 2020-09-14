@@ -2,12 +2,16 @@ html, body, #root, .app {margin: 0; padding: 0; height: 100%}
 li {display: block; text-align: none;}
 ul {list-style-type: none; padding-inline-start: 0px; margin-block-start: 0; margin-block-end: 0;}
 p {margin: 0}
+
 input[type=range] {
-  -webkit-appearance: none; width: 100%; background: transparent;
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
   &:focus {
     outline: none;
   }
 }
+
 button{
   border-style: none;
   background-color: white;
@@ -16,34 +20,58 @@ button{
     outline: none;
   }
 }
+
 .btn {
-  -webkit-transition: background-color 0.3s; transition: background-color 0.3s; cursor: Pointer;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  cursor: pointer;
   &.active {
     background-color: #cad0e0;
     &:hover {
       background-color: #cad0e0;
     }
   }
-  &:hover {background-color: #e6e9f3;}
-  &:active {background-color: #cad0e0;}
+  &:hover {
+    background-color: #e6e9f3;
+  }
+  &:active {
+    background-color: #cad0e0;
+  }
 }
-.btn-img {vertical-align: middle;}
+.btn-img {
+  vertical-align: middle;
+}
 
 
 .card-list {
   &::after {
-    content: ''; display: block; clear: both;
+    content: '';
+    display: block;
+    clear: both;
   }
   .card {
-    margin: 15px; float: left; width: 150px; height: auto; border: 1px solid lightgray;
+    margin: 15px;
+    float: left;
+    width: 150px;
+    height: auto;
+    border: 1px solid lightgray;
     .card-thumbnail {
-      height: 150px; border-bottom: 1px solid lightgray;
+      height: 150px;
+      border-bottom: 1px solid lightgray;
       .thumbnail {
-        cursor: Pointer; width: 100%; height: 100%;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
       }
     }
     .card-title {
-      padding: 5px 7px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight: 600; font-size: 0.9rem; color: #2e2e2e
+      padding: 5px 7px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #2e2e2e
     }
   }
 }
@@ -52,33 +80,61 @@ button{
 * LabelList
 */
 .label-list {
-  display: flex; flex: none; flex-direction: column; border-right: 1px solid lightgray;
+  flex: none;
+  display: flex;
+  flex-flow: column nowrap;
+  border-right: 1px solid lightgray;
   ul {
     overflow: auto;
-    &::-webkit-scrollbar {width: 5px;}
-    &::-webkit-scrollbar-thumb { background-color: #727fa3; border-radius: 20px; }
-    &::-webkit-scrollbar-track {background-color: #d5d9e2; border-radius: 20px;}
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #727fa3;
+      border-radius: 20px;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: #d5d9e2;
+      border-radius: 20px;
+    }
   }
   .label-list-controller {
-    display: flex; min-width: 300px; width: auto; border-bottom: 1px solid lightgray;
+    display: flex;
+    min-width: 300px;
+    width: auto;
+    border-bottom: 1px solid lightgray;
     span {
-      padding: 5px 15px; color: #4d66a7; font-size: 0.85rem;
+      padding: 5px 15px;
+      color: #4d66a7;
+      font-size: 0.85rem;
     }
-    .label-list-btn{display: flex; margin-left: auto; padding: 10px 13px;}
+    .label-list-btn{
+      display: flex;
+      margin-left: auto;
+      padding: 10px 13px;
+    }
   }
   .label-info {
-    padding: 14px 20px 20px 20px; border-bottom: 1px solid lightgray; cursor: Pointer;
+    padding: 14px 20px 20px 20px;
+    border-bottom: 1px solid lightgray;
+    cursor: pointer;
     .label-class {
-      font-size: 0.8rem; font-weight: bold; color: #636a7b;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: #636a7b;
     }
     .label-coordinate {
-      font-size: 0.7rem; padding-top: 5px; color: #828282;
+      font-size: 0.7rem;
+      padding-top: 5px;
+      color: #828282;
     }
   }
 }
 // LabelBoard
 .label-board {
-  display: flex; flex: 1; flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 
@@ -87,19 +143,34 @@ button{
   */
 // .viewer .viewer-content .label-board{display: flex; flex: 1; flex-direction: column;}
 .label-input {
-  width: 120px; border-radius: 15px; border: 2px solid lightgray; padding: 0 10px; height: 23px;
+  width: 120px;
+  border-radius: 15px;
+  border: 2px solid lightgray;
+  padding: 0 10px;
+  height: 23px;
   &:focus {
     outline: none;
   }
 }
 
 .label-board-scaler {
-  position: fixed; bottom: 50px; right: 32px; width: 36px; height: 170px; border-radius: 6px; box-shadow: 0 0 3px 1.5px #e0e0e0; background-color: white;
+  position: fixed;
+  bottom: 50px;
+  right: 32px;
+  width: 36px;
+  height: 170px;
+  border-radius: 6px;
+  box-shadow: 0 0 3px 1.5px #e0e0e0;
+  background-color: white;
   .scaler-plus {
-    position: absolute; left: 12px; top: 11px;
+    position: absolute;
+    top: 11px;
+    left: 12px;
   }
   .scaler-minus {
-    position: absolute; left: 12px; bottom: 11px;
+    position: absolute;
+    left: 12px;
+    bottom: 11px;
   }
   .scaler-range {
     position: relative;
@@ -122,13 +193,32 @@ button{
 }
 
 .label-contextmenu{
-   display: none; position: absolute; width: 230px; cursor: default; border-radius: 5px; background-color: #fbfbfb; box-shadow: 1px 1px 5px 0 #b5b5b5;
-   .item{
-     padding: 10px 15px;
-     &.disabled{color: #b8bdc7}
-     &:first-child{border-bottom: 1px solid #d1d2d8;}
-     &:hover{background-color: #e0e3ea;}
-     .item-name{font-size: 0.91rem;}
-     .item-shortcut{float: right; padding-top: 5px; font-size: 0.7rem; color: #717d9e;}
-   }
+  display: none;
+  position: absolute;
+  width: 230px;
+  cursor: default;
+  border-radius: 5px;
+  background-color: #fbfbfb;
+  box-shadow: 1px 1px 5px 0 #b5b5b5;
+  .item{
+    padding: 10px 15px;
+    &.disabled{
+      color: #b8bdc7;
+    }
+    &:first-child{
+      border-bottom: 1px solid #d1d2d8;
+    }
+    &:hover{
+      background-color: #e0e3ea;
+    }
+    .item-name{
+      font-size: 0.91rem;
+    }
+    .item-shortcut{
+      float: right;
+      padding-top: 5px;
+      font-size: 0.7rem;
+      color: #717d9e;
+    }
+  }
 }

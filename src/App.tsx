@@ -5,6 +5,7 @@ import LabelingHome from "./page/labeling-home/LabelingHome";
 import LabelingView from "./page/labeling-view/LabelingView";
 
 import "./style/layout.scss";
+import "./App.scss";
 
 export default function App() {
   return (
