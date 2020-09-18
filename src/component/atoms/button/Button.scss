@@ -1,0 +1,30 @@
+button{
+  border-style: none;
+  background-color: white;
+  padding: 0;
+  &:focus {
+    outline: none;
+  }
+}
+
+.btn {
+  background-color: blue;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  &.active {
+    background-color: #cad0e0;
+    &:hover {
+      background-color: #cad0e0;
+    }
+  }
+  &:hover {
+    background-color: #e6e9f3;
+  }
+  &:active {
+    background-color: #cad0e0;
+  }
+}
+.btn-img {
+  vertical-align: middle;
+}
