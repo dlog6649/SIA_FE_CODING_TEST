@@ -5,6 +5,7 @@ import { RootState } from "../index";
 import ModeBar from "../component/mode-bar/ModeBar";
 import imgLabelSelectMode from "../asset/images/label_select_mode.png";
 import imgLabelCreateMode from "../asset/images/label_create_mode.png";
+import Button from "../component/atoms/button/Button";
 
 export default function ModeBarContainer() {
   const [mode, setMode] = useState<LabelMode>(LabelMode.SELECT);

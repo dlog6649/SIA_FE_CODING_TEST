@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LabelMode, changeMode } from "../../modules/annotator";
 import "./ModeBar.scss";
+import Button from "../atoms/button/Button";
 
 type Props = {
   mode: LabelMode;
@@ -49,9 +50,9 @@ export default function ModeBar({ mode, clickBtn, btns }: Props) {
     <div className="mode-bar" ref={refModeBtnList}>
       {btns.map((btn: any) => {
         return (
-          <button id={btn.btnId} className={btn.btnClass} type="button" onClick={btn.onClick}>
+          <Button className={btn.btnClass} onClick={btn.onClick} id={btn.btnId}>
             <img className={btn.imgClass} src={btn.imgSrc} alt={btn.alt} />
-          </button>
+          </Button>
         );
       })}
     </div>
