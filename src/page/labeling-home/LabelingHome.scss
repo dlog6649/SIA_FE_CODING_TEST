@@ -1,12 +1,13 @@
 .labeling-home {
   padding: 50px 100px;
-  >.title {
+  > .title {
     padding: 35px 15px;
     font-size: 2.5rem;
     font-weight: bold;
     color: #0f1350;
   }
-  >.content {
-
+  > .card-item-box {
+    display: flex;
+    flex-flow: row wrap;
   }
 }

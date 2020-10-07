@@ -127,7 +127,7 @@ export default function LabelListContainer() {
   };
 
   return (
-    <div className="label-list" ref={refLabelList}>
+    <aside className="label-list" ref={refLabelList}>
       <div className="label-list-controller">
         <span>Labels</span>
         <button className="btn label-list-btn" onClick={toggleLabelList} type="button">
@@ -135,6 +135,6 @@ export default function LabelListContainer() {
         </button>
       </div>
       <ul className="label-list-root" style={{ display: "block" }} onMouseDown={selectLabel} />
-    </div>
+    </aside>
   );
 }

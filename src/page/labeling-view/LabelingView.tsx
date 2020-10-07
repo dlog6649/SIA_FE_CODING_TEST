@@ -17,16 +17,16 @@ export default function LabelingView() {
       : state.annotatorReducer.images[state.annotatorReducer.currentImgURL].title,
   );
   return (
-    <div className={"viewer"}>
-      <Link to="/">
+    <div className={"labeling-view"}>
+      <Link to={"/"}>
         <img src={imgArrowLeft} alt={"home"} />
       </Link>
       <ContentTitle title={imgTitle} />
-      <div className={"viewer-content"}>
+      <main className={"viewer-content"}>
         <ModeBarContainer />
         <LabelListContainer />
         <LabelBoardContainer />
-      </div>
+      </main>
     </div>
   );
 }

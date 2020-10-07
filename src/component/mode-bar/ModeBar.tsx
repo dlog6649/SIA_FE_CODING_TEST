@@ -47,7 +47,7 @@ export default function ModeBar({ mode, clickBtn, btns }: Props) {
   // };
 
   return (
-    <div className="mode-bar" ref={refModeBtnList}>
+    <aside className="mode-bar" ref={refModeBtnList}>
       {btns.map((btn: any) => {
         return (
           <Button className={btn.btnClass} onClick={btn.onClick} id={btn.btnId}>
@@ -55,6 +55,6 @@ export default function ModeBar({ mode, clickBtn, btns }: Props) {
           </Button>
         );
       })}
-    </div>
+    </aside>
   );
 }

@@ -1,8 +1,8 @@
-.viewer {
+.labeling-view {
   display: flex;
   flex-flow: column nowrap;
   height: 100%;
-  >.viewer-content {
+  > .viewer-content {
     flex: 1 1 0;
     display: flex;
     flex-flow: row nowrap;
