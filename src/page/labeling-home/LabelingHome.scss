@@ -1,7 +1,10 @@
 .labeling-home {
+  display: grid;
+  grid-template-rows: 124px auto;
   padding: 50px 100px;
   > .title {
-    padding: 35px 15px;
+    align-self: center;
+    margin-left: 15px;
     font-size: 2.5rem;
     font-weight: bold;
     color: #0f1350;

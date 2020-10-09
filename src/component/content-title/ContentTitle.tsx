@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+import Button from "../atoms/button/Button";
+
 import "./ContentTitle.scss";
 
 interface Props {

@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import CardItem from "../../component/molecules/card-item/CardItem";
+import * as routes from "../../Routes";
 import "./LabelingHome.scss";
 
 const title = "Labeling Home";
@@ -27,7 +28,7 @@ export default function LabelingHome() {
       .then((response) => response.json())
       .then((json) => {
         const photos: Scene[] = [];
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 12; i++) {
           photos.push(json[i]);
         }
         setSceneList(photos);
@@ -36,13 +37,10 @@ export default function LabelingHome() {
   }, []);
 
   const viewScene = (evt: any) => {
-    if (evt.target.className !== "thumbnail") {
-      return;
-    }
-    const url = evt.target.dataset.url;
-    const title = evt.target.dataset.title;
+    const url = evt.currentTarget.dataset.url;
+    const title = evt.currentTarget.dataset.title;
     // dispatch(viewImage({ url: url, title: title }));
-    history.push("/view");
+    history.push(routes.labelingView); // 이것을 /view:id로 또는 <Link /> 컴포넌트로 하는것에 대해 고찰.
   };
 
   return (
@@ -50,7 +48,7 @@ export default function LabelingHome() {
       <header className={"title"}>{title}</header>
       <main className={"card-item-box"}>
         {sceneList.map((scene: Scene) => (
-          <CardItem key={scene.id} id={scene.id} title={scene.title} url={scene.url} thumbnailUrl={scene.thumbnailUrl} />
+          <CardItem key={scene.id} id={scene.id} text={scene.title} url={scene.url} thumbnailUrl={scene.thumbnailUrl} onClick={viewScene} />
         ))}
       </main>
     </div>

@@ -1,4 +1,4 @@
-.btn {
+button {
   -webkit-transition: background-color 0.3s;
   transition: background-color 0.3s;
   cursor: pointer;
@@ -13,7 +13,13 @@
   &:active {
     background-color: #cad0e0;
     &:hover {
+      &[data-type="ghost"] {
+        background-color: rgba(0, 0, 0, 0);
+      }
       background-color: #cad0e0;
     }
+  }
+  &[data-type="ghost"] {
+    background-color: rgba(0, 0, 0, 0);
   }
 }
