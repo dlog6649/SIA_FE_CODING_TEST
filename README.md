@@ -3,13 +3,13 @@
 ## 개요
 
 이 프로젝트는 웹 브라우저 환경에서 동작하는 라벨링 툴입니다.
+UI 라이브러리로는 React를 사용했습니다.
 
 ## 개발환경
 
 - Node.js 10.15.3
-- npm 6.14.1
+- yarn 1.22.4
 - React 16.13.0
-- Redux 4.0.5
 - Visual Studio Code 1.43.2
 - Chrome 80.0.3987.149
 
@@ -18,14 +18,14 @@
 ```bash
 $ git clone git@github.com:dlog6649/labeling-tool.git
 $ cd labeling-tool
-$ npm i
-$ npm start
+$ yarn install
+$ yarn start
 ```
 
 ## 테스트
 
 ```bash
-npm test
+yarn test
 ```
 
 ## Sample Image
