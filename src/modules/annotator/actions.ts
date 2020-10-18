@@ -1,4 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
+
 import { LabelMode } from "./types";
 
 export const VIEW_IMAGE = "annotator/VIEW_IMAGE" as const;

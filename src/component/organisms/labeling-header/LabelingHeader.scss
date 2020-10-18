@@ -6,10 +6,8 @@
     > .history-btn {
       width: 50%;
       height: 100%;
-      &:nth-child(2) {
-        > span > img {
-          transform: rotate(180deg);
-        }
+      &:nth-child(2) > span > img {
+        transform: rotate(180deg);
       }
     }
   }

@@ -1,10 +1,11 @@
-import { parseTransform, getLabelState } from "../../util/common";
 import { createReducer, createSelector } from "@reduxjs/toolkit";
+
+import { parseTransform, getLabelState } from "../../util/common";
 import * as actions from "./actions";
 import { AnnotatorState, Images, Labels, LabelMode } from "./types";
 
 const initialState: AnnotatorState = {
-  mode: LabelMode.SELECT,
+  mode: LabelMode.Select,
   currentImgURL: "" as string,
   images: {} as Images,
   labels: {} as Labels,
@@ -22,7 +23,7 @@ const annotatorReducer = createReducer(initialState, (builder) => {
       if (!state.images[action.payload.url]) {
         state.images[action.payload.url] = { title: action.payload.title, x: 0, y: 0, scale: 1 };
       }
-      state.mode = LabelMode.SELECT;
+      state.mode = LabelMode.Select;
       state.currentImgURL = action.payload.url;
       state.selectedLabelsIds = [];
     })

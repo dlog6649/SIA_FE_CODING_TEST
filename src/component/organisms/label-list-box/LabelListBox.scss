@@ -1,0 +1,51 @@
+.label-list-box {
+  flex: none;
+  display: flex;
+  flex-flow: column nowrap;
+  border-right: 1px solid lightgray;
+  ul {
+    overflow: auto;
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #727fa3;
+      border-radius: 20px;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: #d5d9e2;
+      border-radius: 20px;
+    }
+  }
+  .label-list-controller {
+    display: flex;
+    min-width: 300px;
+    width: auto;
+    border-bottom: 1px solid lightgray;
+    span {
+      padding: 5px 15px;
+      color: #4d66a7;
+      font-size: 0.85rem;
+    }
+    .label-list-btn{
+      display: flex;
+      margin-left: auto;
+      padding: 10px 13px;
+    }
+  }
+  .label-info {
+    padding: 14px 20px 20px 20px;
+    border-bottom: 1px solid lightgray;
+    cursor: pointer;
+    .label-class {
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: #636a7b;
+    }
+    .label-coordinate {
+      font-size: 0.7rem;
+      padding-top: 5px;
+      color: #828282;
+    }
+  }
+}

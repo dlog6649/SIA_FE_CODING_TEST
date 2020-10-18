@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import * as LabelMain from "../labeling-tool/LabelMain";
-import { redrawImage, redrawLabels } from "../labeling-tool/LabelCreator";
-import { compareImage, compareLabels, compareIds } from "../labeling-tool/LabelCompare";
-import LabelCtxMenu from "../component/LabelCtxMenu";
-import imgPlus from "../asset/images/plus.png";
-import imgMinus from "../asset/images/minus.png";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../index";
+
+import * as LabelMain from "../../../labeling-tool/LabelMain";
+import { redrawImage, redrawLabels } from "../../../labeling-tool/LabelCreator";
+import { compareImage, compareLabels, compareIds } from "../../../labeling-tool/LabelCompare";
+import LabelCtxMenu from "./LabelCtxMenu";
+import { RootState } from "../../../index";
+import imgPlus from "../../../asset/images/plus.png";
+import imgMinus from "../../../asset/images/minus.png";
+
+import "./LabelingBoard.scss";
 
 export let dispatch: any;
 export let _setScale: React.Dispatch<React.SetStateAction<number>>;
@@ -105,4 +108,3 @@ export default function LabelBoardContainer() {
     </div>
   );
 }
-//orient="vertical"

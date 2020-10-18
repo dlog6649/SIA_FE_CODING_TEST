@@ -1,17 +1,14 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import ContentTitle from "../../component/content-title/ContentTitle";
-import LabelBoardContainer from "../../container/LabelBoardContainer";
-import LabelListContainer from "../../container/LabelListContainer";
-import ModeBarContainer from "../../container/ModeBarContainer";
+import { useHistory, Link } from "react-router-dom";
+
 import { RootState } from "../../index";
-import imgArrowLeft from "../../asset/images/arrow-left.png";
-import { Link } from "react-router-dom";
 import * as routes from "../../Routes";
-import Button from "../../component/atoms/button/Button";
 import LabelingHeader from "../../component/organisms/labeling-header/LabelingHeader";
 import LabelingModeBar from "../../component/organisms/labeling-mode-bar/LabelingModeBar";
-import { useHistory } from "react-router-dom";
+import LabelListBox from "../../component/organisms/label-list-box/LabelListBox";
+import LabelingBoard from "../../component/organisms/labeling-board/LabelingBoard";
+
 import "./LabelingView.scss";
 
 export default function LabelingView() {
@@ -31,9 +28,11 @@ export default function LabelingView() {
       <aside className={"mode-bar"}>
         <LabelingModeBar />
       </aside>
-      <main className={"labeling-content"}>
-        <LabelListContainer />
-        <LabelBoardContainer />
+      <aside className={"list-box"}>
+        <LabelListBox />
+      </aside>
+      <main className={"board"}>
+        <LabelingBoard />
       </main>
     </div>
   );

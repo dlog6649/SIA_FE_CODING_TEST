@@ -1,5 +1,3 @@
-// "airbnb-typescript",
-// "airbnb/hooks",
 {
   "extends": [
     "plugin:@typescript-eslint/recommended",

@@ -34,8 +34,8 @@ export interface AnnotatorState {
 }
 
 export enum LabelMode {
-  SELECT = "SELECT",
-  CREATE = "CREATE",
+  Select = "SELECT",
+  Create = "CREATE",
 }
 
 // export type AnnotatorAction = ActionType<typeof actions>;

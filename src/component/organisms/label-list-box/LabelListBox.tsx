@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { LabelMode, selectLabels } from "../modules/annotator";
-import imgArrowRight from "../asset/images/arrow-right.png";
-import imgArrowLeft from "../asset/images/arrow-left.png";
-import { RootState } from "../index";
+
+import { LabelMode, selectLabels } from "../../../modules/annotator";
+import { RootState } from "../../../index";
+import imgArrowLeft from "../../../asset/images/arrow-left.png";
+import imgArrowRight from "../../../asset/images/arrow-right.png";
+
+import "./LabelListBox.scss";
 
 const compareIds = (_ids: Array<number>) => {
   const ids = [] as Array<number>;
@@ -107,7 +110,7 @@ export default function LabelListContainer() {
   };
 
   const selectLabel = (evt: any): void => {
-    if (mode === LabelMode.CREATE) {
+    if (mode === LabelMode.Create) {
       return;
     }
     const labelInfo: HTMLLIElement = evt.target.classList.contains("label-info") ? evt.target : evt.target.parentNode;
@@ -127,7 +130,7 @@ export default function LabelListContainer() {
   };
 
   return (
-    <aside className="label-list" ref={refLabelList}>
+    <div className="label-list-box" ref={refLabelList}>
       <div className="label-list-controller">
         <span>Labels</span>
         <button className="btn label-list-btn" onClick={toggleLabelList} type="button">
@@ -135,6 +138,6 @@ export default function LabelListContainer() {
         </button>
       </div>
       <ul className="label-list-root" style={{ display: "block" }} onMouseDown={selectLabel} />
-    </aside>
+    </div>
   );
 }
