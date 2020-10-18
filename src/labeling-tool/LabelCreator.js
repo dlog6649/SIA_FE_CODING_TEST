@@ -1,4 +1,4 @@
-import { dispatch } from "../container/LabelBoardContainer";
+import { dispatch } from "../component/organisms/labeling-board/LabelingBoard";
 import { parseTransform } from "../util/common";
 import * as LabelMain from "./LabelMain";
 import labelNS from "./labelNS";
