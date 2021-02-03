@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import * as LabelMain from "../../../labeling-tool/LabelMain";
 import { redrawImage, redrawLabels } from "../../../labeling-tool/LabelCreator";
-import { compareImage, compareLabels, compareIds } from "../../../labeling-tool/LabelCompare";
+import { compareIds, compareImage, compareLabels } from "../../../labeling-tool/LabelCompare";
 import LabelCtxMenu from "./LabelCtxMenu";
 import { RootState } from "../../../index";
-import imgPlus from "../../../asset/images/plus.png";
-import imgMinus from "../../../asset/images/minus.png";
+import { Plus, Minus } from "../../../asset/icons";
 
 import "./LabelingBoard.scss";
 
@@ -90,7 +89,7 @@ export default function LabelBoardContainer() {
         </defs>
       </svg>
       <div className="label-board-scaler">
-        <img className="scaler-plus btn-img" src={imgPlus} alt="+" />
+        <Plus className={"plus"} />
         <input
           className="scaler-range"
           type="range"
@@ -102,7 +101,7 @@ export default function LabelBoardContainer() {
           max="2"
           step="0.1"
         />
-        <img className="scaler-minus btn-img" src={imgMinus} alt="-" />
+        <Minus className={"minus"} />
       </div>
       <LabelCtxMenu />
     </div>

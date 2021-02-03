@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import "./LabelingModeBar.scss";
 
-import { LabelMode, changeMode } from "../../../modules/annotator";
+import React, { useEffect, useRef, useState } from "react";
+
+import { changeMode, LabelMode } from "../../../modules/annotator";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../index";
-import imgLabelSelectMode from "../../../asset/images/label_select_mode.png";
-import imgLabelCreateMode from "../../../asset/images/label_create_mode.png";
-import Button from "../../../component/atoms/button/Button";
 
-import "./LabelingModeBar.scss";
+import Button from "../../../component/atoms/button/Button";
+import { CursorDefault, Square } from "../../../asset/icons";
 
 export default function LabelingModeBar() {
   const [mode, setMode] = useState<LabelMode>(LabelMode.Select);
@@ -51,10 +51,10 @@ export default function LabelingModeBar() {
   return (
     <div className="labeling-mode-bar" ref={refModeBtnList}>
       <Button className={"btn label-mode-btn active"} onClick={clickBtn} id={LabelMode.Select}>
-        <img className={"btn-img"} src={imgLabelSelectMode} alt={"select-mode"} />
+        <CursorDefault />
       </Button>
       <Button className={"btn label-mode-btn"} onClick={clickBtn} id={LabelMode.Create}>
-        <img className={"btn-img"} src={imgLabelCreateMode} alt={"create-mode"} />
+        <Square />
       </Button>
     </div>
   );

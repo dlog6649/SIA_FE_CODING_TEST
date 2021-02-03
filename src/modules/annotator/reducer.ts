@@ -17,7 +17,7 @@ export const testSelector = createSelector(
   (mode) => mode,
 );
 
-const annotatorReducer = createReducer(initialState, (builder) => {
+export const annotatorReducer = createReducer(initialState, (builder) => {
   builder
     .addCase(actions.viewImage, (state, action) => {
       if (!state.images[action.payload.url]) {
@@ -153,5 +153,3 @@ const annotatorReducer = createReducer(initialState, (builder) => {
 //     state.selectedLabelsIds = [];
 //   },
 // });
-
-export default annotatorReducer;

@@ -1,14 +1,11 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import Home from "../../../asset/icon/home/Home";
-import { RootState } from "../../../index";
-import imgArrowLeft from "../../../asset/images/arrow-left.png";
 import * as routes from "../../../Routes";
 import Button from "../../atoms/button/Button";
 
 import "./LabelingHeader.scss";
+import { Home, ArrowLeft, ArrowRight } from "../../../asset/icons";
 
 export default function LabelingHeader() {
   const history = useHistory();
@@ -26,10 +23,10 @@ export default function LabelingHeader() {
       </Button>
       <section className={"section-history"}>
         <Button className={"history-btn"}>
-          <img src={imgArrowLeft} alt={"back"} />
+          <ArrowLeft />
         </Button>
         <Button className={"history-btn"}>
-          <img src={imgArrowLeft} alt={"foward"} />
+          <ArrowRight />
         </Button>
       </section>
       <section className={"section-title"} title={imgTitle}>

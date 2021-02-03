@@ -1,12 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { LabelMode, selectLabels } from "../../../modules/annotator";
 import { RootState } from "../../../index";
-import imgArrowLeft from "../../../asset/images/arrow-left.png";
-import imgArrowRight from "../../../asset/images/arrow-right.png";
 
 import "./LabelListBox.scss";
+import { Left } from "../../../asset/icons";
 
 const compareIds = (_ids: Array<number>) => {
   const ids = [] as Array<number>;
@@ -96,14 +95,14 @@ export default function LabelListContainer() {
       (controller.firstChild as HTMLElement).style.display = "none";
       controller.style.minWidth = "38px";
       controller.style.borderRight = "1px solid lightgray";
-      img.src = imgArrowRight;
+      // img.src = imgArrowRight;
       labelListRoot.style.display = "none";
       (labelListRoot.parentNode as HTMLElement).style.borderRight = "none";
     } else {
       (controller.firstChild as HTMLElement).style.display = "block";
       controller.style.minWidth = "300px";
       controller.style.borderRight = "none";
-      img.src = imgArrowLeft;
+      // img.src = imgArrowLeft;
       labelListRoot.style.display = "block";
       (labelListRoot.parentNode as HTMLElement).style.borderRight = "1px solid lightgray";
     }
@@ -134,7 +133,7 @@ export default function LabelListContainer() {
       <div className="label-list-controller">
         <span>Labels</span>
         <button className="btn label-list-btn" onClick={toggleLabelList} type="button">
-          <img className="label-list-btn-img" src={imgArrowLeft} alt="arrow-left" />
+          <Left />
         </button>
       </div>
       <ul className="label-list-root" style={{ display: "block" }} onMouseDown={selectLabel} />

@@ -40,12 +40,13 @@ input[type=range] {
   border-radius: 6px;
   box-shadow: 0 0 3px 1.5px #e0e0e0;
   background-color: white;
-  .scaler-plus {
+
+  .plus {
     position: absolute;
     top: 11px;
     left: 12px;
   }
-  .scaler-minus {
+  .minus {
     position: absolute;
     left: 12px;
     bottom: 11px;

@@ -14,7 +14,7 @@ export default function Button(props: Props) {
 
   return (
     <button className={className} type={"button"} data-type={props.type} onClick={props.onClick}>
-      <span>{props.children}</span>
+      {props.children}
     </button>
   );
 }
