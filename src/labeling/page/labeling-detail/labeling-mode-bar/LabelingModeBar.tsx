@@ -1,4 +1,4 @@
-import "./LabelingModeBar.scss";
+import styles from "./LabelingModeBar.module.scss";
 
 import React, { useEffect, useRef, useState } from "react";
 
@@ -49,7 +49,7 @@ export default function LabelingModeBar() {
   };
 
   return (
-    <div className="labeling-mode-bar" ref={refModeBtnList}>
+    <div className={styles.labelingModeBar} ref={refModeBtnList}>
       <Button className={"btn label-mode-btn active"} onClick={clickBtn} id={LabelMode.Select}>
         <CursorDefault />
       </Button>

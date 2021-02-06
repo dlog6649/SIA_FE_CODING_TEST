@@ -1,0 +1,36 @@
+.labelContextmenu {
+  display: none;
+  position: absolute;
+  width: 230px;
+  cursor: default;
+  border-radius: 5px;
+  background-color: #fbfbfb;
+  box-shadow: 1px 1px 5px 0 #b5b5b5;
+
+  .item {
+    padding: 10px 15px;
+
+    &.disabled {
+      color: #b8bdc7;
+    }
+
+    &:first-child {
+      border-bottom: 1px solid #d1d2d8;
+    }
+
+    &:hover {
+      background-color: #e0e3ea;
+    }
+
+    .itemName {
+      font-size: 0.91rem;
+    }
+
+    .itemShortcut {
+      float: right;
+      padding-top: 5px;
+      font-size: 0.7rem;
+      color: #717d9e;
+    }
+  }
+}

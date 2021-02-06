@@ -1,0 +1,22 @@
+html, body, #root, .app {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+li {
+  display: block;
+  text-align: unset;
+}
+
+ul {
+  list-style-type: none;
+  padding-inline-start: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+p, figure, dl, dt, dd, time, section, aside, header, nav, footer, main, div, ul, ol, li, span, hr, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+}

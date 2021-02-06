@@ -1,31 +1,33 @@
 import React, { useEffect } from "react";
+import styles from "./LabelCtxMenu.module.scss";
 
 export default function LabelCtxMenu() {
   useEffect(() => {
     console.log("LabelCtxMenu useEffect");
   });
 
+  // TODO:  label-contextmenu 클래스명 제거
   return (
-    <div className="label-contextmenu">
-      <div id="edit" className="item edit">
-        <span className="item-name">Edit Class</span>
-        <span className="item-shortcut">(TBD)</span>
+    <div className={styles.labelContextmenu + " label-contextmenu"}>
+      <div id={"edit"} className={styles.item + " edit"}>
+        <span className={styles.itemName}>Edit Class</span>
+        <span className={styles.itemShortcut}>(TBD)</span>
       </div>
-      <div id="cut" className="item cut">
-        <span className="item-name">Cut</span>
-        <span className="item-shortcut">Ctrl + X</span>
+      <div id={"cut"} className={styles.item + " cut"}>
+        <span className={styles.itemName}>Cut</span>
+        <span className={styles.itemShortcut}>Ctrl + X</span>
       </div>
-      <div id="copy" className="item copy">
-        <span className="item-name">Copy</span>
-        <span className="item-shortcut">Ctrl + C</span>
+      <div id={"copy"} className={styles.item + " copy"}>
+        <span className={styles.itemName}>Copy</span>
+        <span className={styles.itemShortcut}>Ctrl + C</span>
       </div>
-      <div id="paste" className="item paste">
-        <span className="item-name">Paste</span>
-        <span className="item-shortcut">Ctrl + V</span>
+      <div id={"paste"} className={styles.item + " paste"}>
+        <span className={styles.itemName}>Paste</span>
+        <span className={styles.itemShortcut}>Ctrl + V</span>
       </div>
-      <div id="delete" className="item delete">
-        <span className="item-name">Delete</span>
-        <span className="item-shortcut">Del</span>
+      <div id={"delete"} className={styles.item + " delete"}>
+        <span className={styles.itemName}>Delete</span>
+        <span className={styles.itemShortcut}>Del</span>
       </div>
     </div>
   );

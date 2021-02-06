@@ -1,4 +1,4 @@
-.labeling-home {
+.labelingHome {
   display: grid;
   grid-template-rows: 124px auto;
   padding: 50px 100px;
@@ -9,7 +9,7 @@
     font-weight: bold;
     color: #0f1350;
   }
-  > .card-item-box {
+  > .cardItemBox {
     display: flex;
     flex-flow: row wrap;
   }

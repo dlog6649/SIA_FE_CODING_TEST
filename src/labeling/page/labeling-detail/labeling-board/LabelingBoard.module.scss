@@ -9,7 +9,7 @@ input[type=range] {
 }
 
 // LabelBoard
-.label-board {
+.labelBoard {
   flex: 1;
   display: flex;
   flex-flow: column nowrap;
@@ -20,7 +20,7 @@ input[type=range] {
   * LabelBoard
   */
 // .viewer .viewer-content .label-board{display: flex; flex: 1; flex-direction: column;}
-.label-input {
+.labelInput {
   width: 120px;
   border-radius: 15px;
   border: 2px solid lightgray;
@@ -31,7 +31,7 @@ input[type=range] {
   }
 }
 
-.label-board-scaler {
+.labelBoardScaler {
   position: fixed;
   bottom: 50px;
   right: 32px;
@@ -51,7 +51,7 @@ input[type=range] {
     left: 12px;
     bottom: 11px;
   }
-  .scaler-range {
+  .scalerRange {
     position: relative;
     top: 122px;
     left: 16px;
@@ -67,37 +67,6 @@ input[type=range] {
       height: 15px; 
       cursor: pointer; background: #333333;
       border-radius: 10px;
-    }
-  }
-}
-
-.label-contextmenu{
-  display: none;
-  position: absolute;
-  width: 230px;
-  cursor: default;
-  border-radius: 5px;
-  background-color: #fbfbfb;
-  box-shadow: 1px 1px 5px 0 #b5b5b5;
-  .item{
-    padding: 10px 15px;
-    &.disabled{
-      color: #b8bdc7;
-    }
-    &:first-child{
-      border-bottom: 1px solid #d1d2d8;
-    }
-    &:hover{
-      background-color: #e0e3ea;
-    }
-    .item-name{
-      font-size: 0.91rem;
-    }
-    .item-shortcut{
-      float: right;
-      padding-top: 5px;
-      font-size: 0.7rem;
-      color: #717d9e;
     }
   }
 }

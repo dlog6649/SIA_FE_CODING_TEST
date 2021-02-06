@@ -24,7 +24,7 @@ export const initialize = () => {
 
   buildContextmenu();
 
-  document.querySelector(".scaler-range").addEventListener("change", imgScaleSliderEvent);
+  // document.querySelector(".scaler-range").addEventListener("change", imgScaleSliderEvent);
 
   const labels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("label"));
   labelNS.curId = !labels.length ? 0 : parseInt(labels[labels.length - 1].id) + 1;

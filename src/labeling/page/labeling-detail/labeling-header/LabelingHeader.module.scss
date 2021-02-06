@@ -1,9 +1,9 @@
-.labeling-header {
+.labelingHeader {
   display: grid;
   grid-template-columns: 85px 100px auto;
   grid-template-rows: 85px;
-  > .section-history {
-    > .history-btn {
+  > .sectionHistory {
+    > .historyBtn {
       width: 50%;
       height: 100%;
       &:nth-child(2) > span > img {
@@ -11,7 +11,7 @@
       }
     }
   }
-  > .section-title {
+  > .sectionTitle {
     margin: auto 50px;
     font-size: 2rem;
     font-weight: bold;

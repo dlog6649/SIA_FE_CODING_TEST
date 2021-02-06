@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import Card from "../../../common/components/card/Card";
-import "./LabelingHome.scss";
+import styles from "./LabelingHome.module.scss";
 import * as routes from "../../../routes";
 
 const title = "Labeling Home";
@@ -44,9 +44,9 @@ export default function LabelingHome() {
   };
 
   return (
-    <div className={"labeling-home"}>
-      <header className={"title"}>{title}</header>
-      <main className={"card-item-box"}>
+    <div className={styles.labelingHome}>
+      <header className={styles.title}>{title}</header>
+      <main className={styles.cardItemBox}>
         {sceneList.map((scene: Scene) => (
           <Card key={scene.id} id={scene.id} text={scene.title} url={scene.url} thumbnailUrl={scene.thumbnailUrl} onClick={viewScene(scene.id)} />
         ))}

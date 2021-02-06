@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import * as routes from "../../../../routes";
 import Button from "../../../../common/components/button/Button";
 
-import "./LabelingHeader.scss";
+import styles from "./LabelingHeader.module.scss";
 import { Home, ArrowLeft, ArrowRight } from "../../../../common/asset/icons";
 
 export default function LabelingHeader() {
@@ -17,19 +17,19 @@ export default function LabelingHeader() {
   const imgTitle = "adflakjwflajwelfklawklgjwgj";
 
   return (
-    <div className={"labeling-header"}>
+    <div className={styles.labelingHeader}>
       <Button className={"home-btn"} type={"ghost"} onClick={() => history.push(routes.labeling)}>
         <Home />
       </Button>
-      <section className={"section-history"}>
-        <Button className={"history-btn"}>
+      <section className={styles.sectionHistory}>
+        <Button className={styles.historyBtn}>
           <ArrowLeft />
         </Button>
-        <Button className={"history-btn"}>
+        <Button className={styles.historyBtn}>
           <ArrowRight />
         </Button>
       </section>
-      <section className={"section-title"} title={imgTitle}>
+      <section className={styles.sectionTitle} title={imgTitle}>
         {imgTitle}
       </section>
     </div>

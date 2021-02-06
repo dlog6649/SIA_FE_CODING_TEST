@@ -8,7 +8,7 @@ import LabelCtxMenu from "./LabelCtxMenu";
 import { RootState } from "../../../../index";
 import { Plus, Minus } from "../../../../common/asset/icons";
 
-import "./LabelingBoard.scss";
+import styles from "./LabelingBoard.module.scss";
 
 export let dispatch: any;
 export let _setScale: React.Dispatch<React.SetStateAction<number>>;
@@ -80,7 +80,7 @@ export default function LabelBoardContainer() {
   };
 
   return (
-    <div className="label-board">
+    <div className={styles.labelBoard}>
       <svg id="svg" width="100%" height="100%" data-testid="testSvg">
         <defs>
           <filter id="f1">
@@ -88,20 +88,20 @@ export default function LabelBoardContainer() {
           </filter>
         </defs>
       </svg>
-      <div className="label-board-scaler">
-        <Plus className={"plus"} />
+      <div className={styles.labelBoardScaler}>
+        <Plus className={styles.plus} />
         <input
-          className="scaler-range"
-          type="range"
-          data-testid="testScaler"
+          className={styles.scalerRange}
+          type={"range"}
+          data-testid={"testScaler"}
           value={scale}
           onInput={changeSliderCSS}
           onChange={changeScale}
-          min="0.1"
-          max="2"
-          step="0.1"
+          min={"0.1"}
+          max={"2"}
+          step={"0.1"}
         />
-        <Minus className={"minus"} />
+        <Minus className={styles.minus} />
       </div>
       <LabelCtxMenu />
     </div>

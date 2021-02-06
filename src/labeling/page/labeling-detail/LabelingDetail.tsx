@@ -8,7 +8,7 @@ import LabelingModeBar from "./labeling-mode-bar/LabelingModeBar";
 import LabelListBox from "./label-list-box/LabelListBox";
 import LabelingBoard from "./labeling-board/LabelingBoard";
 import * as routes from "../../../routes";
-import "./LabelingDetail.scss";
+import styles from "./LabelingDetail.module.scss";
 
 /**
  * TODO: SVG 보드 TS로 변경
@@ -26,11 +26,11 @@ export default function LabelingDetail() {
   const imgTitle = "adflakjwflajwelfklawklgjwgj";
 
   return (
-    <div className={"labeling-detail"}>
-      <header className={"header"}>
+    <div className={styles.labelingDetail}>
+      <header className={styles.header}>
         <LabelingHeader />
       </header>
-      <aside className={"mode-bar"}>
+      <aside className={styles.modeBar}>
         <LabelingModeBar />
       </aside>
       <aside className={"list-box"}>
