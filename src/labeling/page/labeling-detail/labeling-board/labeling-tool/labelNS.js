@@ -1,4 +1,4 @@
-import { LabelMode } from "../../../../modules/annotator";
+import { LabelMode } from "../../../../../common/modules/annotator";
 
 const labelNS = {
   //   9

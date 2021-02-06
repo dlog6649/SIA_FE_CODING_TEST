@@ -2,12 +2,12 @@ import "./LabelingModeBar.scss";
 
 import React, { useEffect, useRef, useState } from "react";
 
-import { changeMode, LabelMode } from "../../../modules/annotator";
+import { changeMode, LabelMode } from "../../../../common/modules/annotator";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../index";
+import { RootState } from "../../../../index";
 
-import Button from "../../../components/button/Button";
-import { CursorDefault, Square } from "../../../asset/icons";
+import Button from "../../../../common/components/button/Button";
+import { CursorDefault, Square } from "../../../../common/asset/icons";
 
 export default function LabelingModeBar() {
   const [mode, setMode] = useState<LabelMode>(LabelMode.Select);

@@ -1,4 +1,4 @@
-import { parseTransform } from "../../../../util/common";
+import { parseTransform } from "../../../../../common/utils/common";
 import * as LabelMain from "./LabelMain";
 import labelNS from "./labelNS";
 

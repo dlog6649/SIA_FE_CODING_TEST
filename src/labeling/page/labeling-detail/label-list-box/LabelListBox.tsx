@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { LabelMode, selectLabels } from "../../../modules/annotator";
-import { RootState } from "../../../index";
+import { LabelMode, selectLabels } from "../../../../common/modules/annotator";
+import { RootState } from "../../../../index";
 
 import "./LabelListBox.scss";
-import { Left } from "../../../asset/icons";
+import { Left } from "../../../../common/asset/icons";
 
 const compareIds = (_ids: Array<number>) => {
   const ids = [] as Array<number>;

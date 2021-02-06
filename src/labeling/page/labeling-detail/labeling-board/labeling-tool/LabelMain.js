@@ -1,8 +1,8 @@
 import { dispatch, _setScale } from "../LabelingBoard";
-import { parseTransform, throttle, pauseEvent } from "../../../../util/common";
+import { parseTransform, throttle, pauseEvent } from "../../../../../common/utils/common";
 import { initializeLabel, createLabel, createInputBox, createAnchors, labelBodyMouseDownEvent } from "./LabelCreator";
 import { hideDefaultContextmenu, hideContextmenu, buildContextmenu, showContextmenu } from "./LabelMenu";
-import { LabelMode, selectLabels, createLabels, updateLabels, updateImgLabels, deleteLabels } from "../../../../modules/annotator";
+import { LabelMode, selectLabels, createLabels, updateLabels, updateImgLabels, deleteLabels } from "../../../../../common/modules/annotator";
 import labelNS from "./labelNS";
 
 export const initialize = () => {

@@ -1,11 +1,11 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 
-import * as routes from "../../../Routes";
-import Button from "../../../components/button/Button";
+import * as routes from "../../../../routes";
+import Button from "../../../../common/components/button/Button";
 
 import "./LabelingHeader.scss";
-import { Home, ArrowLeft, ArrowRight } from "../../../asset/icons";
+import { Home, ArrowLeft, ArrowRight } from "../../../../common/asset/icons";
 
 export default function LabelingHeader() {
   const history = useHistory();
@@ -18,7 +18,7 @@ export default function LabelingHeader() {
 
   return (
     <div className={"labeling-header"}>
-      <Button className={"home-btn"} type={"ghost"} onClick={() => history.push(routes.labelingHome)}>
+      <Button className={"home-btn"} type={"ghost"} onClick={() => history.push(routes.labeling)}>
         <Home />
       </Button>
       <section className={"section-history"}>

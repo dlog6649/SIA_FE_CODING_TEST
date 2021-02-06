@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import Card from "../../components/card/Card";
-import * as routes from "../../Routes";
+import Card from "../../../common/components/card/Card";
 import "./LabelingHome.scss";
+import * as routes from "../../../routes";
 
 const title = "Labeling Home";
 const url = "https://jsonplaceholder.typicode.com/photos";
@@ -12,7 +12,7 @@ const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 type Scene = {
   albumId: number;
-  id: number;
+  id: string;
   title: string;
   url: string;
   thumbnailUrl: string;
@@ -36,11 +36,11 @@ export default function LabelingHome() {
       .catch((error) => alert(`fetch failed\nerror: ${error}`));
   }, []);
 
-  const viewScene = (evt: any) => {
+  const viewScene = (id: string) => (evt: React.MouseEvent<HTMLElement, MouseEvent>) => {
     const url = evt.currentTarget.dataset.url;
     const title = evt.currentTarget.dataset.title;
     // dispatch(viewImage({ url: url, title: title }));
-    history.push(routes.labelingView); // 이것을 /view:id로 또는 <Link /> 컴포넌트로 하는것에 대해 고찰.
+    history.push(routes.buildLabelingDetailPath(id)); //TODO: 이미지 아이디가 들어가도록 변경
   };
 
   return (
@@ -48,7 +48,7 @@ export default function LabelingHome() {
       <header className={"title"}>{title}</header>
       <main className={"card-item-box"}>
         {sceneList.map((scene: Scene) => (
-          <Card key={scene.id} id={scene.id} text={scene.title} url={scene.url} thumbnailUrl={scene.thumbnailUrl} onClick={viewScene} />
+          <Card key={scene.id} id={scene.id} text={scene.title} url={scene.url} thumbnailUrl={scene.thumbnailUrl} onClick={viewScene(scene.id)} />
         ))}
       </main>
     </div>

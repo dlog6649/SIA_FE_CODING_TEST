@@ -6,7 +6,7 @@ import logger from "redux-logger";
 
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { annotatorReducer } from "./modules/annotator";
+import { annotatorReducer } from "./common/modules/annotator";
 
 const rootReducer = combineReducers({
   annotatorReducer,

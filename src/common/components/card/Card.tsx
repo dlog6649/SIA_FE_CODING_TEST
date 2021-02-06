@@ -13,9 +13,9 @@ type Props = {
 
 export default function Card(props: Props) {
   return (
-    <div className={"card"} title={props.text} onClick={props.onClick} data-id={props.id} data-url={props.url} data-title={props.text}>
+    <figure className={"card"} title={props.text} onClick={props.onClick} data-id={props.id} data-url={props.url} data-title={props.text}>
       <img className={"thumbnail"} src={props.thumbnailUrl} />
       <div className={"text"}>{props.text}</div>
-    </div>
+    </figure>
   );
 }

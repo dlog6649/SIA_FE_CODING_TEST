@@ -1,6 +1,6 @@
 import { createReducer, createSelector } from "@reduxjs/toolkit";
 
-import { parseTransform, getLabelState } from "../../util/common";
+import { parseTransform, getLabelState } from "../../utils/common";
 import * as actions from "./actions";
 import { AnnotatorState, Images, Labels, LabelMode } from "./types";
 

@@ -1,6 +1,6 @@
 import * as LabelMain from "./LabelMain";
 import labelNS from "./labelNS";
-import { LabelMode } from "../../../../modules/annotator";
+import { LabelMode } from "../../../../../common/modules/annotator";
 
 export const hideDefaultContextmenu = (e) => {
   e.preventDefault();

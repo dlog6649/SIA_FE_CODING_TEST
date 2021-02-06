@@ -5,8 +5,8 @@ import * as LabelMain from "./labeling-tool/LabelMain";
 import { redrawImage, redrawLabels } from "./labeling-tool/LabelCreator";
 import { compareIds, compareImage, compareLabels } from "./labeling-tool/LabelCompare";
 import LabelCtxMenu from "./LabelCtxMenu";
-import { RootState } from "../../../index";
-import { Plus, Minus } from "../../../asset/icons";
+import { RootState } from "../../../../index";
+import { Plus, Minus } from "../../../../common/asset/icons";
 
 import "./LabelingBoard.scss";
 
