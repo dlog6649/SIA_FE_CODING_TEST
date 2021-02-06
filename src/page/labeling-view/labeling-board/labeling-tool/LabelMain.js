@@ -1,8 +1,8 @@
-import { dispatch, _setScale } from "../component/organisms/labeling-board/LabelingBoard";
-import { parseTransform, throttle, pauseEvent } from "../util/common";
+import { dispatch, _setScale } from "../LabelingBoard";
+import { parseTransform, throttle, pauseEvent } from "../../../../util/common";
 import { initializeLabel, createLabel, createInputBox, createAnchors, labelBodyMouseDownEvent } from "./LabelCreator";
 import { hideDefaultContextmenu, hideContextmenu, buildContextmenu, showContextmenu } from "./LabelMenu";
-import { LabelMode, selectLabels, createLabels, updateLabels, updateImgLabels, deleteLabels } from "../modules/annotator";
+import { LabelMode, selectLabels, createLabels, updateLabels, updateImgLabels, deleteLabels } from "../../../../modules/annotator";
 import labelNS from "./labelNS";
 
 export const initialize = () => {

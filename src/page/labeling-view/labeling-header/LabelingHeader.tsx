@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 
 import * as routes from "../../../Routes";
-import Button from "../../atoms/button/Button";
+import Button from "../../../components/button/Button";
 
 import "./LabelingHeader.scss";
 import { Home, ArrowLeft, ArrowRight } from "../../../asset/icons";

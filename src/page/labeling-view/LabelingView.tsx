@@ -4,12 +4,17 @@ import { useHistory, Link } from "react-router-dom";
 
 import { RootState } from "../../index";
 import * as routes from "../../Routes";
-import LabelingHeader from "../../component/organisms/labeling-header/LabelingHeader";
-import LabelingModeBar from "../../component/organisms/labeling-mode-bar/LabelingModeBar";
-import LabelListBox from "../../component/organisms/label-list-box/LabelListBox";
-import LabelingBoard from "../../component/organisms/labeling-board/LabelingBoard";
+import LabelingHeader from "./labeling-header/LabelingHeader";
+import LabelingModeBar from "./labeling-mode-bar/LabelingModeBar";
+import LabelListBox from "./label-list-box/LabelListBox";
+import LabelingBoard from "./labeling-board/LabelingBoard";
 
 import "./LabelingView.scss";
+
+/**
+ * TODO: SVG 보드 TS로 변경
+ * TODO: canvas로 변경
+ */
 
 export default function LabelingView() {
   const history = useHistory();

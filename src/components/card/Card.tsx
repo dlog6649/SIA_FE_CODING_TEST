@@ -1,7 +1,8 @@
 import React from "react";
 
-import "./CardItem.scss";
+import "./Card.scss";
 
+// TODO: HTMLProps 상속
 type Props = {
   id: number | string;
   text: string;
@@ -10,9 +11,9 @@ type Props = {
   onClick?: any;
 };
 
-export default function CardItem(props: Props) {
+export default function Card(props: Props) {
   return (
-    <div className={"card-item"} title={props.text} onClick={props.onClick} data-id={props.id} data-url={props.url} data-title={props.text}>
+    <div className={"card"} title={props.text} onClick={props.onClick} data-id={props.id} data-url={props.url} data-title={props.text}>
       <img className={"thumbnail"} src={props.thumbnailUrl} />
       <div className={"text"}>{props.text}</div>
     </div>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import * as LabelMain from "../../../labeling-tool/LabelMain";
-import { redrawImage, redrawLabels } from "../../../labeling-tool/LabelCreator";
-import { compareIds, compareImage, compareLabels } from "../../../labeling-tool/LabelCompare";
+import * as LabelMain from "./labeling-tool/LabelMain";
+import { redrawImage, redrawLabels } from "./labeling-tool/LabelCreator";
+import { compareIds, compareImage, compareLabels } from "./labeling-tool/LabelCompare";
 import LabelCtxMenu from "./LabelCtxMenu";
 import { RootState } from "../../../index";
 import { Plus, Minus } from "../../../asset/icons";

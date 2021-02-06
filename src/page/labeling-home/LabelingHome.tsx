@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import CardItem from "../../component/molecules/card-item/CardItem";
+import Card from "../../components/card/Card";
 import * as routes from "../../Routes";
 import "./LabelingHome.scss";
 
@@ -48,7 +48,7 @@ export default function LabelingHome() {
       <header className={"title"}>{title}</header>
       <main className={"card-item-box"}>
         {sceneList.map((scene: Scene) => (
-          <CardItem key={scene.id} id={scene.id} text={scene.title} url={scene.url} thumbnailUrl={scene.thumbnailUrl} onClick={viewScene} />
+          <Card key={scene.id} id={scene.id} text={scene.title} url={scene.url} thumbnailUrl={scene.thumbnailUrl} onClick={viewScene} />
         ))}
       </main>
     </div>

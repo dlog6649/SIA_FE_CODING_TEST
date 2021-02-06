@@ -6,7 +6,7 @@ import { changeMode, LabelMode } from "../../../modules/annotator";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../index";
 
-import Button from "../../../component/atoms/button/Button";
+import Button from "../../../components/button/Button";
 import { CursorDefault, Square } from "../../../asset/icons";
 
 export default function LabelingModeBar() {

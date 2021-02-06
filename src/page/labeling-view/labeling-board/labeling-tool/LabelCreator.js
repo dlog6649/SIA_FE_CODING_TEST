@@ -1,8 +1,8 @@
-import { dispatch } from "../component/organisms/labeling-board/LabelingBoard";
-import { parseTransform } from "../util/common";
+import { dispatch } from "../LabelingBoard";
+import { parseTransform } from "../../../../util/common";
 import * as LabelMain from "./LabelMain";
 import labelNS from "./labelNS";
-import { LabelMode, updateLabels } from "../modules/annotator";
+import { LabelMode, updateLabels } from "../../../../modules/annotator";
 
 export const redrawImage = (url, image) => {
   if (document.querySelector("#img")) {
