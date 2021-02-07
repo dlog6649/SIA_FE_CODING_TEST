@@ -6,10 +6,16 @@ import { changeMode, LabelMode } from "../../../../common/modules/annotator";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../index";
 
+import cn from "classnames";
+
 import Button from "../../../../common/components/button/Button";
 import { CursorDefault, Square } from "../../../../common/asset/icons";
 
-export default function LabelingModeBar() {
+type Props = {
+  className?: string;
+};
+
+export default function LabelingModeBar(props: Props) {
   const [mode, setMode] = useState<LabelMode>(LabelMode.Select);
   const refModeBtnList = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
@@ -49,13 +55,13 @@ export default function LabelingModeBar() {
   };
 
   return (
-    <div className={styles.labelingModeBar} ref={refModeBtnList}>
+    <aside className={cn(styles.labelingModeBar, props.className)} ref={refModeBtnList}>
       <Button className={"btn label-mode-btn active"} onClick={clickBtn} id={LabelMode.Select}>
         <CursorDefault />
       </Button>
       <Button className={"btn label-mode-btn"} onClick={clickBtn} id={LabelMode.Create}>
         <Square />
       </Button>
-    </div>
+    </aside>
   );
 }

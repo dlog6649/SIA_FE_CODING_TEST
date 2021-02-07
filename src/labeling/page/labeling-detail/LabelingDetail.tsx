@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
 
@@ -9,36 +9,47 @@ import LabelListBox from "./label-list-box/LabelListBox";
 import LabelingBoard from "./labeling-board/LabelingBoard";
 import * as routes from "../../../routes";
 import styles from "./LabelingDetail.module.scss";
+import { RouteComponentProps } from "react-router";
+import { AsyncStatus } from "../../../common/modules/saga-util";
+import { Image } from "../../modules/labeling";
 
 /**
  * TODO: SVG 보드 TS로 변경
  * TODO: canvas로 변경
  */
 
-export default function LabelingDetail() {
-  console.log("hey");
+type Props = {
+  id: string;
+};
+
+export default function LabelingDetail(props: RouteComponentProps<Props>) {
+  const [image, setImage] = useState<Image | null>(null);
   const history = useHistory();
-  // const imgTitle = useSelector((state: RootState) =>
-  //   state.annotatorReducer.images[state.annotatorReducer.currentImgURL] === undefined
-  //     ? ""
-  //     : state.annotatorReducer.images[state.annotatorReducer.currentImgURL].title,
-  // );
-  const imgTitle = "adflakjwflajwelfklawklgjwgj";
+  const imageListObject = useSelector((state: RootState) => state.labelingReducer.API.getImageList);
+
+  useEffect(() => {
+    if (!imageListObject) return;
+    const { status, payload } = imageListObject;
+    switch (status) {
+      case AsyncStatus.Request:
+        break;
+      case AsyncStatus.Success:
+        const imageList = payload.slice(0, 12) as Image[];
+        const image = imageList.find((scene) => scene.id === Number(props.match.params.id));
+        setImage(image || null);
+        break;
+      case AsyncStatus.Failure:
+        setImage(null);
+        break;
+    }
+  }, [imageListObject]);
 
   return (
     <div className={styles.labelingDetail}>
-      <header className={styles.header}>
-        <LabelingHeader />
-      </header>
-      <aside className={styles.modeBar}>
-        <LabelingModeBar />
-      </aside>
-      <aside className={"list-box"}>
-        <LabelListBox />
-      </aside>
-      <main className={"board"}>
-        <LabelingBoard />
-      </main>
+      <LabelingHeader className={styles.header} title={image ? image.title : ""} />
+      <LabelingModeBar className={styles.modeBar} />
+      <LabelListBox className={styles.listBox} />
+      <LabelingBoard className={styles.board} imgUrl={image ? image.url : ""} />
     </div>
   );
 }

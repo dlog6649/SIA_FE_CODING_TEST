@@ -8,12 +8,18 @@ import LabelCtxMenu from "./LabelCtxMenu";
 import { RootState } from "../../../../index";
 import { Plus, Minus } from "../../../../common/asset/icons";
 
+import cn from "classnames";
 import styles from "./LabelingBoard.module.scss";
 
 export let dispatch: any;
 export let _setScale: React.Dispatch<React.SetStateAction<number>>;
 
-export default function LabelBoardContainer() {
+type Props = {
+  className?: string;
+  imgUrl: string;
+};
+
+export default function LabelBoard(props: Props) {
   const [scale, setScale] = useState<number>(1);
   const dispatcher = useDispatch();
   const mode = useSelector((state: RootState) => state.annotatorReducer.mode);
@@ -82,6 +88,7 @@ export default function LabelBoardContainer() {
   return (
     <div className={styles.labelBoard}>
       <svg id="svg" width="100%" height="100%" data-testid="testSvg">
+        <img src={props.imgUrl} />
         <defs>
           <filter id="f1">
             <feDropShadow dx="-1" dy="1" stdDeviation="2.5" floodColor="gray" />

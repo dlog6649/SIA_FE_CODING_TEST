@@ -7,17 +7,27 @@ import logger from "redux-logger";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { annotatorReducer } from "./common/modules/annotator";
+import { labelingReducer, labelingSaga } from "./labeling/modules/labeling";
+import { all } from "redux-saga/effects";
+import createSagaMiddleWare from "redux-saga";
 
 const rootReducer = combineReducers({
   annotatorReducer,
+  labelingReducer,
 });
+export type RootState = ReturnType<typeof rootReducer>;
+
+const saga = createSagaMiddleWare();
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: getDefaultMiddleware().concat(logger),
+  middleware: getDefaultMiddleware().concat(logger).concat(saga),
 });
 
-export type RootState = ReturnType<typeof rootReducer>;
+function* rootSaga() {
+  yield all([labelingSaga()]);
+}
+saga.run(rootSaga);
 
 ReactDOM.render(
   <Provider store={store}>

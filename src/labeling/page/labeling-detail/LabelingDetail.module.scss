@@ -1,27 +1,17 @@
-// .labeling-view {
-//   display: flex;
-//   flex-flow: column nowrap;
-//   height: 100%;
-//   > .viewer-content {
-//     flex: 1 1 0;
-//     display: flex;
-//     flex-flow: row nowrap;
-//     overflow: auto;
-//   }
-// }
-
 .labelingDetail {
   display: grid;
   grid-template-columns: 65px minmax(auto, 300px) auto;
   grid-template-rows: 85px auto;
   height: 100%;
+
   > .header {
     grid-column: 1/4;
-    border-bottom: 1px solid lightgray;
   }
+
   > .modeBar {
     border-right: 1px solid lightgray;
   }
+
   > .labelingContent {
 
   }

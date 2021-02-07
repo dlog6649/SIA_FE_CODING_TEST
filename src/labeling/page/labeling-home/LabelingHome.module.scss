@@ -2,15 +2,25 @@
   display: grid;
   grid-template-rows: 124px auto;
   padding: 50px 100px;
-  > .title {
+
+  > h1.title {
     align-self: center;
     margin-left: 15px;
     font-size: 2.5rem;
-    font-weight: bold;
-    color: #0f1350;
+    color: var(--main-color);
   }
+
   > .cardItemBox {
     display: flex;
     flex-flow: row wrap;
+
+    > h2 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100px;
+      color: var(--main-color);
+    }
   }
 }

@@ -6,7 +6,7 @@ export default function LabelCtxMenu() {
     console.log("LabelCtxMenu useEffect");
   });
 
-  // TODO:  label-contextmenu 클래스명 제거
+  // TODO:  label-contextmenu, edit,cut... 클래스명 제거
   return (
     <div className={styles.labelContextmenu + " label-contextmenu"}>
       <div id={"edit"} className={styles.item + " edit"}>

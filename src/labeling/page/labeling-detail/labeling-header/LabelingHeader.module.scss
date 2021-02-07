@@ -1,20 +1,23 @@
 .labelingHeader {
-  display: grid;
-  grid-template-columns: 85px 100px auto;
-  grid-template-rows: 85px;
-  > .sectionHistory {
+  display: flex;
+  flex-flow: row nowrap;
+  border-bottom: 1px solid lightgray;
+
+  > section.history {
     > .historyBtn {
       width: 50%;
       height: 100%;
+
       &:nth-child(2) > span > img {
         transform: rotate(180deg);
       }
     }
   }
-  > .sectionTitle {
+
+  > h1 {
     margin: auto 50px;
     font-size: 2rem;
     font-weight: bold;
-    color: #0f1350;
+    color: var(--main-color);
   }
 }

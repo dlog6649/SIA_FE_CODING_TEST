@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { LabelMode, selectLabels } from "../../../../common/modules/annotator";
 import { RootState } from "../../../../index";
 
-import "./LabelListBox.scss";
+import cn from "classnames";
+import styles from "./LabelListBox.module.scss";
 import { Left } from "../../../../common/asset/icons";
 
 const compareIds = (_ids: Array<number>) => {
@@ -31,7 +32,11 @@ interface Label {
   data: { x: number; y: number; w: number; h: number; deg: number };
 }
 
-export default function LabelListContainer() {
+type Props = {
+  className?: string;
+};
+
+export default function LabelListBox(props: Props) {
   const refLabelList = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const mode = useSelector((state: RootState) => state.annotatorReducer.mode);
@@ -129,14 +134,14 @@ export default function LabelListContainer() {
   };
 
   return (
-    <div className="label-list-box" ref={refLabelList}>
-      <div className="label-list-controller">
+    <aside className={cn(styles.labelListBox, props.className)} ref={refLabelList}>
+      <div className={styles.labelListController}>
         <span>Labels</span>
-        <button className="btn label-list-btn" onClick={toggleLabelList} type="button">
+        <button className={styles.labelListBtn} onClick={toggleLabelList} type="button">
           <Left />
         </button>
       </div>
-      <ul className="label-list-root" style={{ display: "block" }} onMouseDown={selectLabel} />
-    </div>
+      <ul className={styles.labelListRoot} style={{ display: "block" }} onMouseDown={selectLabel} />
+    </aside>
   );
 }

@@ -1,56 +1,62 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
-
-import Card from "../../../common/components/card/Card";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "./LabelingHome.module.scss";
 import * as routes from "../../../routes";
-
-const title = "Labeling Home";
-const url = "https://jsonplaceholder.typicode.com/photos";
-const proxyurl = "https://cors-anywhere.herokuapp.com/";
-
-type Scene = {
-  albumId: number;
-  id: string;
-  title: string;
-  url: string;
-  thumbnailUrl: string;
-};
+import { GET_IMAGE_LIST, Image } from "../../modules/labeling/types";
+import { RootState } from "../../../index";
+import { AsyncStatus } from "../../../common/modules/saga-util";
+import Card from "../../../common/components/card/Card";
 
 export default function LabelingHome() {
-  const [sceneList, setSceneList] = useState<Scene[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [imageList, setImageList] = useState<Image[]>([]);
+  const imageListObject = useSelector((state: RootState) => state.labelingReducer.API.getImageList);
   const history = useHistory();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch(url)
-      .then((response) => response.json())
-      .then((json) => {
-        const photos: Scene[] = [];
-        for (let i = 0; i < 12; i++) {
-          photos.push(json[i]);
-        }
-        setSceneList(photos);
-      })
-      .catch((error) => alert(`fetch failed\nerror: ${error}`));
+    if (!imageListObject) return;
+    const { status, payload } = imageListObject;
+    switch (status) {
+      case AsyncStatus.Request:
+        setLoading(true);
+        break;
+      case AsyncStatus.Success:
+        setImageList(payload.slice(0, 12));
+        setLoading(false);
+        break;
+      case AsyncStatus.Failure:
+        setImageList([]);
+        setLoading(false);
+        alert(payload);
+        break;
+    }
+  }, [imageListObject]);
+
+  useEffect(() => {
+    dispatch({ type: GET_IMAGE_LIST });
   }, []);
 
-  const viewScene = (id: string) => (evt: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    const url = evt.currentTarget.dataset.url;
-    const title = evt.currentTarget.dataset.title;
+  const linkToLabelingDetail = (id: number) => () => {
     // dispatch(viewImage({ url: url, title: title }));
-    history.push(routes.buildLabelingDetailPath(id)); //TODO: 이미지 아이디가 들어가도록 변경
+    history.push(routes.buildLabelingDetailPath(id));
   };
 
   return (
-    <div className={styles.labelingHome}>
-      <header className={styles.title}>{title}</header>
-      <main className={styles.cardItemBox}>
-        {sceneList.map((scene: Scene) => (
-          <Card key={scene.id} id={scene.id} text={scene.title} url={scene.url} thumbnailUrl={scene.thumbnailUrl} onClick={viewScene(scene.id)} />
-        ))}
-      </main>
-    </div>
+    <main className={styles.labelingHome}>
+      <h1 className={styles.title}>{"Labeling Home"}</h1>
+      <div className={styles.cardItemBox}>
+        {isLoading ? (
+          <h2>{"Loading..."}</h2>
+        ) : !imageList.length ? (
+          <h2>{"No Data"}</h2>
+        ) : (
+          imageList.map((scene: Image) => (
+            <Card thumbnailUrl={scene.thumbnailUrl} text={scene.title} onClick={linkToLabelingDetail(scene.id)} key={scene.id} />
+          ))
+        )}
+      </div>
+    </main>
   );
 }

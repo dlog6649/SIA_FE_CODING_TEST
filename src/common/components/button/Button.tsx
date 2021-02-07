@@ -1,5 +1,6 @@
 import React, { ReactChildren, useEffect } from "react";
-import "./Button.scss";
+import styles from "./Button.module.scss";
+import cn from "classnames";
 
 type Props = {
   id?: string | number;
@@ -10,10 +11,8 @@ type Props = {
 };
 
 export default function Button(props: Props) {
-  const className = !props.className ? "btn" : "btn " + props.className;
-
   return (
-    <button className={className} type={"button"} data-type={props.type} onClick={props.onClick}>
+    <button className={cn(styles.button, props.className)} type={"button"} data-type={props.type} onClick={props.onClick}>
       {props.children}
     </button>
   );
