@@ -1,65 +1,67 @@
-import { put } from "redux-saga/effects";
+import { put } from "redux-saga/effects"
 
-export type API = {
-  API: {
-    [key: string]: {
-      status: AsyncStatus;
-      payload: any | Error | null;
-    };
-  };
-};
+export const initAsyncState: AsyncState<any> = {
+  isLoading: false,
+  data: null,
+  error: null,
+}
 
-export const Api: API = {
-  API: {},
-};
+export type AsyncState<D> = {
+  isLoading: boolean
+  data: D | null
+  error: Error | null
+}
 
-export enum AsyncStatus {
-  Request = "Request",
+export enum AsyncSuffix {
+  Loading = "Loading",
   Success = "Success",
   Failure = "Failure",
 }
 
-export function taker(type: string, fn: any, sagaOption: any) {
+export function taker(type: string, fn: (action: any) => Promise<any>, sagaOption: any) {
   return sagaOption(type, function* (action: any) {
-    yield put({ type: type + AsyncStatus.Request });
+    yield put({ type: type + AsyncSuffix.Loading })
     try {
-      const response = yield fn(action);
+      const response = yield fn(action)
       yield put({
-        type: type + AsyncStatus.Success,
-        payload: response,
-      });
+        type: type + AsyncSuffix.Success,
+        payload: response.data ? response.data : response,
+      })
     } catch (err) {
       yield put({
-        type: type + AsyncStatus.Failure,
+        type: type + AsyncSuffix.Failure,
         payload: err,
-      });
+      })
     }
-  });
+  })
 }
 
-const getApi = (type: string, status: AsyncStatus) => {
-  return type.substring(0, type.length - status.length);
-};
-
 export const handleAsyncAction = (state: any, action: any) => {
-  const [reducerName, type] = action.type.split("/");
-  if (type.includes(AsyncStatus.Request)) {
-    const api = getApi(type, AsyncStatus.Request);
-    state.API[api] = {
-      status: AsyncStatus.Request,
-      payload: state.API[api] ? state.API[api].payload : null,
-    };
-  } else if (type.includes(AsyncStatus.Success)) {
-    const api = getApi(type, AsyncStatus.Success);
-    state.API[api] = {
-      status: AsyncStatus.Success,
-      payload: action.payload,
-    };
-  } else if (type.includes(AsyncStatus.Failure)) {
-    const api = getApi(type, AsyncStatus.Failure);
-    state.API[api] = {
-      status: AsyncStatus.Failure,
-      payload: action.payload,
-    };
+  // ex) action.type: someReducer/getSomeDataLoading
+  const [reducerName, type] = action.type.split("/")
+  if (type.includes(AsyncSuffix.Loading)) {
+    const api = getApiString(type, AsyncSuffix.Loading)
+    state.api[api] = {
+      isLoading: true,
+      data: getData(state, api),
+      error: null,
+    }
+  } else if (type.includes(AsyncSuffix.Success)) {
+    const api = getApiString(type, AsyncSuffix.Success)
+    console.log(type, api, action)
+    state.api[api] = {
+      isLoading: false,
+      data: action.payload,
+      error: null,
+    }
+  } else if (type.includes(AsyncSuffix.Failure)) {
+    const api = getApiString(type, AsyncSuffix.Failure)
+    state.api[api] = {
+      isLoading: false,
+      data: getData(state, api),
+      error: action.payload,
+    }
   }
-};
+}
+const getApiString = (type: string, suffix: AsyncSuffix) => type.substring(0, type.length - suffix.length)
+const getData = (state: any, api: string) => state.api[api]?.data || null

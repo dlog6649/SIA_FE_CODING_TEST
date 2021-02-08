@@ -19,7 +19,7 @@ type Props = {
   imgUrl: string;
 };
 
-export default function LabelBoard(props: Props) {
+export default function LabelBoard(p: Props) {
   const [scale, setScale] = useState<number>(1);
   const dispatcher = useDispatch();
   const mode = useSelector((state: RootState) => state.annotatorReducer.mode);
@@ -88,7 +88,7 @@ export default function LabelBoard(props: Props) {
   return (
     <div className={styles.labelBoard}>
       <svg id="svg" width="100%" height="100%" data-testid="testSvg">
-        <img src={props.imgUrl} />
+        <img src={p.imgUrl} />
         <defs>
           <filter id="f1">
             <feDropShadow dx="-1" dy="1" stdDeviation="2.5" floodColor="gray" />

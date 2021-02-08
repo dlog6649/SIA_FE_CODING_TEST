@@ -10,10 +10,10 @@ type Props = {
   type?: string;
 };
 
-export default function Button(props: Props) {
+export default function Button(p: Props) {
   return (
-    <button className={cn(styles.button, props.className)} type={"button"} data-type={props.type} onClick={props.onClick}>
-      {props.children}
+    <button className={cn(styles.button, p.className)} type={"button"} data-type={p.type} onClick={p.onClick}>
+      {p.children}
     </button>
   );
 }

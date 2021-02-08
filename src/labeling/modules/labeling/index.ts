@@ -1,23 +1,26 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit"
 
-import { getImageListRequest, getImageListFailure, getImageListSuccess } from "./reducers";
-import { LabelingState } from "./types";
-import { Api } from "../../../common/modules/saga-util";
+import { getImageListLoading, getImageListFailure, getImageListSuccess } from "./reducers"
+import { LabelingState } from "./types"
+import { initAsyncState } from "../../../common/modules/saga-util"
 
 const initialState: LabelingState = {
-  ...Api,
-};
+  api: {
+    getImageList: initAsyncState,
+    getImage: initAsyncState,
+  },
+}
 
 export const labelingSlice = createSlice({
   name: "labeling",
   initialState,
   reducers: {
-    getImageListRequest,
+    getImageListLoading,
     getImageListSuccess,
     getImageListFailure,
   },
-});
+})
 
-export const labelingReducer = labelingSlice.reducer;
-export * from "./types";
-export * from "./saga";
+export const labelingReducer = labelingSlice.reducer
+export * from "./types"
+export * from "./saga"
