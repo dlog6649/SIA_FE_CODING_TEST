@@ -1,14 +1,11 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { useHistory } from "react-router-dom"
 
 import * as routes from "../../../../routes"
 import Button from "../../../../common/components/button/Button"
 
-import styles from "./LabelingHeader.module.scss"
-import { Home, ArrowLeft, ArrowRight } from "../../../../common/asset/icons"
-import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../../../../index"
-import { AsyncSuffix } from "../../../../common/modules/util"
+import styles from "./Header.module.scss"
+import { ArrowLeft, ArrowRight, Home } from "../../../../common/asset/icons"
 import cn from "classnames"
 
 type Props = {
@@ -16,11 +13,11 @@ type Props = {
   title: string
 }
 
-export default function LabelingHeader(p: Props) {
+export default function Header(p: Props) {
   const history = useHistory()
 
   return (
-    <header className={cn(styles.labelingHeader, p.className)}>
+    <header className={cn(styles.header, p.className)}>
       <Button className={"home-btn"} type={"ghost"} onClick={() => history.push(routes.labeling)}>
         <Home />
       </Button>

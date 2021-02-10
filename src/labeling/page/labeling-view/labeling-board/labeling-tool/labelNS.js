@@ -1,4 +1,4 @@
-import { LabelMode } from "../../../../../common/modules/annotator";
+import { LabelMode } from "../../../../../common/modules/annotator"
 
 const labelNS = {
   //   9
@@ -58,6 +58,6 @@ const labelNS = {
   cloneLabels: [],
   selectedHandler: null,
   anchor: null,
-};
+}
 
-export default labelNS;
+export default labelNS

@@ -1,14 +1,14 @@
-import React from "react";
-import cn from "classnames";
-import styles from "./Card.module.scss";
+import React from "react"
+import cn from "classnames"
+import styles from "./Card.module.scss"
 
 // TODO: HTMLProps 상속
 type Props = {
-  className?: string;
-  onClick?: any;
-  thumbnailUrl?: string;
-  text: string;
-};
+  className?: string
+  onClick?: any
+  thumbnailUrl?: string
+  text: string
+}
 
 export default function Card(props: Props) {
   return (
@@ -16,5 +16,5 @@ export default function Card(props: Props) {
       <img className={styles.thumbnail} src={props.thumbnailUrl} />
       <div className={styles.text}>{props.text}</div>
     </figure>
-  );
+  )
 }

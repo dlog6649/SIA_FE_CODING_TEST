@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 
 export function Minus(props: React.HTMLProps<HTMLSpanElement>) {
   return (
@@ -18,5 +18,5 @@ export function Minus(props: React.HTMLProps<HTMLSpanElement>) {
         <line x1="5" y1="12" x2="19" y2="12" />
       </svg>
     </span>
-  );
+  )
 }

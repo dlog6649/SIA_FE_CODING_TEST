@@ -17,7 +17,7 @@ export default function LabelingHome() {
   }, [])
 
   const linkToLabelingDetail = (id: number) => () => {
-    history.push(routes.buildLabelingDetailPath(id))
+    history.push(routes.buildLabelingViewPath(id))
   }
 
   return (

@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux"
 import { useHistory, Link } from "react-router-dom"
 
 import { RootState } from "../../../index"
-import LabelingHeader from "./labeling-header/LabelingHeader"
-import LabelingModeBar from "./labeling-mode-bar/LabelingModeBar"
-import LabelListBox from "./label-list-box/LabelListBox"
+import Header from "./header/Header"
+import ToolBar from "./tool-bar/ToolBar"
+import ListBox from "./list-box/ListBox"
 import LabelingBoard from "./labeling-board/LabelingBoard"
 import * as routes from "../../../routes"
-import styles from "./LabelingDetail.module.scss"
+import styles from "./LabelingView.module.scss"
 import { RouteComponentProps } from "react-router"
 import { AsyncSuffix } from "../../../common/modules/util"
 import { getImage, Image } from "../../modules/labeling"
@@ -22,7 +22,7 @@ type Props = {
   id: string
 }
 
-export default function LabelingDetail(p: RouteComponentProps<Props>) {
+export default function LabelingView(p: RouteComponentProps<Props>) {
   const { loading, data, error } = useSelector((state: RootState) => state.labelingReducer.api.getImage)
   const history = useHistory()
   const dispatch = useDispatch()
@@ -32,11 +32,11 @@ export default function LabelingDetail(p: RouteComponentProps<Props>) {
   }, [])
 
   return (
-    <div className={styles.labelingDetail}>
-      <LabelingHeader className={styles.header} title={data?.title || ""} />
-      <LabelingModeBar className={styles.modeBar} />
-      <LabelListBox className={styles.listBox} />
-      <LabelingBoard className={styles.board} imgUrl={data?.url || ""} />
+    <div className={styles.labelingView}>
+      <Header className={styles.headerPositioner} title={data?.title || ""} />
+      <ToolBar className={styles.toolBarPositioner} />
+      <ListBox className={styles.listBoxPositioner} />
+      <LabelingBoard imgUrl={data?.url || ""} />
     </div>
   )
 }

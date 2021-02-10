@@ -1,6 +1,6 @@
-import React from "react";
+import React from "react"
 
-import { IconBase } from "./IconBase";
+import { IconBase } from "./IconBase"
 
 export function Home(props: React.HTMLProps<HTMLSpanElement>) {
   return (
@@ -12,5 +12,5 @@ export function Home(props: React.HTMLProps<HTMLSpanElement>) {
         }
       />
     </span>
-  );
+  )
 }

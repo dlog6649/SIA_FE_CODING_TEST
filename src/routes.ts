@@ -1,2 +1,2 @@
-export const labeling = "/";
-export const buildLabelingDetailPath = (id: number) => `/${id}`;
+export const labeling = "/"
+export const buildLabelingViewPath = (id: number) => `/${id}`

@@ -18,14 +18,14 @@ export enum AsyncSuffix {
   Failure = "Failure",
 }
 
-export const taker = (sagaOption: any, type: string, fn: (action: any) => Promise<any>) =>
-  sagaOption(type, function* (action: any) {
+export function taker(sagaOption: any, type: string, fn: (action: any) => Promise<any>) {
+  return sagaOption(type, function* (action: any) {
     yield put({ type: `${type}/${AsyncSuffix.Loading}` })
     try {
       const response = yield fn(action)
       yield put({
         type: `${type}/${AsyncSuffix.Success}`,
-        payload: response.data ? response.data : response,
+        payload: response.data || response,
       })
     } catch (err) {
       yield put({
@@ -34,26 +34,30 @@ export const taker = (sagaOption: any, type: string, fn: (action: any) => Promis
       })
     }
   })
+}
 
-export const handleAsyncAction = (state: any, action: any) => {
+export function handleAsyncAction(state: any, action: any) {
   const [reducerName, type, suffix] = action.type.split("/")
-  suffix === AsyncSuffix.Loading
-    ? (state.api[type] = {
-        Loading: true,
+  switch (suffix) {
+    case AsyncSuffix.Loading:
+      state.api[type] = {
+        loading: true,
         data: state.api[type]?.data || null,
         error: null,
-      })
-    : suffix === AsyncSuffix.Success
-    ? (state.api[type] = {
-        Loading: false,
+      }
+      break
+    case AsyncSuffix.Success:
+      state.api[type] = {
+        loading: false,
         data: action.payload,
         error: null,
-      })
-    : suffix === AsyncSuffix.Failure
-    ? (state.api[type] = {
-        Loading: true,
+      }
+      break
+    case AsyncSuffix.Failure:
+      state.api[type] = {
+        loading: true,
         data: state.api[type]?.data || null,
         error: action.payload,
-      })
-    : null
+      }
+  }
 }

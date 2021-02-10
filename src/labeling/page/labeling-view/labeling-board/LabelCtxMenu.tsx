@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import styles from "./LabelCtxMenu.module.scss";
+import React, { useEffect } from "react"
+import styles from "./LabelCtxMenu.module.scss"
 
 export default function LabelCtxMenu() {
   useEffect(() => {
-    console.log("LabelCtxMenu useEffect");
-  });
+    console.log("LabelCtxMenu useEffect")
+  })
 
   // TODO:  label-contextmenu, edit,cut... 클래스명 제거
   return (
@@ -30,5 +30,5 @@ export default function LabelCtxMenu() {
         <span className={styles.itemShortcut}>Del</span>
       </div>
     </div>
-  );
+  )
 }

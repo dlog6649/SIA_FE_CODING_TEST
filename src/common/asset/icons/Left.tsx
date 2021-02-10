@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 
 export function Left(props: React.HTMLProps<HTMLSpanElement>) {
   return (
@@ -18,5 +18,5 @@ export function Left(props: React.HTMLProps<HTMLSpanElement>) {
         <polyline points="15 18 9 12 15 6"></polyline>
       </svg>
     </span>
-  );
+  )
 }

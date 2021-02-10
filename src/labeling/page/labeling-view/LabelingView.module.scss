@@ -1,18 +1,18 @@
-.labelingDetail {
+.labelingView {
   display: grid;
   grid-template-columns: 65px minmax(auto, 300px) auto;
   grid-template-rows: 85px auto;
   height: 100%;
 
-  > .header {
+  > .headerPositioner {
     grid-column: 1/4;
   }
 
-  > .modeBar {
+  > .toolBarPositioner {
     border-right: 1px solid lightgray;
   }
 
-  > .labelingContent {
+  > .listBoxPositioner {
 
   }
 }
