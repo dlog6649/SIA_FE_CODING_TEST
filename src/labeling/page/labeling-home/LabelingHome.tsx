@@ -3,17 +3,17 @@ import { useHistory } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import styles from "./LabelingHome.module.scss"
 import * as routes from "../../../routes"
-import { GET_IMAGE_LIST, Image } from "../../modules/labeling"
+import { getImage, getImageList, Image } from "../../modules/labeling"
 import { RootState } from "../../../index"
 import Card from "../../../common/components/card/Card"
 
 export default function LabelingHome() {
-  const { isLoading, data, error } = useSelector((state: RootState) => state.labelingReducer.api.getImageList)
+  const { loading, data, error } = useSelector((state: RootState) => state.labelingReducer.api.getImageList)
   const history = useHistory()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch({ type: GET_IMAGE_LIST })
+    dispatch(getImageList())
   }, [])
 
   const linkToLabelingDetail = (id: number) => () => {
@@ -24,7 +24,7 @@ export default function LabelingHome() {
     <main className={styles.labelingHome}>
       <h1 className={styles.title}>{"Labeling Home"}</h1>
       <div className={styles.cardItemBox}>
-        {isLoading ? (
+        {loading ? (
           <h2>{"Loading..."}</h2>
         ) : error ? (
           <h2>{error.toString()}</h2>

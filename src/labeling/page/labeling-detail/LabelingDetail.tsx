@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useHistory, Link } from "react-router-dom"
 
 import { RootState } from "../../../index"
@@ -10,8 +10,8 @@ import LabelingBoard from "./labeling-board/LabelingBoard"
 import * as routes from "../../../routes"
 import styles from "./LabelingDetail.module.scss"
 import { RouteComponentProps } from "react-router"
-import { AsyncSuffix } from "../../../common/modules/saga-util"
-import { Image } from "../../modules/labeling"
+import { AsyncSuffix } from "../../../common/modules/util"
+import { getImage, Image } from "../../modules/labeling"
 
 /**
  * TODO: SVG 보드 TS로 변경
@@ -23,33 +23,20 @@ type Props = {
 }
 
 export default function LabelingDetail(p: RouteComponentProps<Props>) {
-  const [image, setImage] = useState<Image | null>(null)
+  const { loading, data, error } = useSelector((state: RootState) => state.labelingReducer.api.getImage)
   const history = useHistory()
-  // const imageListObject = useSelector((state: RootState) => state.labelingReducer.API.getImageList)
+  const dispatch = useDispatch()
 
-  // useEffect(() => {
-  //   if (!imageListObject) return
-  //   const { status, payload } = imageListObject
-  //   switch (status) {
-  //     case AsyncSuffix.Loading:
-  //       break
-  //     case AsyncSuffix.Success:
-  //       const imageList = payload.slice(0, 12) as Image[]
-  //       const image = imageList.find((scene) => scene.id === Number(p.match.params.id))
-  //       setImage(image || null)
-  //       break
-  //     case AsyncSuffix.Failure:
-  //       setImage(null)
-  //       break
-  //   }
-  // }, [imageListObject])
+  useEffect(() => {
+    dispatch(getImage(p.match.params.id))
+  }, [])
 
   return (
     <div className={styles.labelingDetail}>
-      <LabelingHeader className={styles.header} title={image ? image.title : ""} />
+      <LabelingHeader className={styles.header} title={data?.title || ""} />
       <LabelingModeBar className={styles.modeBar} />
       <LabelListBox className={styles.listBox} />
-      <LabelingBoard className={styles.board} imgUrl={image ? image.url : ""} />
+      <LabelingBoard className={styles.board} imgUrl={data?.url || ""} />
     </div>
   )
 }

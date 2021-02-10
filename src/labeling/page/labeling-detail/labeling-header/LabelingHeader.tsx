@@ -8,7 +8,7 @@ import styles from "./LabelingHeader.module.scss"
 import { Home, ArrowLeft, ArrowRight } from "../../../../common/asset/icons"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../../../index"
-import { AsyncSuffix } from "../../../../common/modules/saga-util"
+import { AsyncSuffix } from "../../../../common/modules/util"
 import cn from "classnames"
 
 type Props = {
