@@ -1,0 +1,43 @@
+.scaler {
+  position: absolute;
+  width: 36px;
+  height: 170px;
+  border-radius: 6px;
+  background-color: white;
+  box-shadow: 0 0 3px 1.5px #e0e0e0;
+
+  > span[role=img] {
+    position: absolute;
+    left: 10px;
+    font-size: 16px;
+
+    &.plus {
+      top: 10px;
+    }
+
+    &.minus {
+      bottom: 10px;
+    }
+  }
+
+  > input[type=range] {
+    position: absolute;
+    top: 134px;
+    left: 16px;
+    width: 104px;
+    height: 3px;
+    transform: rotate(-90deg);
+    transform-origin: left;
+    cursor: pointer;
+    border-radius: 10px;
+    -webkit-appearance: none;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 3px;
+      height: 15px;
+      background: #131644;
+      border-radius: 10px;
+    }
+  }
+}
