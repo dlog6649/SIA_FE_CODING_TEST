@@ -1,31 +1,28 @@
 .button {
-  -webkit-transition: background-color 0.3s;
   transition: background-color 0.3s;
   cursor: pointer;
-  border: none;
+  border: 1px solid var(--main-color);
+  border-radius: 2px;
 
   &:focus {
-    outline: none;
+    outline-color: #0f1350;
+    outline-offset: 1px;
   }
 
   &:hover {
     background-color: #e6e9f3;
-    border: none;
   }
 
   &:active {
     background-color: #cad0e0;
 
     &:hover {
-      &[data-type="ghost"] {
-        background-color: rgba(0, 0, 0, 0);
-      }
-
-      background-color: #cad0e0;
+      //background-color: #cad0e0;
     }
   }
 
   &[data-type="ghost"] {
-    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    background-color: transparent;
   }
 }
