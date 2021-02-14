@@ -62,10 +62,10 @@ function useAsync<D, E, F extends PromiseFn<D>>(promiseFn: F) {
         type: "SUCCESS",
         data,
       })
-    } catch (e) {
+    } catch (err) {
       dispatch({
         type: "ERROR",
-        error: e,
+        error: err,
       })
     }
   }
