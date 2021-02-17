@@ -1,67 +1,39 @@
 import styles from "./ToolBar.module.scss"
-
-import React, { useEffect, useRef, useState } from "react"
-
-import { changeMode, LabelMode } from "../../../../common/modules/annotator"
-import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../../../../index"
-
+import React, { useState } from "react"
 import cn from "classnames"
-
 import Button from "../../../../common/components/button/Button"
-import { CursorDefault, Square } from "../../../../common/asset/icons"
+
+export type ToolBtn = {
+  key: string
+  icon: React.ReactNode
+}
 
 type Props = {
   className?: string
+  btnList: ToolBtn[]
+  defaultKey?: string
+  onChange: (key: string) => void
 }
 
-export default function ToolBar(props: Props) {
-  const [mode, setMode] = useState<LabelMode>(LabelMode.Select)
-  const refModeBtnList = useRef<HTMLDivElement>(null)
-  const dispatch = useDispatch()
-  const labelMode = useSelector((state: RootState) => state.annotatorReducer.mode)
+export default function ToolBar(p: Props) {
+  const [key, setKey] = useState<string>(p.defaultKey || p.btnList[0].key)
 
-  useEffect(() => {
-    console.log("LabelMode useEffect: [props.mode]")
-    const refModeBtnDiv = refModeBtnList.current
-    if (refModeBtnDiv === null) {
-      return
-    }
-    refModeBtnDiv.childNodes.forEach((modeBtnEle) => {
-      const modeBtn = modeBtnEle as HTMLButtonElement
-      labelMode === LabelMode[modeBtn.id] ? modeBtn.classList.add("active") : modeBtn.classList.remove("active")
-    })
-  }, [labelMode])
-
-  const clickBtn = (evt: React.FormEvent<HTMLButtonElement>) => {
-    const clickedMode: string = evt.currentTarget.id
-    if (mode === clickedMode) {
-      return
-    }
-    const refModeBtnDiv = refModeBtnList.current
-    if (refModeBtnDiv === null) {
-      return
-    }
-    refModeBtnDiv.childNodes.forEach((modeBtnEle) => {
-      const modeBtn = modeBtnEle as HTMLButtonElement
-      if (clickedMode === modeBtn.id) {
-        modeBtn.classList.add("active")
-      } else {
-        modeBtn.classList.remove("active")
-      }
-    })
-    setMode(LabelMode[clickedMode])
-    dispatch(changeMode({ mode: LabelMode[clickedMode] }))
+  const changeKey = (_key: string) => () => {
+    if (_key === key) return
+    setKey(_key)
+    p.onChange(_key)
   }
 
   return (
-    <aside className={cn(styles.toolBar, props.className)} ref={refModeBtnList}>
-      <Button className={"btn label-mode-btn active"} onClick={clickBtn} id={LabelMode.Select}>
-        <CursorDefault />
-      </Button>
-      <Button className={"btn label-mode-btn"} onClick={clickBtn} id={LabelMode.Create}>
-        <Square />
-      </Button>
+    <aside className={cn(styles.toolBar, p.className)}>
+      {p.btnList.map((btn) => (
+        <Button
+          className={btn.key === key ? styles.active : ""}
+          icon={btn.icon}
+          onClick={changeKey(btn.key)}
+          key={btn.key}
+        />
+      ))}
     </aside>
   )
 }

@@ -1,11 +1,33 @@
 .toolBar {
-  // flex: none;
-  // display: flex;
-  // flex-flow: column nowrap;
-  // border-right: 1px solid lightgray;
-  // > button {
-  //   border-radius: 8px;
-  //   margin: 5px 7px;
-  // }
+  flex: none;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 56px;
+  border-right: 1px solid lightgray;
 
+  > button {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+
+    &:nth-child(1) {
+      font-size: 32px;
+    }
+
+    &:nth-child(2) {
+      font-size: 14px;
+    }
+
+    &.active {
+      background-color: #cad0e0;
+    }
+  }
+
+  > * {
+    margin-top: 8px;
+  }
 }
