@@ -1,61 +1,86 @@
 .listBox {
   flex: none;
-  display: flex;
-  flex-flow: column nowrap;
-  border-right: 1px solid lightgray;
+  position: relative;
 
-  ul {
-    overflow: auto;
+  > button.toggle {
+    position: absolute;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    border-right: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+
+    &.open {
+      right: 0;
+      border: none;
+    }
+  }
+
+  > section {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    height: 32px;
+    border-right: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+
+    > h4 {
+      margin-left: 16px;
+      color: #727FA3;
+    }
+
+    > button.closer {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  > ul {
+    display: flex;
+    flex-flow: column nowrap;
+    border-right: 1px solid lightgray;
+    overflow-y: auto;
+    height: calc(100vh - 90px);
+    width: 320px;
 
     &::-webkit-scrollbar {
-      width: 5px;
+      width: 6px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: #727fa3;
+      background-color: #727FA3;
       border-radius: 20px;
     }
 
     &::-webkit-scrollbar-track {
-      background-color: #d5d9e2;
+      background-color: #D5D9E2;
       border-radius: 20px;
     }
-  }
 
-  .labelListController {
-    display: flex;
-    min-width: 300px;
-    width: auto;
-    border-bottom: 1px solid lightgray;
-
-    span {
-      padding: 5px 15px;
-      color: #4d66a7;
-      font-size: 0.85rem;
-    }
-
-    .labelListBtn {
-      display: flex;
-      margin-left: auto;
-      padding: 10px 13px;
-    }
-  }
-
-  .labelInfo {
-    padding: 14px 20px 20px 20px;
-    border-bottom: 1px solid lightgray;
-    cursor: pointer;
-
-    .labelClass {
-      font-size: 0.8rem;
+    > li {
+      padding: 20px 24px;
+      word-break: break-word;
       font-weight: bold;
-      color: #636a7b;
-    }
+      font-size: 17px;
+      cursor: pointer;
 
-    .labelCoordinate {
-      font-size: 0.7rem;
-      padding-top: 5px;
-      color: #828282;
+      &.active {
+        background-color: #cad0e0;
+      }
+
+      &:not(:first-child) {
+        border-top: 1px solid lightgray;
+      }
+
+      > .name {
+        color: #141746;
+      }
+
+      > .coord {
+        margin-top: 4px;
+        color: #727FA3;
+      }
     }
   }
 }

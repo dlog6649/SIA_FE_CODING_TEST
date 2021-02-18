@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import { LabelMode, selectLabels } from "../../../../common/modules/annotator"
@@ -6,7 +6,8 @@ import { RootState } from "../../../../index"
 
 import cn from "classnames"
 import styles from "./ListBox.module.scss"
-import { Left } from "../../../../common/asset/icons"
+import { Left, Right } from "../../../../common/asset/icons"
+import Button from "../../../../common/components/button/Button"
 
 const compareIds = (_ids: Array<number>) => {
   const ids = [] as Array<number>
@@ -28,16 +29,25 @@ const compareIds = (_ids: Array<number>) => {
 interface Label {
   id: number
   name: string
-  coordinates: Array<{ x: number; y: number }>
+  coord: Array<{ x: number; y: number }>
   data: { x: number; y: number; w: number; h: number; deg: number }
+}
+
+export type ListItem = {
+  id: string
+  name: string
+  coord: string
+  selected: boolean
 }
 
 type Props = {
   className?: string
+  itemList?: ListItem[]
+  onItemClick?: (id: string) => (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => void
 }
 
-export default function ListBox(props: Props) {
-  const refLabelList = useRef<HTMLDivElement>(null)
+export default function ListBox(p: Props) {
+  const [isOpen, setOpen] = useState<boolean>(false)
   const dispatch = useDispatch()
   const mode = useSelector((state: RootState) => state.annotatorReducer.mode)
   const selectedLabelsIds = useSelector((state: RootState) => state.annotatorReducer.selectedLabelsIds)
@@ -47,38 +57,38 @@ export default function ListBox(props: Props) {
       : state.annotatorReducer.labels[state.annotatorReducer.currentImgURL],
   )
 
-  useEffect(() => {
-    console.log("LabelList useEffect [props.labels]")
-    if (!refLabelList.current) {
-      return
-    }
-    const curRefLabelList = refLabelList.current
-    const labelListRoot = curRefLabelList.lastChild as HTMLUListElement
-    while (labelListRoot.firstChild) {
-      labelListRoot.removeChild(labelListRoot.firstChild)
-    }
-    let labelList = ""
-    labels.forEach((label: Label) => {
-      labelList += `
-                <li class="label-info btn" data-id="${label.id}" data-testid="testLabelInfo">
-                    <p class="label-class">${label.name}</p>
-                    <p class="label-coordinate">
-                        (${Number(label.coordinates[0].x)}, ${Number(label.coordinates[0].y)})
-                        (${Number(label.coordinates[1].x)}, ${Number(label.coordinates[1].y)})
-                        (${Number(label.coordinates[2].x)}, ${Number(label.coordinates[2].y)})
-                        (${Number(label.coordinates[3].x)}, ${Number(label.coordinates[3].y)})
-                    </p>
-                </li>
-            `
-    })
+  // useEffect(() => {
+  //   console.log("LabelList useEffect [p.labels]")
+  //   if (!listBoxRef.current) {
+  //     return
+  //   }
+  //   const curRefLabelList = listBoxRef.current
+  //   const labelListRoot = curRefLabelList.lastChild as HTMLUListElement
+  //   while (labelListRoot.firstChild) {
+  //     labelListRoot.removeChild(labelListRoot.firstChild)
+  //   }
+  //   let labelList = ""
+  //   labels.forEach((label: Label) => {
+  //     labelList += `
+  //               <li class="label-info btn" data-id="${label.id}" data-testid="testLabelInfo">
+  //                   <p class="label-class">${label.name}</p>
+  //                   <p class="label-coordinate">
+  //                       (${Number(label.coord[0].x)}, ${Number(label.coord[0].y)})
+  //                       (${Number(label.coord[1].x)}, ${Number(label.coord[1].y)})
+  //                       (${Number(label.coord[2].x)}, ${Number(label.coord[2].y)})
+  //                       (${Number(label.coord[3].x)}, ${Number(label.coord[3].y)})
+  //                   </p>
+  //               </li>
+  //           `
+  //   })
+  //
+  //   labelListRoot.insertAdjacentHTML("afterbegin", labelList)
+  // }, [labels])
 
-    labelListRoot.insertAdjacentHTML("afterbegin", labelList)
-  }, [labels])
-
   useEffect(() => {
-    console.log("LabelList useEffect [props.selectedLabelsIds]")
+    console.log("LabelList useEffect [p.selectedLabelsIds]")
     if (compareIds(selectedLabelsIds)) {
-      console.log("LabelList useEffect [props.selectedLabelsIds] returned")
+      console.log("LabelList useEffect [p.selectedLabelsIds] returned")
       return
     }
     document.querySelectorAll(".label-info").forEach((labelInfo) => {
@@ -91,27 +101,6 @@ export default function ListBox(props: Props) {
       })
     })
   }, [selectedLabelsIds])
-
-  const toggleLabelList = () => {
-    const controller = document.querySelector(".label-list-controller") as HTMLDivElement
-    const img = document.querySelector(".label-list-btn-img") as HTMLImageElement
-    const labelListRoot = document.querySelector(".label-list-root") as HTMLUListElement
-    if (labelListRoot.style.display === "block") {
-      ;(controller.firstChild as HTMLElement).style.display = "none"
-      controller.style.minWidth = "38px"
-      controller.style.borderRight = "1px solid lightgray"
-      // img.src = imgArrowRight;
-      labelListRoot.style.display = "none"
-      ;(labelListRoot.parentNode as HTMLElement).style.borderRight = "none"
-    } else {
-      ;(controller.firstChild as HTMLElement).style.display = "block"
-      controller.style.minWidth = "300px"
-      controller.style.borderRight = "none"
-      // img.src = imgArrowLeft;
-      labelListRoot.style.display = "block"
-      ;(labelListRoot.parentNode as HTMLElement).style.borderRight = "1px solid lightgray"
-    }
-  }
 
   const selectLabel = (evt: any): void => {
     if (mode === LabelMode.Create) {
@@ -134,14 +123,32 @@ export default function ListBox(props: Props) {
   }
 
   return (
-    <aside className={cn(styles.listBox, props.className)} ref={refLabelList}>
-      <div className={styles.labelListController}>
-        <span>Labels</span>
-        <button className={styles.labelListBtn} onClick={toggleLabelList} type="button">
-          <Left />
-        </button>
-      </div>
-      <ul className={styles.labelListRoot} style={{ display: "block" }} onMouseDown={selectLabel} />
+    <aside className={cn(styles.listBox, p.className)}>
+      <Button
+        className={cn(styles.toggle, isOpen && styles.open)}
+        icon={isOpen ? <Left /> : <Right />}
+        onClick={() => setOpen(!isOpen)}
+        type={"ghost"}
+      />
+      {isOpen && (
+        <>
+          <section>
+            <h4>{"Labels"}</h4>
+          </section>
+          <ul>
+            {p.itemList?.map((item) => (
+              <li
+                className={cn(item.selected && styles.active)}
+                onClick={p.onItemClick && p.onItemClick(item.id)}
+                key={item.id}
+              >
+                <div className={styles.name}>{item.name}</div>
+                <div className={styles.coord}>{item.coord}</div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </aside>
   )
 }
