@@ -1,23 +1,25 @@
+@import "../../styles/common.scss";
+
 .card {
   display: grid;
   grid-template-rows: 150px 30px;
   grid-template-columns: 150px;
   margin: 15px;
   border: 1px solid lightgray;
-  border-bottom-right-radius: 15px;
+  border-radius: 6px;
   cursor: pointer;
+
   > img.thumbnail {
     width: 100%;
     height: 100%;
   }
+
   > .text {
     border-top: 1px solid lightgray;
     padding: 3px 7px;
     color: #2e2e2e;
     font-size: 0.9rem;
     font-weight: bold;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+    @include one-line-ellipsis;
   }
 }

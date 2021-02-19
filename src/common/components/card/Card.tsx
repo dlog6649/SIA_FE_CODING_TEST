@@ -10,11 +10,11 @@ type Props = {
   text: string
 }
 
-export default function Card(props: Props) {
+export default function Card(p: Props) {
   return (
-    <figure className={cn(styles.card, props.className)} title={props.text} onClick={props.onClick}>
-      <img className={styles.thumbnail} src={props.thumbnailUrl} />
-      <div className={styles.text}>{props.text}</div>
+    <figure className={cn(styles.card, p.className)} title={p.text} onClick={p.onClick} tabIndex={0}>
+      <img className={styles.thumbnail} src={p.thumbnailUrl} />
+      <div className={styles.text}>{p.text}</div>
     </figure>
   )
 }
