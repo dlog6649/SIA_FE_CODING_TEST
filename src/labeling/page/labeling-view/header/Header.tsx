@@ -18,18 +18,12 @@ export default function Header(p: Props) {
 
   return (
     <header className={cn(styles.header, p.className)}>
-      <Button className={"home-btn"} type={"ghost"} onClick={() => history.push(routes.labeling)}>
-        <Home />
-      </Button>
-      <div className={styles.history}>
-        <Button className={styles.historyBtn}>
-          <ArrowLeft />
-        </Button>
-        <Button className={styles.historyBtn}>
-          <ArrowRight />
-        </Button>
-      </div>
-      <h1>{p.title}</h1>
+      <Button icon={<Home />} onClick={() => history.push(routes.labelingHome)} type={"ghost"} />
+      <hr />
+      <Button icon={<ArrowLeft />} onClick={() => history.goBack()} type={"ghost"} />
+      <Button icon={<ArrowRight />} onClick={() => history.goForward()} type={"ghost"} />
+      <hr />
+      <h1 title={p.title}>{p.title}</h1>
     </header>
   )
 }

@@ -1,23 +1,28 @@
+@import "../../../../common/styles/common.scss";
+
 .header {
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
   border-bottom: 1px solid lightgray;
+  height: 56px;
 
-  > section.history {
-    > .historyBtn {
-      width: 50%;
-      height: 100%;
-
-      &:nth-child(2) > span > img {
-        transform: rotate(180deg);
-      }
-    }
+  > button {
+    height: 100%;
   }
 
   > h1 {
-    margin: auto 50px;
-    font-size: 2rem;
-    font-weight: bold;
+    @include one-line-ellipsis;
     color: var(--main-color);
+  }
+
+  > hr {
+    border: none;
+    border-left: 1px solid lightgray;
+    height: calc(100% - 6px);
+  }
+
+  > * {
+    margin-left: 8px;
   }
 }
