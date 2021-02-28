@@ -11,7 +11,7 @@ export const hideContextmenu = () => {
 }
 
 export const showContextmenu = (e) => {
-  e.preventDefault()
+  // e.preventDefault()
 
   if (labelNS.mode === LabelMode.CREATE) {
     return
