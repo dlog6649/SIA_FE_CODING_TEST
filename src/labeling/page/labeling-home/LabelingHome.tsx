@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import styles from "./LabelingHome.module.scss"
 import * as routes from "../../../routes"
-import { getImage, getImageList, Image } from "../../modules/labeling"
+import { getImageList, Image } from "../../modules/labeling"
 import { RootState } from "../../../index"
 import Card from "../../../common/components/card/Card"
 
