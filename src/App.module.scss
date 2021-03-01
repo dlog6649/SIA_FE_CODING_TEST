@@ -20,3 +20,9 @@ p, figure, dl, dt, dd, time, section, aside, header, nav, footer, main, div, ul,
   margin: 0;
   padding: 0;
 }
+
+span[role=img] {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
