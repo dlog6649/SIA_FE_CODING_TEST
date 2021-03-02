@@ -38,6 +38,20 @@ export const parseTransform = (obj: any) => {
   return { x, y, deg, rotX, rotY, w, h, scale }
 }
 
+export const parseTransformG = (transform: string) => {
+  console.log(transform)
+  const attributeList = transform.split(" ")
+  console.log(attributeList)
+  // const x = parseFloat(attributeList[0].substring(10))
+  // const y = parseFloat(attributeList[1].split(")")[0])
+  // const scale = parseFloat(attributeList[2].substring(6).split(")")[0])
+  // const deg = parseInt(attributeList[3].substring(7))
+  // const rotX = parseFloat(attributeList[4])
+  // const rotY = parseFloat(attributeList[5].split(")")[0])
+  // return { x, y, deg, rotX, rotY }
+  return { x: 123, y: 123 }
+}
+
 export function throttle(func: any, wait: number, options: any) {
   let context: any
   let args: IArguments | null
@@ -143,4 +157,14 @@ export const getLabelState = (label: SVGGElement) => {
   coordinates.push({ x: sw_xp, y: sw_yp })
 
   return { id: id, name: name, coordinates: coordinates, data: data }
+}
+
+export const generateUUID = () => {
+  let dt = new Date().getTime()
+  const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (dt + Math.random() * 16) % 16 | 0
+    dt = Math.floor(dt / 16)
+    return (c == "x" ? r : (r & 0x3) | 0x8).toString(16)
+  })
+  return uuid
 }
