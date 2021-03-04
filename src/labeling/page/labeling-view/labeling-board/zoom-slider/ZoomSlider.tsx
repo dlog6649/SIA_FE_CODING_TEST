@@ -14,12 +14,11 @@ export default function ZoomSlider(p: Props) {
     <div className={cn(styles.zoomSlider, p.className)}>
       <Plus className={styles.plus} />
       <input
-        className={styles.abc}
         type={"range"}
         data-testid={"testScaler"}
         value={p.value}
         onChange={p.onChange}
-        min={"0"}
+        min={"0.1"}
         max={"2"}
         step={"0.1"}
         style={{
