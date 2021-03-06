@@ -1,37 +1,43 @@
 import styles from "./ToolBar.module.scss"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import cn from "classnames"
 import Button from "../../../../common/components/button/Button"
 
 export type ToolBtn = {
-  key: string
+  value: string
   icon: React.ReactNode
 }
 
 type Props = {
   className?: string
   btnList: ToolBtn[]
-  defaultKey?: string
-  onChange: (key: string) => void
+  defaultValue?: string
+  value?: string
+  onChange: (value: string) => void
 }
 
 export default function ToolBar(p: Props) {
-  const [key, setKey] = useState<string>(p.defaultKey || p.btnList[0].key)
+  const [value, setValue] = useState<string>(p.defaultValue || p.btnList[0].value)
 
-  const changeKey = (_key: string) => () => {
-    if (_key === key) return
-    setKey(_key)
-    p.onChange(_key)
+  useEffect(() => {
+    if (!p.value) return
+    setValue(p.value)
+  }, [p.value])
+
+  const changeKey = (val: string) => () => {
+    if (val === value) return
+    setValue(val)
+    p.onChange(val)
   }
 
   return (
     <aside className={cn(styles.toolBar, p.className)}>
       {p.btnList.map((btn) => (
         <Button
-          className={btn.key === key ? styles.active : ""}
+          className={btn.value === value ? styles.active : ""}
           icon={btn.icon}
-          onClick={changeKey(btn.key)}
-          key={btn.key}
+          onClick={changeKey(btn.value)}
+          key={btn.value}
         />
       ))}
     </aside>
