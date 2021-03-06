@@ -8,54 +8,48 @@ import cn from "classnames"
 import styles from "./ListBox.module.scss"
 import { Left, Right } from "../../../../common/asset/icons"
 import Button from "../../../../common/components/button/Button"
+import { Label } from "../labeling-board/Label"
 
-const compareIds = (_ids: Array<number>) => {
-  const ids = [] as Array<number>
-  document.querySelectorAll(".label-info.active").forEach((labelInfo: Element) => {
-    const info: HTMLLIElement = labelInfo as HTMLLIElement
-    ids.push(Number(info.dataset.id))
-  })
-  if (ids.length !== _ids.length) {
-    return false
-  }
-  for (let i = 0; i < _ids.length; i++) {
-    if (Number(_ids[i]) !== Number(ids[i])) {
-      return false
-    }
-  }
-  return true
-}
+// const compareIds = (_ids: Array<number>) => {
+//   const ids = [] as Array<number>
+//   document.querySelectorAll(".label-info.active").forEach((labelInfo: Element) => {
+//     const info: HTMLLIElement = labelInfo as HTMLLIElement
+//     ids.push(Number(info.dataset.id))
+//   })
+//   if (ids.length !== _ids.length) {
+//     return false
+//   }
+//   for (let i = 0; i < _ids.length; i++) {
+//     if (Number(_ids[i]) !== Number(ids[i])) {
+//       return false
+//     }
+//   }
+//   return true
+// }
 
-interface Label {
-  id: number
-  name: string
-  coord: Array<{ x: number; y: number }>
-  data: { x: number; y: number; w: number; h: number; deg: number }
-}
-
-export type ListItem = {
-  id: string
-  name: string
-  coord: string
-  selected: boolean
-}
+// interface Label {
+//   id: number
+//   name: string
+//   coord: Array<{ x: number; y: number }>
+//   data: { x: number; y: number; w: number; h: number; deg: number }
+// }
 
 type Props = {
   className?: string
-  itemList?: ListItem[]
+  labelList?: Label[]
   onItemClick?: (id: string) => (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => void
 }
 
 export default function ListBox(p: Props) {
   const [isOpen, setOpen] = useState<boolean>(false)
-  const dispatch = useDispatch()
-  const mode = useSelector((state: RootState) => state.annotatorReducer.mode)
-  const selectedLabelsIds = useSelector((state: RootState) => state.annotatorReducer.selectedLabelsIds)
-  const labels = useSelector((state: RootState) =>
-    state.annotatorReducer.labels[state.annotatorReducer.currentImgURL] === undefined
-      ? []
-      : state.annotatorReducer.labels[state.annotatorReducer.currentImgURL],
-  )
+  // const dispatch = useDispatch()
+  // const mode = useSelector((state: RootState) => state.annotatorReducer.mode)
+  // const selectedLabelsIds = useSelector((state: RootState) => state.annotatorReducer.selectedLabelsIds)
+  // const labels = useSelector((state: RootState) =>
+  //   state.annotatorReducer.labels[state.annotatorReducer.currentImgURL] === undefined
+  //     ? []
+  //     : state.annotatorReducer.labels[state.annotatorReducer.currentImgURL],
+  // )
 
   // useEffect(() => {
   //   console.log("LabelList useEffect [p.labels]")
@@ -85,42 +79,42 @@ export default function ListBox(p: Props) {
   //   labelListRoot.insertAdjacentHTML("afterbegin", labelList)
   // }, [labels])
 
-  useEffect(() => {
-    console.log("LabelList useEffect [p.selectedLabelsIds]")
-    if (compareIds(selectedLabelsIds)) {
-      console.log("LabelList useEffect [p.selectedLabelsIds] returned")
-      return
-    }
-    document.querySelectorAll(".label-info").forEach((labelInfo) => {
-      const info: HTMLElement = labelInfo as HTMLElement
-      info.classList.remove("active")
-      selectedLabelsIds.forEach((id) => {
-        if (Number(info.dataset.id) === Number(id)) {
-          info.classList.add("active")
-        }
-      })
-    })
-  }, [selectedLabelsIds])
+  // useEffect(() => {
+  //   console.log("LabelList useEffect [p.selectedLabelsIds]")
+  //   if (compareIds(selectedLabelsIds)) {
+  //     console.log("LabelList useEffect [p.selectedLabelsIds] returned")
+  //     return
+  //   }
+  //   document.querySelectorAll(".label-info").forEach((labelInfo) => {
+  //     const info: HTMLElement = labelInfo as HTMLElement
+  //     info.classList.remove("active")
+  //     selectedLabelsIds.forEach((id) => {
+  //       if (Number(info.dataset.id) === Number(id)) {
+  //         info.classList.add("active")
+  //       }
+  //     })
+  //   })
+  // }, [selectedLabelsIds])
 
-  const selectLabel = (evt: any): void => {
-    if (mode === LabelMode.Create) {
-      return
-    }
-    const labelInfo: HTMLLIElement = evt.target.classList.contains("label-info") ? evt.target : evt.target.parentNode
-    labelInfo.classList.add("active")
-    if (!evt.ctrlKey) {
-      document.querySelectorAll(".label-info.active").forEach((info: Element) => {
-        if (labelInfo !== info) {
-          info.classList.remove("active")
-        }
-      })
-    }
-    const ids = [] as Array<number>
-    document.querySelectorAll(".label-info.active").forEach((info: Element) => {
-      ids.push(Number((info as HTMLLIElement).dataset.id as string))
-    })
-    dispatch(selectLabels({ selectedLabelsIds: ids }))
-  }
+  // const selectLabel = (evt: any): void => {
+  //   if (mode === LabelMode.Create) {
+  //     return
+  //   }
+  //   const labelInfo: HTMLLIElement = evt.target.classList.contains("label-info") ? evt.target : evt.target.parentNode
+  //   labelInfo.classList.add("active")
+  //   if (!evt.ctrlKey) {
+  //     document.querySelectorAll(".label-info.active").forEach((info: Element) => {
+  //       if (labelInfo !== info) {
+  //         info.classList.remove("active")
+  //       }
+  //     })
+  //   }
+  //   const ids = [] as Array<number>
+  //   document.querySelectorAll(".label-info.active").forEach((info: Element) => {
+  //     ids.push(Number((info as HTMLLIElement).dataset.id as string))
+  //   })
+  //   dispatch(selectLabels({ selectedLabelsIds: ids }))
+  // }
 
   return (
     <aside className={cn(styles.listBox, p.className)}>
@@ -136,14 +130,14 @@ export default function ListBox(p: Props) {
             <h4>{"Labels"}</h4>
           </section>
           <ul>
-            {p.itemList?.map((item) => (
+            {p.labelList?.map((label) => (
               <li
-                className={cn(item.selected && styles.active)}
-                onClick={p.onItemClick && p.onItemClick(item.id)}
-                key={item.id}
+                className={cn(label.selected && styles.active)}
+                onClick={p.onItemClick && p.onItemClick(label.id)}
+                key={label.id}
               >
-                <div className={styles.name}>{item.name}</div>
-                <div className={styles.coord}>{item.coord}</div>
+                <div className={styles.name}>{label.name}</div>
+                <div className={styles.coord}>{`(${label.x}, ${label.y})`}</div>
               </li>
             ))}
           </ul>

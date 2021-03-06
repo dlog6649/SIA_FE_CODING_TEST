@@ -9,9 +9,10 @@
     height: 32px;
     border-right: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
+    background-color: white;
 
     &.open {
-      right: 0;
+      right: 1px;
       border: none;
     }
   }
