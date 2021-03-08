@@ -21,7 +21,7 @@ export const initialize = () => {
   document.addEventListener("click", hideContextmenu)
   document.addEventListener("mousewheel", hideContextmenu)
   document.addEventListener("contextmenu", hideDefaultContextmenu)
-  document.addEventListener("mousemove", pauseEvent)
+  // document.addEventListener("mousemove", pauseEvent)
 
   labelNS.svg = document.querySelector("#svg")
   labelNS.svg.addEventListener("mousedown", svgMousedownEvent)
