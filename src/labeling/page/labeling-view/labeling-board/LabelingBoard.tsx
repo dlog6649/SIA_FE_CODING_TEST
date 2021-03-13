@@ -34,6 +34,7 @@ type Props = {
   imgUrl?: string
   mode: Mode
   labelList?: Label[]
+  setLabelList?: (labelList: Label[]) => void
   addLabel: (label: Label) => void
 }
 
@@ -50,8 +51,10 @@ export default function LabelBoard(p: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
 
   useEffect(() => {
+    if (p.labelList === undefined) return
+    if (p.setLabelList === undefined) return
     if (!svgRef.current) return
-    labelingCoreRef.current = new LabelingCore(svgRef.current)
+    labelingCoreRef.current = new LabelingCore(svgRef.current, p.labelList, p.setLabelList)
   }, [])
 
   useEffect(() => {
@@ -63,6 +66,12 @@ export default function LabelBoard(p: Props) {
     if (!labelingCoreRef.current) return
     labelingCoreRef.current.mode = p.mode
   }, [p.mode])
+
+  useEffect(() => {
+    if (p.labelList === undefined) return
+    if (!labelingCoreRef.current) return
+    labelingCoreRef.current.labelList = p.labelList
+  }, [p.labelList])
 
   // useEffect(() => {
   //   console.log("LabelBoard useEffect: []")
@@ -110,22 +119,12 @@ export default function LabelBoard(p: Props) {
 
   return (
     <main className={styles.labelBoard}>
-      <svg
-        id={"svg"}
-        width={"100%"}
-        height={"100%"}
-        // onMouseDown={onSvgMouseDown}
-        // onMouseMove={onSvgMouseMove}
-        // onMouseUp={onSvgMouseUp}
-        data-testid={"testSvg"}
-        ref={svgRef}
-      >
+      <svg id={"svg"} width={"100%"} height={"100%"} data-testid={"testSvg"} ref={svgRef}>
         {p.labelList?.map((label) => (
           <g
-            transform={`
-            translate(${label.x} ${label.y})
-            rotate(${label.degree} ${label.width * 0.5} ${label.height * 0.5})
-            `}
+            transform={`translate(${label.x} ${label.y}) scale(${zoom}) rotate(${label.degree} ${label.width * 0.5} ${
+              label.height * 0.5
+            })`}
             key={label.id}
           >
             <rect

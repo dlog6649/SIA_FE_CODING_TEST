@@ -14,13 +14,14 @@ export class Label {
   private _width = 0
   private _height = 0
   private _degree = 0
-  private _scale = 1
+  private _scale: number
   private _color = "#5c6dda"
   private _selected = false
 
   constructor(x = 0, y = 0, scale = 1) {
     this._x = x
     this._y = y
+    this._scale = scale
     this._g = document.createElementNS(labelNS.svgNS, "g") as SVGGElement
     this._g.setAttribute("transform", `translate(${x} ${y}) scale(${scale}) rotate(0 0 0)`)
     this._rect = document.createElementNS(labelNS.svgNS, "rect") as SVGRectElement

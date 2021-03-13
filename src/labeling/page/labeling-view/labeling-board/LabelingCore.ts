@@ -34,12 +34,16 @@ export class LabelingCore {
   private _isDrawing = false
   private _isDragging = false
   private _isPushingSpacebar = false
+  private _labelList: Label[]
+  private _setLabelList: (labelList: Label[]) => void
 
-  constructor(svg: SVGSVGElement) {
+  constructor(svg: SVGSVGElement, labelList: Label[], setLabelList: (labelList: Label[]) => void) {
     this._svg = svg
     this._svg.addEventListener("mousedown", this.onSvgMouseDown)
     this._svg.addEventListener("mousemove", this.onSvgMouseMove)
     this._svg.addEventListener("mouseup", this.onSvgMouseUp)
+    this._labelList = labelList
+    this._setLabelList = setLabelList
   }
 
   set mode(mode: Mode) {
@@ -48,6 +52,10 @@ export class LabelingCore {
 
   set zoom(zoom: number) {
     this._zoom = zoom
+  }
+
+  set labelList(labelList: Label[]) {
+    this._labelList = labelList
   }
 
   onSvgMouseDown = (evt: MouseEvent) => {
@@ -94,7 +102,7 @@ export class LabelingCore {
     if (this._mode === Mode.Creation && this._isDrawing) {
       if (!this._curLabel) return
       if (this._curLabel.width > 10 && this._curLabel.height > 10) {
-        // p.addLabel(label)
+        this._setLabelList(this._labelList.concat(this._curLabel))
       }
       this._svg.removeChild(this._curLabel.g)
       this._curLabel = null

@@ -108,6 +108,7 @@ export default function LabelingView(p: RouteComponentProps<Props>) {
           imgUrl={getImageAsync.data?.url || ""}
           mode={mode}
           labelList={labelList}
+          setLabelList={setLabelList}
           addLabel={addLabel}
           // removeLabel={}
         />

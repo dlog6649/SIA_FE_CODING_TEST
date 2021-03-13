@@ -127,7 +127,6 @@ const svgMousedownEvent = (e) => {
     if (e.button !== 0) {
       return
     }
-    console.log("abc")
     labelNS.isDrawing = true
     initializeLabel(e)
   } else if (labelNS.mode === LabelMode.SELECT) {
