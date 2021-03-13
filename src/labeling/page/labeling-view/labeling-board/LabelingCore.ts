@@ -6,6 +6,8 @@ import { Mode } from "../LabelingView"
 import { initializeLabel, labelBodyMouseDownEvent } from "./labeling-tool/LabelCreator"
 import { dispatch } from "./LabelingBoard"
 import { deleteAnchors, getSelectedLabelsIds } from "./labeling-tool/LabelMain"
+import React from "react"
+import { Label } from "./Label"
 
 export class LabelingCore {
   private _svg: SVGSVGElement
@@ -26,7 +28,7 @@ export class LabelingCore {
   ]
   private _mode = Mode.Selection
   private _zoom = 1
-  private _curLabel: SVGGElement | null = null
+  private _curLabel: Label | null = null
   private _startX = 0
   private _startY = 0
   private _isDrawing = false
@@ -35,7 +37,9 @@ export class LabelingCore {
 
   constructor(svg: SVGSVGElement) {
     this._svg = svg
-    this._svg.addEventListener("mousedown", this.svgMousedownEvent)
+    this._svg.addEventListener("mousedown", this.onSvgMouseDown)
+    this._svg.addEventListener("mousemove", this.onSvgMouseMove)
+    this._svg.addEventListener("mouseup", this.onSvgMouseUp)
   }
 
   set mode(mode: Mode) {
@@ -46,45 +50,74 @@ export class LabelingCore {
     this._zoom = zoom
   }
 
-  svgMousedownEvent = (evt: MouseEvent) => {
+  onSvgMouseDown = (evt: MouseEvent) => {
     if (this._isPushingSpacebar) {
-      // this._isDragging = true
+      // labelNS.isDragging = true
       // initImgForDrag(evt)
     } else if (this._mode === Mode.Creation) {
-      // evt.button 0은 마우스 왼쪽 클릭
-      if (evt.button !== 0) return
+      const LEFT_BUTTON = 0
+      if (evt.button !== LEFT_BUTTON) return
       this._isDrawing = true
-      this.initializeLabel(evt)
-    } else if (this._mode === Mode.Selection) {
-      // const selectedLabels = [...this.svg.childNodes].filter((node) => node.classList.contains("selected"))
-      // if (!selectedLabels.length) return
+      this._startX = evt.offsetX
+      this._startY = evt.offsetY
+      const label = new Label(this._startX, this._startY, this._zoom)
+      this._svg.appendChild(label.g)
+      this._curLabel = label
+      // } else if (p.mode === Mode.Selection) {
+      // const selectedLabels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("selected"))
+      // if (!selectedLabels.length) {
+      //   return
+      // }
       // deleteAnchors(evt)
       // dispatch(selectLabels({ selectedLabelsIds: getSelectedLabelsIds() }))
+      // }
     }
   }
 
-  initializeLabel = (evt: MouseEvent) => {
-    this._startX = evt.offsetX
-    this._startY = evt.offsetY
-    this._curLabel = document.createElementNS(this._svgNS, "g")
-    this._curLabel.setAttribute(
-      "transform",
-      `translate(${this._startX} ${this._startY}) scale(${this._zoom}) rotate(0 0 0)`,
-    )
-    this._curLabel.classList.add("label")
-
-    const labelBody = document.createElementNS(this._svgNS, "rect")
-    labelBody.setAttribute("width", "0")
-    labelBody.setAttribute("height", "0")
-    labelBody.setAttribute("fill", "#5c6dda")
-    labelBody.setAttribute("fill-opacity", "0.2")
-    labelBody.setAttribute("stroke", "#5c6dda")
-    labelBody.setAttribute("stroke-width", "3")
-    labelBody.addEventListener("mousedown", labelBodyMouseDownEvent)
-
-    this._curLabel.appendChild(labelBody)
-    this._svg.appendChild(this._curLabel)
+  onSvgMouseMove = (evt: MouseEvent) => {
+    if (this._mode === Mode.Creation && this._isDrawing) {
+      if (!this._curLabel) return
+      const endX = evt.offsetX
+      const endY = evt.offsetY
+      const x = this._startX < endX ? this._startX : endX
+      const y = this._startY < endY ? this._startY : endY
+      const width = Math.abs(this._startX - endX) / this._zoom
+      const height = Math.abs(this._startY - endY) / this._zoom
+      this._curLabel.x = x
+      this._curLabel.y = y
+      this._curLabel.width = width
+      this._curLabel.height = height
+    }
   }
+
+  onSvgMouseUp = (evt: MouseEvent) => {
+    if (this._mode === Mode.Creation && this._isDrawing) {
+      if (!this._curLabel) return
+      if (this._curLabel.width > 10 && this._curLabel.height > 10) {
+        // p.addLabel(label)
+      }
+      this._svg.removeChild(this._curLabel.g)
+      this._curLabel = null
+    }
+    this._isDrawing = false
+  }
+
+  // svgMousedownEvent = (evt: MouseEvent) => {
+  //   if (this._isPushingSpacebar) {
+  //     // this._isDragging = true
+  //     // initImgForDrag(evt)
+  //   } else if (this._mode === Mode.Creation) {
+  //     // evt.button 0은 마우스 왼쪽 클릭
+  //     if (evt.button !== 0) return
+  //     this._isDrawing = true
+  //     this.initializeLabel(evt)
+  //   } else if (this._mode === Mode.Selection) {
+  //     // const selectedLabels = [...this.svg.childNodes].filter((node) => node.classList.contains("selected"))
+  //     // if (!selectedLabels.length) return
+  //     // deleteAnchors(evt)
+  //     // dispatch(selectLabels({ selectedLabelsIds: getSelectedLabelsIds() }))
+  //   }
+  // }
 
   // document.addEventListener("keydown", documentKeydownEvent)
   // document.addEventListener("keyup", documentKeyupEvent)

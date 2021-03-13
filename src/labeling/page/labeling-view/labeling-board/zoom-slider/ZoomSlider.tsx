@@ -22,7 +22,7 @@ export default function ZoomSlider(p: Props) {
         max={"2"}
         step={"0.1"}
         style={{
-          background: `linear-gradient(to right, #131644 0%, #131644 ${p.value * 50}%,
+          background: `linear-gradient(to right, #131644 0%, #131644 ${p.value * 50 - 2.5}%,
           #d5d4d3 0%, #d5d4d3 100%)`,
         }}
       />
