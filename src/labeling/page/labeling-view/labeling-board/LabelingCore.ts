@@ -4,28 +4,13 @@ import labelNS from "./labeling-tool/labelNS"
 import { throttle } from "../../../../common/utils/common"
 import { Mode } from "../LabelingView"
 import { initializeLabel, labelBodyMouseDownEvent } from "./labeling-tool/LabelCreator"
-import { dispatch } from "./LabelingBoard"
+import { dispatch, HANDLER_CURSOR_LIST } from "./LabelingBoard"
 import { deleteAnchors, getSelectedLabelsIds } from "./labeling-tool/LabelMain"
 import React from "react"
 import { Label } from "./Label"
 
 export class LabelingCore {
   private _svg: SVGSVGElement
-  private readonly _svgNS = "http://www.w3.org/2000/svg"
-  //   9
-  // 0 1 2
-  // 7 8 3
-  // 6 5 4
-  private readonly CURSOR_LIST = [
-    "nw-resize",
-    "n-resize",
-    "ne-resize",
-    "e-resize",
-    "se-resize",
-    "s-resize",
-    "sw-resize",
-    "w-resize",
-  ]
   private _mode = Mode.Selection
   private _zoom = 1
   private _curLabel: Label | null = null
@@ -36,6 +21,9 @@ export class LabelingCore {
   private _isPushingSpacebar = false
   private _labelList: Label[]
   private _setLabelList: (labelList: Label[]) => void
+  private readonly _svgNs = "http://www.w3.org/2000/svg"
+  private _selectedElement: "label" | "resizer" | "rotator" = "label"
+  private _selectedLabelList: { label: Label; x: number; y: number }[] = []
 
   constructor(svg: SVGSVGElement, labelList: Label[], setLabelList: (labelList: Label[]) => void) {
     this._svg = svg
@@ -46,16 +34,63 @@ export class LabelingCore {
     this._setLabelList = setLabelList
   }
 
+  get svgNs() {
+    return this._svgNs
+  }
+
   set mode(mode: Mode) {
     this._mode = mode
+    if (mode === Mode.Selection) {
+      this._labelList.forEach((label) => {
+        label.rect.style.cursor = "move"
+      })
+    } else {
+      this._labelList.forEach((label) => {
+        label.rect.style.cursor = "default"
+      })
+    }
   }
 
   set zoom(zoom: number) {
     this._zoom = zoom
   }
 
+  initLabelList = (labelList: Label[]) => {
+    labelList.forEach((label) => {
+      this._svg.appendChild(label.g)
+    })
+  }
+
   set labelList(labelList: Label[]) {
     this._labelList = labelList
+  }
+
+  get startX() {
+    return this._startX
+  }
+
+  set startX(startX) {
+    this._startX = startX
+  }
+
+  get startY() {
+    return this._startY
+  }
+
+  set startY(startY) {
+    this._startY = startY
+  }
+
+  get isPushingSpaceBar() {
+    return this._isPushingSpacebar
+  }
+
+  set isDragging(isDragging: boolean) {
+    this._isDragging = isDragging
+  }
+
+  set curLabel(label: Label) {
+    this._curLabel = label
   }
 
   onSvgMouseDown = (evt: MouseEvent) => {
@@ -79,6 +114,74 @@ export class LabelingCore {
       // deleteAnchors(evt)
       // dispatch(selectLabels({ selectedLabelsIds: getSelectedLabelsIds() }))
       // }
+    } else if (this._mode === Mode.Selection) {
+      const target = evt.target as SVGElement
+      const { role } = target.dataset
+      const id = target.parentElement?.id
+
+      console.log(this._mode)
+
+      if (evt.ctrlKey) {
+        if (role === "label") {
+          if (!id) return
+          const newLabelList = this._labelList.map((label) => {
+            if (label.id === id) label.selected = !label.selected
+            return label
+          })
+          this._setLabelList(newLabelList)
+          this._selectedElement = "label"
+          this._selectedLabelList = newLabelList
+            .filter((label) => label.selected)
+            .map((label) => ({
+              label,
+              x: label.x,
+              y: label.y,
+            }))
+          this._isDragging = true
+          this._startX = evt.offsetX
+          this._startY = evt.offsetY
+        }
+      } else {
+        if (role === "svg") {
+          this._setLabelList(
+            this._labelList.map((label) => {
+              label.selected = false
+              return label
+            }),
+          )
+        } else if (role === "label") {
+          console.log(role)
+          if (!id) return
+          const newLabelList = this._labelList.map((label) => {
+            label.selected = label.id === id
+            return label
+          })
+          this._setLabelList(newLabelList)
+          this._selectedElement = "label"
+          this._selectedLabelList = newLabelList
+            .filter((label) => label.selected)
+            .map((label) => ({
+              label,
+              x: label.x,
+              y: label.y,
+            }))
+          this._isDragging = true
+          this._startX = evt.offsetX
+          this._startY = evt.offsetY
+        }
+      }
+
+      // switch (target.dataset.role) {
+      //   case "label":
+      //     const g = target.parentElement
+      //     if(!g) return
+      //     if(target.parentElement?.id
+      //     break
+      //   case HANDLER_CURSOR_LIST[0]:
+      //     break
+      //   default:
+      //     break
+      // }
     }
   }
 
@@ -95,6 +198,17 @@ export class LabelingCore {
       this._curLabel.y = y
       this._curLabel.width = width
       this._curLabel.height = height
+    } else if (this._mode === Mode.Selection && this._isDragging) {
+      if (this._selectedElement === "label") {
+        const endX = evt.offsetX
+        const endY = evt.offsetY
+        const deltaX = endX - this._startX
+        const deltaY = endY - this._startY
+        this._selectedLabelList.forEach((selectedLabel) => {
+          selectedLabel.label.x = selectedLabel.x + deltaX
+          selectedLabel.label.y = selectedLabel.y + deltaY
+        })
+      }
     }
   }
 
@@ -104,9 +218,9 @@ export class LabelingCore {
       if (this._curLabel.width > 10 && this._curLabel.height > 10) {
         this._setLabelList(this._labelList.concat(this._curLabel))
       }
-      this._svg.removeChild(this._curLabel.g)
       this._curLabel = null
     }
+    this._isDragging = false
     this._isDrawing = false
   }
 
