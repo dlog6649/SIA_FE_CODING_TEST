@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import styles from "./LabelingBoard.module.scss"
 import ZoomSlider from "./zoom-slider/ZoomSlider"
 import ContextMenu from "./context-menu/ContextMenu"
-import { LabelingCore } from "./LabelingCore"
+import { LabelingCore, SvgRole } from "./LabelingCore"
 import { Mode } from "../LabelingView"
 import { Label } from "./Label"
 
@@ -198,7 +198,7 @@ export default function LabelBoard(p: Props) {
 
   return (
     <main className={styles.labelBoard}>
-      <svg id={"svg"} width={"100%"} height={"100%"} data-role={"svg"} data-testid={"testSvg"} ref={svgRef}>
+      <svg id={"svg"} width={"100%"} height={"100%"} data-role={SvgRole.Svg} data-testid={"testSvg"} ref={svgRef}>
         {/*{p.labelList?.map((label) => (*/}
         {/*  <g*/}
         {/*    transform={`translate(${label.x} ${label.y}) scale(${zoom}) rotate(${label.degree} ${label.width * 0.5} ${*/}

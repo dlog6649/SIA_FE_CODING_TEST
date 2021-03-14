@@ -1,10 +1,5 @@
-import labelNS from "./labeling-tool/labelNS"
-import { createAnchors } from "./labeling-tool/LabelCreator"
-import { LabelMode } from "../../../../common/modules/annotator"
-import * as LabelMain from "./labeling-tool/LabelMain"
-import { generateUUID, parseTransform } from "../../../../common/utils/common"
-import { LabelingCore } from "./LabelingCore"
-import { Mode } from "../LabelingView"
+import { generateUUID } from "../../../../common/utils/common"
+import { SvgRole } from "./LabelingCore"
 
 export class Label {
   private readonly _g: SVGGElement
@@ -16,6 +11,8 @@ export class Label {
   private _width = 0
   private _height = 0
   private _degree = 0
+  private _rotateX = 0
+  private _rotateY = 0
   private _scale: number
   private _color = "#5c6dda"
   private _selected = false
@@ -51,8 +48,7 @@ export class Label {
     this._rect.setAttribute("fill-opacity", "0.2")
     this._rect.setAttribute("stroke", this._color)
     this._rect.setAttribute("stroke-width", "3")
-    this._rect.dataset.role = "label"
-    this._rect.addEventListener("mousedown", this.onRectMouseDown)
+    this._rect.dataset.role = SvgRole.LabelBody
     this._g.appendChild(this._rect)
   }
 
@@ -84,7 +80,7 @@ export class Label {
     this._x = x
     this._g.setAttribute(
       "transform",
-      `translate(${x} ${this._y}) scale(${this._scale}) rotate(0 ${this._width * 0.5} ${this._height * 0.5})`,
+      `translate(${x} ${this._y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
     )
   }
 
@@ -96,7 +92,7 @@ export class Label {
     this._y = y
     this._g.setAttribute(
       "transform",
-      `translate(${this._x} ${y}) scale(${this._scale}) rotate(0 ${this._width * 0.5} ${this._height * 0.5})`,
+      `translate(${this._x} ${y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
     )
   }
 
@@ -106,9 +102,10 @@ export class Label {
 
   set width(width) {
     this._width = width
+    this._rotateX = width * 0.5
     this._g.setAttribute(
       "transform",
-      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(0 ${width * 0.5} ${this._height * 0.5})`,
+      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
     )
     this._rect.setAttribute("width", width.toString())
   }
@@ -119,18 +116,23 @@ export class Label {
 
   set height(height) {
     this._height = height
+    this._rotateY = height * 0.5
     this._g.setAttribute(
       "transform",
-      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(0 ${this._width * 0.5} ${height * 0.5})`,
+      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
     )
     this._rect.setAttribute("height", height.toString())
+  }
+
+  get scale() {
+    return this._scale
   }
 
   set scale(scale: number) {
     this._scale = scale
     this._g.setAttribute(
       "transform",
-      `translate(${this._x} ${this._y}) scale(${scale}) rotate(0 ${this._width * 0.5} ${this._height * 0.5})`,
+      `translate(${this._x} ${this._y}) scale(${scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
     )
   }
 
@@ -142,9 +144,16 @@ export class Label {
     this._degree = degree
     this._g.setAttribute(
       "transform",
-      `translate(${this._x} ${this._y}) scale(${this._scale}) 
-      rotate(${degree} ${this._width * 0.5} ${this._height * 0.5})`,
+      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(${degree} ${this._rotateX} ${this._rotateY})`,
     )
+  }
+
+  get rotateX() {
+    return this._rotateX
+  }
+
+  get rotateY() {
+    return this._rotateY
   }
 
   get selected() {
@@ -191,25 +200,7 @@ export class Label {
     circle.setAttribute("fill", "white")
     circle.setAttribute("stroke", this._color)
     circle.setAttribute("stroke-width", "3")
-    // circle.addEventListener("mousedown", (evt: any) => {
-    //   if (evt.button !== 0 && evt.button !== 2) return
-    //   this._core.curLabel = this
-    //   if (this._core.mode === Mode.Creation || this._core.isPushingSpaceBar) return
-    //   evt.stopPropagation()
-    //   labelNS.isDragging = true
-    //   labelNS.curLabel = labelNS.selectedLabel = e.target.parentNode
-    //   labelNS.selectedHandler = labelNS.LABEL_ROTATOR
-    //   labelNS.startX = evt.offsetX
-    //   labelNS.startY = evt.offsetY
-    //
-    //   const { x, y, deg, rotX, rotY } = parseTransform(labelNS.curLabel)
-    //   labelNS.preX = x
-    //   labelNS.preY = y
-    //   labelNS.preDegree = deg
-    //   labelNS.preRotX = rotX
-    //   labelNS.preRotY = rotY
-    //   LabelMain.deleteAnchors(evt)
-    // })
+    circle.dataset.role = SvgRole.Rotator
     this._g.appendChild(circle)
 
     const anchorPosXList = [
@@ -242,59 +233,9 @@ export class Label {
       anchor.setAttribute("fill", "white")
       anchor.setAttribute("stroke", this._color)
       anchor.setAttribute("stroke-width", "3")
-      // anchor.addEventListener("mousedown", (evt: any) => {
-      //   if (evt.button !== 0 && evt.button !== 2) {
-      //     return
-      //   }
-      //   labelNS.curLabel = e.target.parentNode
-      //   if (labelNS.mode === LabelMode.CREATE || labelNS.isPushingSpacebar) {
-      //     return
-      //   }
-      //   console.log("anchor mousedown")
-      //   e.stopPropagation()
-      //   labelNS.isDragging = true
-      //   labelNS.curLabel = labelNS.selectedLabel = e.target.parentNode
-      //   labelNS.selectedHandler = labelNS.LABEL_RESIZE
-      //   labelNS.anchor = labelNS.CURSOR_LIST[i]
-      //
-      //   const { x, y, deg, rotX, rotY, w, h } = parseTransform(labelNS.curLabel)
-      //   labelNS.preX = x
-      //   labelNS.preY = y
-      //   labelNS.preDegree = deg
-      //   labelNS.preRotX = rotX
-      //   labelNS.preRotY = rotY
-      //   labelNS.preWidth = parseFloat((w * labelNS.curScale).toFixed(2))
-      //   labelNS.preHeight = parseFloat((h * labelNS.curScale).toFixed(2))
-      //
-      //   const theta = (Math.PI / 180) * deg
-      //   const cos_t = Math.cos(theta)
-      //   const sin_t = Math.sin(theta)
-      //   const c0_x = x + rotX * labelNS.curScale
-      //   const c0_y = y + rotY * labelNS.curScale
-      //
-      //   const rightSide = x + labelNS.preWidth
-      //   const bottomSide = y + labelNS.preHeight
-      //
-      //   const q0_x_arr = [x, c0_x, rightSide, rightSide, rightSide, c0_x, x, x]
-      //   const q0_y_arr = [y, y, y, c0_y, bottomSide, bottomSide, bottomSide, c0_y]
-      //   const p0_x_arr = [rightSide, c0_x, x, x, x, c0_x, rightSide, rightSide]
-      //   const p0_y_arr = [bottomSide, bottomSide, bottomSide, c0_y, y, y, y, c0_y]
-      //
-      //   const q0_x = q0_x_arr[i]
-      //   const q0_y = q0_y_arr[i]
-      //
-      //   const p0_x = p0_x_arr[i]
-      //   const p0_y = p0_y_arr[i]
-      //
-      //   labelNS.qp0_x = (q0_x - c0_x) * cos_t - (q0_y - c0_y) * sin_t + c0_x
-      //   labelNS.qp0_y = (q0_x - c0_x) * sin_t + (q0_y - c0_y) * cos_t + c0_y
-      //
-      //   labelNS.pp_x = (p0_x - c0_x) * cos_t - (p0_y - c0_y) * sin_t + c0_x
-      //   labelNS.pp_y = (p0_x - c0_x) * sin_t + (p0_y - c0_y) * cos_t + c0_y
-      //
-      //   LabelMain.deleteAnchors(e)
-      // })
-
+      anchor.dataset.role = SvgRole.Resizer
+      anchor.dataset.cursor = this._HANDLER_CURSOR_LIST[i]
+      anchor.dataset.sequence = i.toString()
       this._g.appendChild(anchor)
     }
 
@@ -358,35 +299,5 @@ export class Label {
     for (let i = this._g.childElementCount - 1; i > 0; i--) {
       this._g.removeChild(this._g.children[i])
     }
-  }
-
-  onRectMouseDown = (evt: MouseEvent) => {
-    console.log("dasfasdf")
-    // this._selected = true
-    // const LEFT_BUTTON = 0
-    // const RIGHT_BUTTON = 2
-    // if (evt.button !== LEFT_BUTTON && evt.button !== RIGHT_BUTTON) return
-    // this._core.curLabel = this
-    // if (this._core.mode === Mode.Creation || this._core.isPushingSpaceBar) return
-    // evt.stopPropagation()
-    // this._core.isDragging = true
-    // this._core.curLabel = this
-    // // labelNS.curLabel = labelNS.selectedLabel = e.target.parentNode
-    // // labelNS.selectedHandler = labelNS.LABEL_BODY
-    // this._core.startX = evt.offsetX
-    // this._core.startY = evt.offsetY
-    // if (labelNS.curLabel.childNodes.length < 3) {
-    //   createAnchors(labelNS.curLabel)
-    // }
-    // LabelMain.deleteAnchors(evt)
-    //
-    // // 선택된 레이블들의 이전 정보 세팅
-    // const infos = []
-    // const selectedLabels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("selected"))
-    // selectedLabels.forEach((label) => {
-    //   const { x, y, deg, rotX, rotY } = parseTransform(label)
-    //   infos.push({ id: parseInt(label.dataset.id), preX: x, preY: y, preDegree: deg, preRotX: rotX, preRotY: rotY })
-    // })
-    // labelNS.selectedLabelsInfo = infos
   }
 }
