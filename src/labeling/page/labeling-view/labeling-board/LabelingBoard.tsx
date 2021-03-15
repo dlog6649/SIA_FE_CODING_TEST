@@ -9,11 +9,6 @@ import { Label } from "./Label"
 export let dispatch: any
 export let _setScale: React.Dispatch<React.SetStateAction<number>>
 
-const INIT_ZOOM_LEVEL = 1
-
-const MAX_ZOOM = 2
-const MIN_ZOOM = 0.1
-
 // type Label = {
 //   ele: SVGGElement
 //   x: number
@@ -110,8 +105,7 @@ export default function LabelBoard(p: Props) {
 
   useEffect(() => {
     if (!svgRef.current) return
-    labelingCoreRef.current = new LabelingCore(svgRef.current, p.labelList, p.setLabelList)
-    labelingCoreRef.current.initLabelList(p.labelList)
+    labelingCoreRef.current = new LabelingCore(svgRef.current, p.labelList, p.setLabelList, setZoom)
   }, [])
 
   useEffect(() => {
@@ -172,29 +166,6 @@ export default function LabelBoard(p: Props) {
   //   }
   //   LabelMain.createAnchorsInSelectedLabelsIds(selectedLabelsIds)
   // }, [selectedLabelsIds])
-
-  // const onRectMouseDown = (label: Label) => (evt: React.MouseEvent) => {
-  //   console.log(label)
-  //   p.setLabelList(
-  //     p.labelList.map((_label) => {
-  //       if (_label.id === label.id) {
-  //         _label.selected = true
-  //       }
-  //       return _label
-  //     }),
-  //   )
-  // }
-
-  // for (let i = 0; i < 8; i++) {
-  //   const anchor = document.createElementNS(labelNS.svgNS, "rect")
-  //   anchor.setAttribute("x", anchorPosXList[i].toString())
-  //   anchor.setAttribute("y", anchorPosYList[i].toString())
-  //   anchor.setAttribute("cursor", this._HANDLER_CURSOR_LIST[i])
-  //   anchor.setAttribute("width", "10")
-  //   anchor.setAttribute("height", "10")
-  //   anchor.setAttribute("fill", "white")
-  //   anchor.setAttribute("stroke", this._color)
-  //   anchor.setAttribute("stroke-width", "3")
 
   return (
     <main className={styles.labelBoard}>
