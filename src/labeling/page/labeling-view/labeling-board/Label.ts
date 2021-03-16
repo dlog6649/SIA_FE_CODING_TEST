@@ -1,7 +1,9 @@
 import { generateUUID } from "../../../../common/utils/common"
 import { SvgRole } from "./LabelingCore"
+import labelNS from "./labeling-tool/labelNS"
 
 export class Label {
+  private readonly _svgNs = "http://www.w3.org/2000/svg"
   private readonly _g: SVGGElement
   private readonly _rect: SVGRectElement
   private readonly _id: string
@@ -16,7 +18,6 @@ export class Label {
   private _scale: number
   private _color = "#5c6dda"
   private _selected = false
-  private readonly _svgNs = "http://www.w3.org/2000/svg"
 
   //   9
   // 0 1 2
@@ -161,6 +162,7 @@ export class Label {
   }
 
   set selected(selected) {
+    if (this._selected === selected) return
     this._selected = selected
     if (selected) {
       this.createHandlers()
@@ -179,7 +181,7 @@ export class Label {
     this._rect.setAttribute("stroke", color)
   }
 
-  createHandlers = () => {
+  private createHandlers = () => {
     const halfOfWidth = this._width * 0.5
     const halfOfHeight = this._height * 0.5
 
@@ -295,9 +297,52 @@ export class Label {
     // label.appendChild(infoTxt)
   }
 
-  removeHandlers = () => {
+  private removeHandlers = () => {
     for (let i = this._g.childElementCount - 1; i > 0; i--) {
       this._g.removeChild(this._g.children[i])
+    }
+  }
+
+  moveHandlers = () => {
+    const width = this._width
+    const height = this._height
+    const halfOfWidth = width * 0.5
+    const halfOfHeight = height * 0.5
+    const anchorPosXList = [-7, halfOfWidth - 5, width - 3, width - 3, width - 3, halfOfWidth - 5, -7, -7]
+    const anchorPosYList = [-7, -7, -7, halfOfHeight - 5, height - 3, height - 3, height - 3, halfOfHeight - 5]
+    let i = 0
+    let anchor = this._rect.nextElementSibling
+    while (anchor) {
+      switch (anchor.tagName) {
+        case labelNS.tagNm.RECT:
+          if (anchor.classList.contains("infoBox")) {
+            anchor.setAttribute("x", (width + 23).toString())
+            anchor.setAttribute("y", (height + 5).toString())
+          } else {
+            anchor.setAttribute("x", anchorPosXList[i].toString())
+            anchor.setAttribute("y", anchorPosYList[i].toString())
+            i++
+          }
+          break
+        case labelNS.tagNm.LINE:
+          anchor.setAttribute("x1", halfOfWidth.toString())
+          anchor.setAttribute("x2", halfOfWidth.toString())
+          break
+        case labelNS.tagNm.CIRCLE:
+          anchor.setAttribute("cx", halfOfWidth.toString())
+          break
+        case labelNS.tagNm.TEXT:
+          anchor.setAttribute("y", (height + 5).toString())
+          const children = anchor.children
+          for (let i = 0; i < children.length; i++) {
+            children[i].setAttribute("x", (width + 30).toString())
+          }
+          break
+        case labelNS.tagNm.FOREIGNOBJECT:
+          anchor.setAttribute("x", (width + 20).toString())
+          break
+      }
+      anchor = anchor.nextElementSibling
     }
   }
 }
