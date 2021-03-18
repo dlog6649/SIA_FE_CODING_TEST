@@ -79,10 +79,6 @@ export class Label {
 
   set x(x) {
     this._x = x
-    this._g.setAttribute(
-      "transform",
-      `translate(${x} ${this._y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
-    )
   }
 
   get y() {
@@ -91,10 +87,6 @@ export class Label {
 
   set y(y) {
     this._y = y
-    this._g.setAttribute(
-      "transform",
-      `translate(${this._x} ${y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
-    )
   }
 
   get width() {
@@ -104,11 +96,6 @@ export class Label {
   set width(width) {
     this._width = width
     this._rotateX = width * 0.5
-    this._g.setAttribute(
-      "transform",
-      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
-    )
-    this._rect.setAttribute("width", width.toString())
   }
 
   get height() {
@@ -118,11 +105,6 @@ export class Label {
   set height(height) {
     this._height = height
     this._rotateY = height * 0.5
-    this._g.setAttribute(
-      "transform",
-      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
-    )
-    this._rect.setAttribute("height", height.toString())
   }
 
   get scale() {
@@ -131,10 +113,6 @@ export class Label {
 
   set scale(scale: number) {
     this._scale = scale
-    this._g.setAttribute(
-      "transform",
-      `translate(${this._x} ${this._y}) scale(${scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
-    )
   }
 
   get degree() {
@@ -143,10 +121,6 @@ export class Label {
 
   set degree(degree) {
     this._degree = degree
-    this._g.setAttribute(
-      "transform",
-      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(${degree} ${this._rotateX} ${this._rotateY})`,
-    )
   }
 
   get rotateX() {
@@ -179,6 +153,15 @@ export class Label {
     this._color = color
     this._rect.setAttribute("fill", color)
     this._rect.setAttribute("stroke", color)
+  }
+
+  setAttributes = () => {
+    this._g.setAttribute(
+      "transform",
+      `translate(${this._x} ${this._y}) scale(${this._scale}) rotate(${this._degree} ${this._rotateX} ${this._rotateY})`,
+    )
+    this._rect.setAttribute("height", this._height.toString())
+    this._rect.setAttribute("width", this._width.toString())
   }
 
   private createHandlers = () => {
