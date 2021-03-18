@@ -1,5 +1,11 @@
 import { Mode } from "../LabelingView"
 import { Label } from "./Label"
+import labelNS from "./labeling-tool/labelNS"
+import { _setScale, dispatch } from "./LabelingBoard"
+import { MouseEventHandler } from "react"
+import { parseTransform } from "../../../../common/utils/common"
+import { updateImgLabels } from "../../../../common/modules/annotator"
+import { getSelectedLabelsIds } from "./labeling-tool/LabelMain"
 
 export enum SvgRole {
   Svg = "Svg",
@@ -43,23 +49,30 @@ export class LabelingCore {
     height: number
     rotateX: number
     rotateY: number
+    qp0_x: number
+    qp0_y: number
+    pp_x: number
+    pp_y: number
   } | null = null
-  private _qp0_x = 0
-  private _qp0_y = 0
-  private _pp_x = 0
-  private _pp_y = 0
+  readonly MIN_ZOOM = 0.1
+  readonly MAX_ZOOM = 2
+  private _setZoom: (zoom: number) => void
 
-  constructor(svg: SVGSVGElement, labelList: Label[], setLabelList: (labelList: Label[]) => void) {
+  constructor(
+    svg: SVGSVGElement,
+    labelList: Label[],
+    setLabelList: (labelList: Label[]) => void,
+    setZoom: (zoom: number) => void,
+  ) {
     this._svg = svg
     this._svg.addEventListener("mousedown", this.onSvgMouseDown)
     this._svg.addEventListener("mousemove", this.onSvgMouseMove)
     this._svg.addEventListener("mouseup", this.onSvgMouseUp)
+    this._svg.addEventListener("mousewheel", this.onSvgMouseWheel)
     this._labelList = labelList
+    this.appendLabelList(labelList)
     this._setLabelList = setLabelList
-  }
-
-  get svgNs() {
-    return this._svgNs
+    this._setZoom = setZoom
   }
 
   set mode(mode: Mode) {
@@ -76,10 +89,11 @@ export class LabelingCore {
   }
 
   set zoom(zoom: number) {
+    this.setZoomLabelList(this._zoom, zoom)
     this._zoom = zoom
   }
 
-  initLabelList = (labelList: Label[]) => {
+  private appendLabelList = (labelList: Label[]) => {
     labelList.forEach((label) => {
       this._svg.appendChild(label.g)
     })
@@ -87,14 +101,6 @@ export class LabelingCore {
 
   set labelList(labelList: Label[]) {
     this._labelList = labelList
-  }
-
-  get isPushingSpaceBar() {
-    return this._isPushingSpacebar
-  }
-
-  set isDragging(isDragging: boolean) {
-    this._isDragging = isDragging
   }
 
   onSvgMouseDown = (evt: MouseEvent) => {
@@ -173,13 +179,31 @@ export class LabelingCore {
           if (!target.dataset.cursor) return
           const sequence = target.dataset.sequence
           if (!sequence) return
-
           this._curSvgRole = role
           this._curLabel = found
           this._resizerCursor = target.dataset.cursor
           this._isDragging = true
-
           const { x, y, width, height, scale, degree, rotateX, rotateY } = found
+
+          const theta = (Math.PI / 180) * degree
+          const cos_t = Math.cos(theta)
+          const sin_t = Math.sin(theta)
+          const c0_x = x + rotateX * scale
+          const c0_y = y + rotateY * scale
+          const rightSide = x + width
+          const bottomSide = y + height
+          const q0_x_arr = [x, c0_x, rightSide, rightSide, rightSide, c0_x, x, x]
+          const q0_y_arr = [y, y, y, c0_y, bottomSide, bottomSide, bottomSide, c0_y]
+          const p0_x_arr = [rightSide, c0_x, x, x, x, c0_x, rightSide, rightSide]
+          const p0_y_arr = [bottomSide, bottomSide, bottomSide, c0_y, y, y, y, c0_y]
+          const q0_x = q0_x_arr[sequence]
+          const q0_y = q0_y_arr[sequence]
+          const p0_x = p0_x_arr[sequence]
+          const p0_y = p0_y_arr[sequence]
+          const qp0_x = (q0_x - c0_x) * cos_t - (q0_y - c0_y) * sin_t + c0_x
+          const qp0_y = (q0_x - c0_x) * sin_t + (q0_y - c0_y) * cos_t + c0_y
+          const pp_x = (p0_x - c0_x) * cos_t - (p0_y - c0_y) * sin_t + c0_x
+          const pp_y = (p0_x - c0_x) * sin_t + (p0_y - c0_y) * cos_t + c0_y
 
           this._selectedLabel = {
             label: found,
@@ -189,33 +213,11 @@ export class LabelingCore {
             height,
             rotateX,
             rotateY,
+            qp0_x,
+            qp0_y,
+            pp_x,
+            pp_y,
           }
-
-          const theta = (Math.PI / 180) * degree
-          const cos_t = Math.cos(theta)
-          const sin_t = Math.sin(theta)
-          const c0_x = x + rotateX * scale
-          const c0_y = y + rotateY * scale
-
-          const rightSide = x + width
-          const bottomSide = y + height
-
-          const q0_x_arr = [x, c0_x, rightSide, rightSide, rightSide, c0_x, x, x]
-          const q0_y_arr = [y, y, y, c0_y, bottomSide, bottomSide, bottomSide, c0_y]
-          const p0_x_arr = [rightSide, c0_x, x, x, x, c0_x, rightSide, rightSide]
-          const p0_y_arr = [bottomSide, bottomSide, bottomSide, c0_y, y, y, y, c0_y]
-
-          const q0_x = q0_x_arr[sequence]
-          const q0_y = q0_y_arr[sequence]
-
-          const p0_x = p0_x_arr[sequence]
-          const p0_y = p0_y_arr[sequence]
-
-          this._qp0_x = (q0_x - c0_x) * cos_t - (q0_y - c0_y) * sin_t + c0_x
-          this._qp0_y = (q0_x - c0_x) * sin_t + (q0_y - c0_y) * cos_t + c0_y
-
-          this._pp_x = (p0_x - c0_x) * cos_t - (p0_y - c0_y) * sin_t + c0_x
-          this._pp_y = (p0_x - c0_x) * sin_t + (p0_y - c0_y) * cos_t + c0_y
         }
       }
     }
@@ -223,110 +225,14 @@ export class LabelingCore {
 
   onSvgMouseMove = (evt: MouseEvent) => {
     if (this._mode === Mode.Creation && this._isDrawing) {
-      if (!this._curLabel) return
-      const endX = evt.offsetX
-      const endY = evt.offsetY
-      const x = this._startX < endX ? this._startX : endX
-      const y = this._startY < endY ? this._startY : endY
-      const width = Math.abs(this._startX - endX) / this._zoom
-      const height = Math.abs(this._startY - endY) / this._zoom
-      this._curLabel.x = x
-      this._curLabel.y = y
-      this._curLabel.width = width
-      this._curLabel.height = height
+      this.drawLabel(evt)
     } else if (this._mode === Mode.Selection && this._isDragging) {
-      console.log(this._curSvgRole)
       if (this._curSvgRole === SvgRole.LabelBody) {
-        const endX = evt.offsetX
-        const endY = evt.offsetY
-        const deltaX = endX - this._startX
-        const deltaY = endY - this._startY
-        this._selectedLabelList.forEach((selectedLabel) => {
-          selectedLabel.label.x = selectedLabel.x + deltaX
-          selectedLabel.label.y = selectedLabel.y + deltaY
-        })
+        this.dragLabelList(evt)
       } else if (this._curSvgRole === SvgRole.Rotator) {
-        if (!this._curLabel) return
-        const endX = evt.offsetX
-        const endY = evt.offsetY
-        const oriRotX = this._curLabel.width * this._curLabel.scale * 0.5
-        const oriRotY = this._curLabel.height * this._curLabel.scale * 0.5
-        console.log(oriRotX, oriRotY)
-        // 이 부분에서 scale을 곱해줘야 SCALE이 바뀌었을때 유효해지는가?
-        let degree =
-          (Math.atan2(endY - (this._curLabel.y + oriRotY), endX - (this._curLabel.x + oriRotX)) * 180) / Math.PI + 90
-        degree = degree < 0 ? degree + 360 : degree
-        this._curLabel.degree = degree
+        this.rotateLabel(evt)
       } else if (this._curSvgRole === SvgRole.Resizer) {
-        const endX = evt.offsetX
-        const endY = evt.offsetY
-        let x
-        let y
-        let w
-        let h
-        let qp_x
-        let qp_y
-        if (this._selectedLabel === null) return
-        if (this._resizerCursor === _HANDLER_CURSOR_LIST[1] || this._resizerCursor === _HANDLER_CURSOR_LIST[5]) {
-          qp_x = this._qp0_x
-          qp_y = this._qp0_y + (endY - this._qp0_y)
-        } else if (this._resizerCursor === _HANDLER_CURSOR_LIST[3] || this._resizerCursor === _HANDLER_CURSOR_LIST[7]) {
-          qp_x = this._qp0_x + (endX - this._qp0_x)
-          qp_y = this._qp0_y
-        } else {
-          qp_x = this._qp0_x + (endX - this._qp0_x)
-          qp_y = this._qp0_y + (endY - this._qp0_y)
-        }
-        const cp_x = (qp_x + this._pp_x) * 0.5
-        const cp_y = (qp_y + this._pp_y) * 0.5
-
-        const mtheta = (-1 * Math.PI * this._selectedLabel.label.degree) / 180
-        const cos_mt = Math.cos(mtheta)
-        const sin_mt = Math.sin(mtheta)
-
-        const q_x = (qp_x - cp_x) * cos_mt - (qp_y - cp_y) * sin_mt + cp_x
-        const q_y = (qp_x - cp_x) * sin_mt + (qp_y - cp_y) * cos_mt + cp_y
-        const p_x = (this._pp_x - cp_x) * cos_mt - (this._pp_y - cp_y) * sin_mt + cp_x
-        const p_y = (this._pp_x - cp_x) * sin_mt + (this._pp_y - cp_y) * cos_mt + cp_y
-
-        if (this._resizerCursor === _HANDLER_CURSOR_LIST[1] || this._resizerCursor === _HANDLER_CURSOR_LIST[5]) {
-          w = this._selectedLabel.width
-          h = p_y - q_y
-          x = this._selectedLabel.x
-          y = q_y
-        } else if (this._resizerCursor === _HANDLER_CURSOR_LIST[3] || this._resizerCursor === _HANDLER_CURSOR_LIST[7]) {
-          w = p_x - q_x
-          h = this._selectedLabel.height
-          x = q_x
-          y = this._selectedLabel.y
-        } else {
-          w = p_x - q_x
-          h = p_y - q_y
-          x = q_x
-          y = q_y
-        }
-
-        if (w < 0) {
-          w *= -1
-          x = p_x
-        }
-        if (h < 0) {
-          h *= -1
-          y = p_y
-        }
-
-        w /= this._selectedLabel.label.scale
-        h /= this._selectedLabel.label.scale
-
-        x = parseFloat(x.toFixed(2))
-        y = parseFloat(y.toFixed(2))
-        w = parseFloat(w.toFixed(2))
-        h = parseFloat(h.toFixed(2))
-
-        this._selectedLabel.label.x = x
-        this._selectedLabel.label.y = y
-        this._selectedLabel.label.width = w
-        this._selectedLabel.label.height = h
+        this.resizeLabel(evt)
       }
     }
   }
@@ -341,10 +247,144 @@ export class LabelingCore {
       }
       this._curLabel = null
     } else if (this._mode === Mode.Selection && this._isDragging) {
-      // degree가 다른 라벨들에 대해서 새로운 x, y값을 지정해야 하는가?
       this._setLabelList([...this._labelList])
     }
     this._isDragging = false
     this._isDrawing = false
+  }
+
+  onSvgMouseWheel = (evt: Event) => {
+    let newZoom = (evt as WheelEvent).deltaY < 0 ? this._zoom + 0.1 : this._zoom - 0.1
+    newZoom = parseFloat(newZoom.toFixed(1))
+    if (newZoom < this.MIN_ZOOM || newZoom > this.MAX_ZOOM) return
+    this._setZoom(newZoom)
+  }
+
+  setZoomLabelList = (preZoom: number, newZoom: number) => {
+    this._labelList.forEach((label) => {
+      label.scale = newZoom
+      label.x = (label.x / preZoom) * newZoom
+      label.y = (label.y / preZoom) * newZoom
+      label.setAttributes()
+    })
+  }
+
+  drawLabel = (evt: MouseEvent) => {
+    if (!this._curLabel) return
+    const endX = evt.offsetX
+    const endY = evt.offsetY
+    const x = this._startX < endX ? this._startX : endX
+    const y = this._startY < endY ? this._startY : endY
+    const width = Math.abs(this._startX - endX) / this._zoom
+    const height = Math.abs(this._startY - endY) / this._zoom
+    this._curLabel.x = x
+    this._curLabel.y = y
+    this._curLabel.width = width
+    this._curLabel.height = height
+    this._curLabel.setAttributes()
+  }
+
+  dragLabelList = (evt: MouseEvent) => {
+    const endX = evt.offsetX
+    const endY = evt.offsetY
+    const deltaX = endX - this._startX
+    const deltaY = endY - this._startY
+    this._selectedLabelList.forEach((selectedLabel) => {
+      selectedLabel.label.x = selectedLabel.x + deltaX
+      selectedLabel.label.y = selectedLabel.y + deltaY
+      selectedLabel.label.setAttributes()
+    })
+  }
+
+  rotateLabel = (evt: MouseEvent) => {
+    if (!this._curLabel) return
+    const endX = evt.offsetX
+    const endY = evt.offsetY
+    const originalRotateX = this._curLabel.width * this._curLabel.scale * 0.5
+    const originalRotateY = this._curLabel.height * this._curLabel.scale * 0.5
+    let degree =
+      (Math.atan2(endY - (this._curLabel.y + originalRotateY), endX - (this._curLabel.x + originalRotateX)) * 180) /
+        Math.PI +
+      90
+    degree = degree < 0 ? degree + 360 : degree
+    this._curLabel.degree = degree
+    this._curLabel.setAttributes()
+  }
+
+  resizeLabel = (evt: MouseEvent) => {
+    const endX = evt.offsetX
+    const endY = evt.offsetY
+    let x
+    let y
+    let w
+    let h
+    let qp_x
+    let qp_y
+    if (this._selectedLabel === null) return
+    if (this._resizerCursor === _HANDLER_CURSOR_LIST[1] || this._resizerCursor === _HANDLER_CURSOR_LIST[5]) {
+      qp_x = this._selectedLabel.qp0_x
+      qp_y = this._selectedLabel.qp0_y + (endY - this._selectedLabel.qp0_y)
+    } else if (this._resizerCursor === _HANDLER_CURSOR_LIST[3] || this._resizerCursor === _HANDLER_CURSOR_LIST[7]) {
+      qp_x = this._selectedLabel.qp0_x + (endX - this._selectedLabel.qp0_x)
+      qp_y = this._selectedLabel.qp0_y
+    } else {
+      qp_x = this._selectedLabel.qp0_x + (endX - this._selectedLabel.qp0_x)
+      qp_y = this._selectedLabel.qp0_y + (endY - this._selectedLabel.qp0_y)
+    }
+    const cp_x = (qp_x + this._selectedLabel.pp_x) * 0.5
+    const cp_y = (qp_y + this._selectedLabel.pp_y) * 0.5
+
+    const mtheta = (-1 * Math.PI * this._selectedLabel.label.degree) / 180
+    const cos_mt = Math.cos(mtheta)
+    const sin_mt = Math.sin(mtheta)
+
+    const q_x = (qp_x - cp_x) * cos_mt - (qp_y - cp_y) * sin_mt + cp_x
+    const q_y = (qp_x - cp_x) * sin_mt + (qp_y - cp_y) * cos_mt + cp_y
+    const p_x = (this._selectedLabel.pp_x - cp_x) * cos_mt - (this._selectedLabel.pp_y - cp_y) * sin_mt + cp_x
+    const p_y = (this._selectedLabel.pp_x - cp_x) * sin_mt + (this._selectedLabel.pp_y - cp_y) * cos_mt + cp_y
+
+    console.log(this._resizerCursor)
+    if (this._resizerCursor === _HANDLER_CURSOR_LIST[1] || this._resizerCursor === _HANDLER_CURSOR_LIST[5]) {
+      w = this._selectedLabel.width
+      h = p_y - q_y
+      x = this._selectedLabel.x
+      y = q_y
+    } else if (this._resizerCursor === _HANDLER_CURSOR_LIST[3] || this._resizerCursor === _HANDLER_CURSOR_LIST[7]) {
+      w = p_x - q_x
+      h = this._selectedLabel.height
+      x = q_x
+      y = this._selectedLabel.y
+    } else {
+      w = p_x - q_x
+      h = p_y - q_y
+      x = q_x
+      y = q_y
+    }
+
+    if (w < 0) {
+      w *= -1
+      x = p_x
+    }
+    if (h < 0) {
+      h *= -1
+      y = p_y
+    }
+
+    w /= this._selectedLabel.label.scale
+    h /= this._selectedLabel.label.scale
+
+    x = parseFloat(x.toFixed(2))
+    y = parseFloat(y.toFixed(2))
+    w = parseFloat(w.toFixed(2))
+    h = parseFloat(h.toFixed(2))
+
+    console.log(this._selectedLabel.label.width, w)
+    console.log(this._selectedLabel.label.height, h)
+    this._selectedLabel.label.x = x
+    this._selectedLabel.label.y = y
+    this._selectedLabel.label.width = w
+    this._selectedLabel.label.height = h
+    this._selectedLabel.label.setAttributes()
+    this._selectedLabel.label.moveHandlers()
   }
 }
