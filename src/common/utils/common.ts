@@ -1,14 +1,3 @@
-const tagNm = {
-  LINE: "line",
-  CIRCLE: "circle",
-  RECT: "rect",
-  TEXT: "text",
-  FOREIGNOBJECT: "foreignObject",
-  IMAGE: "image",
-  G: "g",
-  SPAN: "SPAN",
-}
-
 export const parseTransform = (obj: any) => {
   let transform = ""
   let x = 0
