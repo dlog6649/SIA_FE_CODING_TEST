@@ -4,13 +4,11 @@ import { Provider } from "react-redux"
 import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit"
 import App from "./App"
 import * as serviceWorker from "./serviceWorker"
-import { annotatorReducer } from "./common/modules/annotator"
 import { labelingReducer, labelingSaga } from "./labeling/modules/labeling"
 import { all } from "redux-saga/effects"
 import createSagaMiddleWare from "redux-saga"
 
 const rootReducer = combineReducers({
-  annotatorReducer,
   labelingReducer,
 })
 export type RootState = ReturnType<typeof rootReducer>
