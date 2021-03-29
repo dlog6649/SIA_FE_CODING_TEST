@@ -13,7 +13,7 @@ type Props = {
 export default function Card(p: Props) {
   return (
     <figure className={cn(styles.card, p.className)} title={p.text} onClick={p.onClick} tabIndex={0}>
-      <img className={styles.thumbnail} src={p.thumbnailUrl} />
+      <img className={styles.thumbnail} src={p.thumbnailUrl} alt={p.text} />
       <div className={styles.text}>{p.text}</div>
     </figure>
   )
