@@ -7,12 +7,12 @@ export const useInput = (initialValue?: string, validator?: (value: string) => b
       target: { value },
     } = evt
     let willUpdate = true
-    if (typeof validator === "function") {
+    if (validator !== undefined) {
       willUpdate = validator(value)
     }
     if (willUpdate) {
       setValue(value)
     }
   }
-  return { value, onChange }
+  return { value, onChange, setValue }
 }

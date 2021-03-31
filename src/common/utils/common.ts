@@ -53,64 +53,11 @@ export const pauseEvent = (evt: any) => {
   return false
 }
 
-export const getLabelState = (label: SVGGElement) => {
-  const id = Number(label.dataset.id)
-  const name = label.dataset.name
-  const tf = parseTransform(label)
-  const data = { x: tf.x, y: tf.y, w: tf.w, h: tf.h, deg: tf.deg }
-
-  const theta = (Math.PI / 180) * tf.deg
-  const cos_t = Math.cos(theta)
-  const sin_t = Math.sin(theta)
-
-  const c_x = tf.x + tf.rotX
-  const c_y = tf.y + tf.rotY
-
-  const nw_x = tf.x
-  const nw_y = tf.y
-  const ne_x = tf.x + tf.w
-  const ne_y = tf.y
-  const se_x = tf.x + tf.w
-  const se_y = tf.y + tf.h
-  const sw_x = tf.x
-  const sw_y = tf.y + tf.h
-
-  let nw_xp = (nw_x - c_x) * cos_t - (nw_y - c_y) * sin_t + c_x
-  let nw_yp = (nw_x - c_x) * sin_t + (nw_y - c_y) * cos_t + c_y
-  let ne_xp = (ne_x - c_x) * cos_t - (ne_y - c_y) * sin_t + c_x
-  let ne_yp = (ne_x - c_x) * sin_t + (ne_y - c_y) * cos_t + c_y
-  let se_xp = (se_x - c_x) * cos_t - (se_y - c_y) * sin_t + c_x
-  let se_yp = (se_x - c_x) * sin_t + (se_y - c_y) * cos_t + c_y
-  let sw_xp = (sw_x - c_x) * cos_t - (sw_y - c_y) * sin_t + c_x
-  let sw_yp = (sw_x - c_x) * sin_t + (sw_y - c_y) * cos_t + c_y
-
-  nw_xp = parseFloat(nw_xp.toFixed(2))
-  nw_yp = parseFloat(nw_yp.toFixed(2))
-  ne_xp = parseFloat(ne_xp.toFixed(2))
-  ne_yp = parseFloat(ne_yp.toFixed(2))
-  se_xp = parseFloat(se_xp.toFixed(2))
-  se_yp = parseFloat(se_yp.toFixed(2))
-  sw_xp = parseFloat(sw_xp.toFixed(2))
-  sw_yp = parseFloat(sw_yp.toFixed(2))
-
-  // coordinates
-  // 0 1
-  // 3 2
-  const coordinates = []
-  coordinates.push({ x: nw_xp, y: nw_yp })
-  coordinates.push({ x: ne_xp, y: ne_yp })
-  coordinates.push({ x: se_xp, y: se_yp })
-  coordinates.push({ x: sw_xp, y: sw_yp })
-
-  return { id: id, name: name, coordinates: coordinates, data: data }
-}
-
 export const generateUUID = () => {
   let dt = new Date().getTime()
-  const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     const r = (dt + Math.random() * 16) % 16 | 0
     dt = Math.floor(dt / 16)
-    return (c == "x" ? r : (r & 0x3) | 0x8).toString(16)
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16)
   })
-  return uuid
 }

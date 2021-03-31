@@ -37,6 +37,7 @@ export function taker(sagaOption: any, type: string, fn: (action: any) => Promis
 }
 
 export function handleAsyncAction(state: any, action: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reducerName, type, suffix] = action.type.split("/")
   switch (suffix) {
     case AsyncSuffix.Loading:
