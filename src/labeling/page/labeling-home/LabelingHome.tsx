@@ -14,7 +14,7 @@ export default function LabelingHome() {
 
   useEffect(() => {
     dispatch(getImageList())
-  }, [])
+  }, [dispatch])
 
   const linkToLabelingDetail = (id: number) => () => {
     history.push(routes.buildLabelingViewPath(id))
