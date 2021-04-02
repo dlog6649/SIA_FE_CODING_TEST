@@ -1,11 +1,5 @@
 import { Mode } from "../LabelingView"
 import { Label } from "./Label"
-import labelNS from "./labeling-tool/labelNS"
-import { _setScale, dispatch } from "./LabelingBoard"
-import { MouseEventHandler } from "react"
-import { parseTransform } from "../../../../common/utils/common"
-import { updateImgLabels } from "../../../../common/modules/annotator"
-import { getSelectedLabelsIds } from "./labeling-tool/LabelMain"
 
 export enum SvgRole {
   Svg = "Svg",
@@ -36,7 +30,7 @@ export class LabelingCore {
   private _isDragging = false
   private _isPushingSpacebar = false
   private _labelList: Label[]
-  private _setLabelList: (labelList: Label[]) => void
+  private readonly _setLabelList: (labelList: Label[]) => void
   private readonly _svgNs = "http://www.w3.org/2000/svg"
   private _curSvgRole: SvgRole = SvgRole.LabelBody
   private _selectedLabelList: { label: Label; x: number; y: number }[] = []
@@ -56,7 +50,8 @@ export class LabelingCore {
   } | null = null
   readonly MIN_ZOOM = 0.1
   readonly MAX_ZOOM = 2
-  private _setZoom: (zoom: number) => void
+  private readonly _setZoom: (zoom: number) => void
+  private _copiedLabelList: Label[] = []
 
   constructor(
     svg: SVGSVGElement,
@@ -69,10 +64,62 @@ export class LabelingCore {
     this._svg.addEventListener("mousemove", this.onSvgMouseMove)
     this._svg.addEventListener("mouseup", this.onSvgMouseUp)
     this._svg.addEventListener("mousewheel", this.onSvgMouseWheel)
+
+    // this._svg.addEventListener("contextmenu", this.onSvgContextMenu)
+
     this._labelList = labelList
     this.appendLabelList(labelList)
     this._setLabelList = setLabelList
     this._setZoom = setZoom
+  }
+
+  // onSvgContextMenu = (evt: MouseEvent) => {
+  //   evt.preventDefault()
+  //   if (this._mode === Mode.Creation) return
+  // }
+
+  onEditMenuClick = () => {}
+
+  onCutMenuClick = () => {
+    this.copySelectedLabelList()
+    this.deleteSelectedLabelList()
+  }
+
+  onCopyMenuClick = () => {
+    this.copySelectedLabelList()
+  }
+
+  onPasteMenuClick = () => {
+    this.appendCopiedLabelList(this._copiedLabelList)
+    this._setLabelList(this._labelList.concat(this._copiedLabelList))
+  }
+
+  onDeleteMenuClick = () => {
+    this.deleteSelectedLabelList()
+  }
+
+  appendCopiedLabelList = (labelList: Label[]) => {
+    labelList.forEach((label) => this._svg.appendChild(label.g))
+  }
+
+  copySelectedLabelList = () => {
+    this._copiedLabelList = this._labelList
+      .filter((label) => label.selected)
+      .map((label) => new Label().copyLabel(label))
+  }
+
+  deleteSelectedLabelList = () => {
+    this._setLabelList(
+      this._labelList.filter((label) => {
+        this.removeSelectedLabel(label)
+        return !label.selected
+      }),
+    )
+  }
+
+  removeSelectedLabel = (label: Label) => {
+    if (!label.selected) return
+    this._svg.removeChild(label.g)
   }
 
   set mode(mode: Mode) {
