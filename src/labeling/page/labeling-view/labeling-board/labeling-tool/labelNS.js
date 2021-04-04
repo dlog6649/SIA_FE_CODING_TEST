@@ -1,4 +1,7 @@
-import { LabelMode } from "../../../../../common/modules/annotator"
+const LabelMode = {
+  CREATE: "CREATE",
+  SELECT: "SELECT",
+}
 
 const labelNS = {
   //   9
