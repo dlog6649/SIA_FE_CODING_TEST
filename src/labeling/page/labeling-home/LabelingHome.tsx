@@ -1,14 +1,14 @@
 import React, { useEffect } from "react"
 import { useHistory } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import styles from "./LabelingHome.module.scss"
 import * as routes from "../../../routes"
 import { getImageList, Image } from "../../modules/labeling"
-import { RootState } from "../../../index"
 import Card from "../../../common/components/card/Card"
+import { useRootState } from "../../../common/hooks/useRootState"
 
 export default function LabelingHome() {
-  const { loading, data, error } = useSelector((state: RootState) => state.labelingReducer.api.getImageList)
+  const { loading, data, error } = useRootState((state) => state.labelingReducer.api.getImageList)
   const history = useHistory()
   const dispatch = useDispatch()
 
