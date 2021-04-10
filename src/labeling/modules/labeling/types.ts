@@ -2,7 +2,7 @@ import { AsyncState } from "../../../common/modules/util"
 
 export type LabelingState = {
   api: {
-    getImageList: AsyncState<Image[]>
+    getImages: AsyncState<Image[]>
     getImage: AsyncState<Image>
   }
 }
