@@ -1,50 +1,53 @@
-import React, { useEffect } from "react"
+import React from "react"
 import styles from "./ContextMenu.module.scss"
 import cn from "classnames"
+import { Coordinate } from "../LabelingBoard"
 
-enum Menu {
-  Edit = "Edit class",
-  Cut = "Cut",
-  Copy = "Copy",
-  Paste = "Paste",
-  Delete = "Delete",
+export type MenuItem = {
+  name: string
+  shortCut: string
+  onClick: any
+  visible: boolean
+  disabled: boolean
 }
-
-const menuList = [
-  {
-    key: Menu.Edit,
-    value: Menu.Edit,
-  },
-]
 
 type Props = {
   className?: string
+  coordinate: Coordinate
+  hideContextMenu: () => void
+  contextMenuRef: React.RefObject<HTMLDivElement>
+  menuItemList: MenuItem[]
 }
 
 export default function ContextMenu(p: Props) {
-  // TODO:  label-contextmenu, edit,cut... 클래스명 제거
+  const onMenuItemClick = (disabled: boolean, onClick?: any) => () => {
+    if (disabled) return
+    console.log(onClick)
+    if (typeof onClick === "function") onClick()
+    p.hideContextMenu()
+  }
+
   return (
-    <div className={cn(styles.labelContextmenu, p.className)}>
-      <div className={styles.item + " edit"}>
-        <span className={styles.itemName}>Edit Class</span>
-        <span className={styles.itemShortcut}>(TBD)</span>
-      </div>
-      <div className={styles.item + " cut"}>
-        <span className={styles.itemName}>Cut</span>
-        <span className={styles.itemShortcut}>Ctrl + X</span>
-      </div>
-      <div className={styles.item + " copy"}>
-        <span className={styles.itemName}>Copy</span>
-        <span className={styles.itemShortcut}>Ctrl + C</span>
-      </div>
-      <div className={styles.item + " paste"}>
-        <span className={styles.itemName}>Paste</span>
-        <span className={styles.itemShortcut}>Ctrl + V</span>
-      </div>
-      <div className={styles.item + " delete"}>
-        <span className={styles.itemName}>Delete</span>
-        <span className={styles.itemShortcut}>Del</span>
-      </div>
+    <div
+      className={cn(styles.labelContextmenu, p.className)}
+      style={{ top: p.coordinate.y, left: p.coordinate.x }}
+      onClick={(evt) => evt.stopPropagation()}
+      onContextMenu={(evt) => evt.preventDefault()}
+      ref={p.contextMenuRef}
+    >
+      {p.menuItemList.map(
+        (menuItem) =>
+          menuItem.visible && (
+            <div
+              className={cn(styles.item, menuItem.disabled && styles.disabled)}
+              onClick={onMenuItemClick(menuItem.disabled, menuItem.onClick)}
+              key={menuItem.name}
+            >
+              <span className={styles.name}>{menuItem.name}</span>
+              <span className={styles.shortcut}>{menuItem.shortCut}</span>
+            </div>
+          ),
+      )}
     </div>
   )
 }

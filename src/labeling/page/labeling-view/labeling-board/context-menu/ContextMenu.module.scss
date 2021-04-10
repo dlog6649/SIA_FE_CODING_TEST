@@ -1,5 +1,4 @@
 .labelContextmenu {
-  display: none;
   position: absolute;
   width: 230px;
   cursor: default;
@@ -7,11 +6,15 @@
   background-color: #fbfbfb;
   box-shadow: 1px 1px 5px 0 #b5b5b5;
 
-  .item {
+  > .item {
     padding: 10px 15px;
 
     &.disabled {
       color: #b8bdc7;
+
+      > .shortcut {
+        color: inherit;
+      }
     }
 
     &:first-child {
@@ -22,11 +25,11 @@
       background-color: #e0e3ea;
     }
 
-    .itemName {
+    > .name {
       font-size: 0.91rem;
     }
 
-    .itemShortcut {
+    > .shortcut {
       float: right;
       padding-top: 5px;
       font-size: 0.7rem;
