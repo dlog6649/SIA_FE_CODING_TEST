@@ -13,7 +13,7 @@ export default function App() {
     <div className={styles.app}>
       <BrowserRouter>
         <Switch>
-          <Route path={routes.labelingHome} component={Labeling} />
+          <Route path={routes.LABELING_HOME_PATH} component={Labeling} />
         </Switch>
       </BrowserRouter>
     </div>
