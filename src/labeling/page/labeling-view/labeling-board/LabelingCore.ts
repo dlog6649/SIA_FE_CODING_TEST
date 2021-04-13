@@ -31,10 +31,10 @@ export class LabelingCore {
   private _isDrawing = false
   private _isDragging = false
   private _isPushingSpacebar = false
-  private _labelList: Label[]
-  private readonly _setLabelList: (labelList: Label[]) => void
+  private _labels: Label[]
+  private readonly _setLabels: (labels: Label[]) => void
   private _curSvgRole: SvgRole = SvgRole.LabelBody
-  private _selectedLabelList: { label: Label; coordinate: Coordinate }[] = []
+  private _selectedLabels: { label: Label; coordinate: Coordinate }[] = []
   private _resizerCursor = ""
   private _selectedLabel: {
     label: Label
@@ -49,12 +49,12 @@ export class LabelingCore {
   readonly MAX_ZOOM = 2
   private readonly _setZoom: (zoom: number) => void
   private readonly _setContextMenuState: (ctxMenuState: ContextMenuState) => void
-  private _copiedLabelList: Label[] = []
+  private _copiedLabels: Label[] = []
 
   constructor(
     svg: SVGSVGElement,
-    labelList: Label[],
-    setLabelList: (labelList: Label[]) => void,
+    labels: Label[],
+    setLabels: (labels: Label[]) => void,
     imgUrl: string,
     setZoom: (zoom: number) => void,
     setContextMenuState: (ctxMenuState: ContextMenuState) => void,
@@ -65,9 +65,9 @@ export class LabelingCore {
     this._svg.addEventListener("mouseup", this.onSvgMouseUp)
     this._svg.addEventListener("mousewheel", this.onSvgMouseWheel)
 
-    this._labelList = labelList
-    this.appendLabelList(labelList)
-    this._setLabelList = setLabelList
+    this._labels = labels
+    this.appendLabels(labels)
+    this._setLabels = setLabels
     this._setZoom = setZoom
     this._setContextMenuState = setContextMenuState
 
@@ -82,19 +82,19 @@ export class LabelingCore {
       this._isPushingSpacebar = true
     }
     if (code === "F2") {
-      this.editLabelList()
+      this.editLabels()
     }
     if (code === "Delete" || code === "Backspace") {
-      this.deleteLabelList()
+      this.deleteLabels()
     }
     if (evt.ctrlKey && code === "KeyX") {
-      this.cutLabelList()
+      this.cutLabels()
     }
     if (evt.ctrlKey && code === "KeyC") {
-      this.copyLabelList()
+      this.copyLabels()
     }
     if (evt.ctrlKey && code === "KeyV") {
-      this.pasteLabelList()
+      this.pasteLabels()
     }
   }
 
@@ -105,24 +105,24 @@ export class LabelingCore {
     }
   }
 
-  onEditMenuClick = () => this.editLabelList()
+  onEditMenuClick = () => this.editLabels()
 
-  editLabelList = () => this._labelList.filter((label) => label.selected).forEach((label) => label.createInputBox())
+  editLabels = () => this._labels.filter((label) => label.selected).forEach((label) => label.createInputBox())
 
-  onCutMenuClick = () => this.cutLabelList()
+  onCutMenuClick = () => this.cutLabels()
 
-  cutLabelList = () => {
-    this.copyLabelList()
-    this.deleteLabelList()
+  cutLabels = () => {
+    this.copyLabels()
+    this.deleteLabels()
   }
 
-  onCopyMenuClick = () => this.copyLabelList()
+  onCopyMenuClick = () => this.copyLabels()
 
-  onPasteMenuClick = () => this.pasteLabelListOnMousePosition()
+  onPasteMenuClick = () => this.pasteLabelsOnMousePosition()
 
-  pasteLabelList = () => {
+  pasteLabels = () => {
     const COPIED_LABEL_POSITION_DISTANCE = 10
-    this._copiedLabelList = this._copiedLabelList.map((label) => {
+    this._copiedLabels = this._copiedLabels.map((label) => {
       const _label = new Label().copyLabel(label)
       _label.x = _label.x + COPIED_LABEL_POSITION_DISTANCE
       _label.y = _label.y + COPIED_LABEL_POSITION_DISTANCE
@@ -130,40 +130,40 @@ export class LabelingCore {
       _label.setCursor(this.getLabelCursorStyle())
       return _label
     })
-    this.appendCopiedLabelList(this._copiedLabelList)
-    this._setLabelList(this._labelList.concat(this._copiedLabelList))
+    this.appendCopiedLabels(this._copiedLabels)
+    this._setLabels(this._labels.concat(this._copiedLabels))
   }
 
-  pasteLabelListOnMousePosition = () => {
-    const newLabelList = this._copiedLabelList.map((label) => {
+  pasteLabelsOnMousePosition = () => {
+    const newLabels = this._copiedLabels.map((label) => {
       const _label = new Label().copyLabel(label)
-      _label.x = this._copiedLabelList[0].x - _label.x + this._menuCoordinate.x
-      _label.y = this._copiedLabelList[0].y - _label.y + this._menuCoordinate.y
+      _label.x = this._copiedLabels[0].x - _label.x + this._menuCoordinate.x
+      _label.y = this._copiedLabels[0].y - _label.y + this._menuCoordinate.y
       _label.setAttributes()
       _label.setCursor(this.getLabelCursorStyle())
       return _label
     })
-    this.appendCopiedLabelList(newLabelList)
-    this._setLabelList(this._labelList.concat(newLabelList))
+    this.appendCopiedLabels(newLabels)
+    this._setLabels(this._labels.concat(newLabels))
   }
 
   getLabelCursorStyle = () => (this._mode === Mode.Selection ? "move" : "default")
 
   onDeleteMenuClick = () => {
-    this.deleteLabelList()
+    this.deleteLabels()
   }
 
-  appendCopiedLabelList = (labelList: Label[]) => {
-    labelList.forEach((label) => this._svg.appendChild(label.g))
+  appendCopiedLabels = (labels: Label[]) => {
+    labels.forEach((label) => this._svg.appendChild(label.g))
   }
 
-  copyLabelList = () => {
-    this._copiedLabelList = this._labelList.filter((label) => label.selected)
+  copyLabels = () => {
+    this._copiedLabels = this._labels.filter((label) => label.selected)
   }
 
-  deleteLabelList = () => {
-    this._setLabelList(
-      this._labelList.filter((label) => {
+  deleteLabels = () => {
+    this._setLabels(
+      this._labels.filter((label) => {
         this.removeSelectedLabel(label)
         return !label.selected
       }),
@@ -177,24 +177,24 @@ export class LabelingCore {
 
   set mode(mode: Mode) {
     this._mode = mode
-    this._labelList.forEach((label) => {
+    this._labels.forEach((label) => {
       label.setCursor(this.getLabelCursorStyle())
     })
   }
 
   set zoom(zoom: number) {
-    this.setZoomLabelList(this._zoom, zoom)
+    this.setZoomLabels(this._zoom, zoom)
     this._zoom = zoom
   }
 
-  private appendLabelList = (labelList: Label[]) => {
-    labelList.forEach((label) => {
+  private appendLabels = (labels: Label[]) => {
+    labels.forEach((label) => {
       this._svg.appendChild(label.g)
     })
   }
 
-  set labelList(labelList: Label[]) {
-    this._labelList = labelList
+  set labels(labels: Label[]) {
+    this._labels = labels
   }
 
   onSvgMouseDown = (evt: MouseEvent) => {
@@ -221,12 +221,12 @@ export class LabelingCore {
       if (evt.ctrlKey) {
         if (role === SvgRole.LabelBody) {
           if (!id) return
-          const newLabelList = this._labelList.map((label) => {
+          const newLabels = this._labels.map((label) => {
             if (label.id === id) label.selected = !label.selected
             return label
           })
-          this._setLabelList(newLabelList)
-          this._selectedLabelList = newLabelList
+          this._setLabels(newLabels)
+          this._selectedLabels = newLabels
             .filter((label) => label.selected)
             .map((label) => ({
               label,
@@ -239,20 +239,20 @@ export class LabelingCore {
       } else {
         console.log(role)
         if (role === SvgRole.Svg) {
-          this._setLabelList(
-            this._labelList.map((label) => {
+          this._setLabels(
+            this._labels.map((label) => {
               label.selected = false
               return label
             }),
           )
         } else if (role === SvgRole.LabelBody) {
           if (!id) return
-          const newLabelList = this._labelList.map((label) => {
+          const newLabels = this._labels.map((label) => {
             label.selected = label.id === id
             return label
           })
-          this._setLabelList(newLabelList)
-          this._selectedLabelList = newLabelList
+          this._setLabels(newLabels)
+          this._selectedLabels = newLabels
             .filter((label) => label.selected)
             .map((label) => ({
               label,
@@ -262,12 +262,12 @@ export class LabelingCore {
           this._startCoordinate.x = evt.offsetX
           this._startCoordinate.y = evt.offsetY
         } else if (role === SvgRole.Rotator) {
-          const found = this._labelList.find((label) => label.id === id)
+          const found = this._labels.find((label) => label.id === id)
           if (!found) return
           this._curLabel = found
           this._isDragging = true
         } else if (role === SvgRole.Resizer) {
-          const found = this._labelList.find((label) => label.id === id)
+          const found = this._labels.find((label) => label.id === id)
           if (!found) return
           if (!target.dataset.cursor) return
           const sequence = target.dataset.sequence
@@ -317,7 +317,7 @@ export class LabelingCore {
       this.drawLabel(evt)
     } else if (this._mode === Mode.Selection && this._isDragging) {
       if (this._curSvgRole === SvgRole.LabelBody) {
-        this.dragLabelList(evt)
+        this.dragLabels(evt)
       } else if (this._curSvgRole === SvgRole.Rotator) {
         this.rotateLabel(evt)
       } else if (this._curSvgRole === SvgRole.Resizer) {
@@ -331,14 +331,14 @@ export class LabelingCore {
       if (!this._curLabel) return
       if (this._curLabel.width > 10 && this._curLabel.height > 10) {
         this._curLabel.createInputBox()
-        this._setLabelList(this._labelList.concat(this._curLabel))
+        this._setLabels(this._labels.concat(this._curLabel))
       } else {
         this._svg.removeChild(this._curLabel.g)
       }
       this._curLabel = null
     } else if (this._mode === Mode.Selection) {
       if (this._isDragging) {
-        this._setLabelList([...this._labelList])
+        this._setLabels([...this._labels])
       }
 
       const target = evt.target as SVGElement
@@ -355,7 +355,7 @@ export class LabelingCore {
             edit: { visible: true, disabled: false },
             cut: { visible: true, disabled: false },
             copy: { visible: true, disabled: false },
-            paste: { visible: true, disabled: this._copiedLabelList.length === 0 },
+            paste: { visible: true, disabled: this._copiedLabels.length === 0 },
             delete: { visible: true, disabled: false },
           })
         } else {
@@ -363,7 +363,7 @@ export class LabelingCore {
             edit: { visible: false, disabled: true },
             cut: { visible: false, disabled: true },
             copy: { visible: false, disabled: true },
-            paste: { visible: true, disabled: this._copiedLabelList.length === 0 },
+            paste: { visible: true, disabled: this._copiedLabels.length === 0 },
             delete: { visible: false, disabled: true },
           })
         }
@@ -380,8 +380,8 @@ export class LabelingCore {
     this._setZoom(newZoom)
   }
 
-  setZoomLabelList = (preZoom: number, newZoom: number) => {
-    this._labelList.forEach((label) => {
+  setZoomLabels = (preZoom: number, newZoom: number) => {
+    this._labels.forEach((label) => {
       label.scale = newZoom
       label.x = (label.x / preZoom) * newZoom
       label.y = (label.y / preZoom) * newZoom
@@ -404,12 +404,12 @@ export class LabelingCore {
     this._curLabel.setAttributes()
   }
 
-  dragLabelList = (evt: MouseEvent) => {
+  dragLabels = (evt: MouseEvent) => {
     const endX = evt.offsetX
     const endY = evt.offsetY
     const deltaX = endX - this._startCoordinate.x
     const deltaY = endY - this._startCoordinate.y
-    this._selectedLabelList.forEach((selectedLabel) => {
+    this._selectedLabels.forEach((selectedLabel) => {
       selectedLabel.label.x = selectedLabel.coordinate.x + deltaX
       selectedLabel.label.y = selectedLabel.coordinate.y + deltaY
       selectedLabel.label.setAttributes()
