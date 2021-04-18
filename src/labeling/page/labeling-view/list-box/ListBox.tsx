@@ -8,7 +8,7 @@ import { Label } from "../labeling-board/Label"
 
 type Props = {
   className?: string
-  labelList?: Label[]
+  labels?: Label[]
   onItemClick?: (id: string) => (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => void
 }
 
@@ -29,7 +29,7 @@ export default function ListBox(p: Props) {
             <h4>{"Labels"}</h4>
           </section>
           <ul>
-            {p.labelList?.map((label) => (
+            {p.labels?.map((label) => (
               <li
                 className={cn(label.selected && styles.active)}
                 onClick={p.onItemClick && p.onItemClick(label.id)}

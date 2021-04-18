@@ -10,14 +10,14 @@ export type ToolBtn = {
 
 type Props = {
   className?: string
-  btnList: ToolBtn[]
+  btns: ToolBtn[]
   defaultValue?: string
   value?: string
   onChange: (value: string) => void
 }
 
 export default function ToolBar(p: Props) {
-  const [value, setValue] = useState<string>(p.defaultValue || p.btnList[0].value)
+  const [value, setValue] = useState<string>(p.defaultValue || p.btns[0].value)
 
   useEffect(() => {
     if (!p.value) return
@@ -32,7 +32,7 @@ export default function ToolBar(p: Props) {
 
   return (
     <aside className={cn(styles.toolBar, p.className)}>
-      {p.btnList.map((btn) => (
+      {p.btns.map((btn) => (
         <Button
           className={btn.value === value ? styles.active : ""}
           icon={btn.icon}
