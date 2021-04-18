@@ -44,21 +44,6 @@ export const abcdefg = () => {}
 //   document.removeEventListener("mousemove", pauseEvent)
 // }
 //
-// export const getMode = () => {
-//   return labelNS.mode
-// }
-//
-// export const setMode = (mode) => {
-//   labelNS.mode = mode
-//   const labels = [...labelNS.svg.childNodes].filter((node) => node.classList.contains("label"))
-//   labels.forEach((label) => {
-//     labelNS.mode === LabelMode.SELECT
-//       ? label.firstChild.setAttribute("cursor", "move")
-//       : label.firstChild.setAttribute("cursor", "auto")
-//   })
-//   labelNS.selectedLabel = null
-//   deleteAnchors()
-// }
 //
 // export const createAnchorsInSelectedLabelsIds = (_ids) => {
 //   deleteAnchors()
@@ -68,46 +53,6 @@ export const abcdefg = () => {}
 //       createAnchors(label)
 //     }
 //   })
-// }
-//
-// const documentKeydownEvent = (e) => {
-//   console.log("keydown")
-//
-//   if (labelNS.isWritingTxt) {
-//     return
-//   }
-//
-//   const key = "which" in e ? e.which : e.keyCode
-//
-//   if (key === 32) {
-//     // spacebar
-//     labelNS.isPushingSpacebar = true
-//   }
-//   if (key === 46 || key === 8) {
-//     // delete or backspace
-//     deleteSelectedLabels()
-//   }
-//   if (e.ctrlKey && key === 88) {
-//     // ctrl + x
-//     copySelectedLabels()
-//     deleteSelectedLabels()
-//   }
-//   if (e.ctrlKey && key === 67) {
-//     // ctrl + c
-//     copySelectedLabels()
-//   }
-//   if (e.ctrlKey && key === 86) {
-//     // ctrl + v
-//     pasteCopiedLabels(false)
-//   }
-// }
-//
-// const documentKeyupEvent = (e) => {
-//   const key = "which" in e ? e.which : e.keyCode
-//
-//   if (key === 32) {
-//     labelNS.isPushingSpacebar = false
-//   }
 // }
 //
 // const svgMousedownEvent = (e) => {
