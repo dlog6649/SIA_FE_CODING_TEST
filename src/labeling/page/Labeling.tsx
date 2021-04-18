@@ -3,11 +3,11 @@ import { Route, RouteComponentProps, Switch } from "react-router"
 import LabelingHome from "./labeling-home/LabelingHome"
 import LabelingView from "./labeling-view/LabelingView"
 
-export default function Labeling(props: RouteComponentProps) {
+export default function Labeling({ match: { path } }: RouteComponentProps) {
   return (
     <Switch>
-      <Route exact path={props.match.path} component={LabelingHome} />
-      <Route path={`${props.match.path}:id`} component={LabelingView} />
+      <Route exact path={path} component={LabelingHome} />
+      <Route path={`${path}:id`} component={LabelingView} />
     </Switch>
   )
 }
