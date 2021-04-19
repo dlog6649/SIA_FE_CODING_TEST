@@ -3,17 +3,17 @@ import { useHistory } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import styles from "./LabelingHome.module.scss"
 import * as routes from "../../../routes"
-import { getImageList, Image } from "../../modules/labeling"
+import { getImages, Image } from "../../modules/labeling"
 import Card from "../../../common/components/card/Card"
 import { useRootState } from "../../../common/hooks/useRootState"
 
 export default function LabelingHome() {
-  const { loading, data, error } = useRootState((state) => state.labelingReducer.api.getImageList)
+  const { loading, data, error } = useRootState((state) => state.labelingReducer.api.getImages)
   const history = useHistory()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getImageList())
+    dispatch(getImages())
   }, [dispatch])
 
   const linkToLabelingDetail = (id: number) => () => {
