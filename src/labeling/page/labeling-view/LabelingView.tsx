@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../../../index"
+import { useDispatch } from "react-redux"
 import Header from "./header/Header"
 import ToolBar, { ToolBtn } from "./tool-bar/ToolBar"
 import ListBox from "./list-box/ListBox"
@@ -10,9 +9,9 @@ import { RouteComponentProps } from "react-router"
 import { getImage } from "../../modules/labeling"
 import { CursorDefault, Square } from "../../../common/asset/icons"
 import { Label } from "./labeling-board/Label"
+import { useRootState } from "../../../common/hooks/useRootState"
 
 /**
- * TODO: SVG 보드 TS로 변경
  * TODO: canvas로 변경
  */
 
@@ -21,7 +20,7 @@ export enum Mode {
   Creation = "Creation",
 }
 
-const toolBtnList: ToolBtn[] = [
+const toolBtns: ToolBtn[] = [
   {
     value: Mode.Selection,
     icon: <CursorDefault />,
@@ -29,13 +28,7 @@ const toolBtnList: ToolBtn[] = [
   { value: Mode.Creation, icon: <Square /> },
 ]
 
-function getRandomInt(min: number, max: number) {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min)) + min //최댓값은 제외, 최솟값은 포함
-}
-
-const initLabelList: Label[] = [...Array(1)].map((t, i) => {
+const initLabels: Label[] = [...Array(1)].map((t, i) => {
   const label = new Label()
   label.name = "Class"
   label.x = 200
@@ -46,24 +39,24 @@ const initLabelList: Label[] = [...Array(1)].map((t, i) => {
   return label
 })
 
-type Props = {
+type Params = {
   id: string
 }
 
-export default function LabelingView(p: RouteComponentProps<Props>) {
+export default function LabelingView({ match: { params } }: RouteComponentProps<Params>) {
   const [mode, setMode] = useState<Mode>(Mode.Creation)
-  const [labelList, setLabelList] = useState<Label[]>(initLabelList)
-  const getImageAsync = useSelector((state: RootState) => state.labelingReducer.api.getImage)
+  const [labels, setLabels] = useState<Label[]>(initLabels)
+  const getImageState = useRootState((state) => state.labelingReducer.api.getImage)
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getImage(p.match.params.id))
-  }, [])
+    dispatch(getImage(params.id))
+  }, [params.id])
 
   useEffect(() => {
     if (mode === Mode.Creation) {
-      setLabelList(
-        labelList.map((item) => {
+      setLabels((labels) =>
+        labels.map((item) => {
           item.selected = false
           return item
         }),
@@ -71,18 +64,18 @@ export default function LabelingView(p: RouteComponentProps<Props>) {
     }
   }, [mode])
 
-  const selectItem = (id: string) => (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+  const selectItem = (id: string) => (evt: React.MouseEvent) => {
     if (mode === Mode.Creation) return
     if (evt.ctrlKey) {
-      setLabelList(
-        labelList.map((item) => {
+      setLabels(
+        labels.map((item) => {
           if (item.id === id) item.selected = !item.selected
           return item
         }),
       )
     } else {
-      setLabelList(
-        labelList.map((item) => {
+      setLabels(
+        labels.map((item) => {
           item.selected = item.id === id
           return item
         }),
@@ -91,27 +84,20 @@ export default function LabelingView(p: RouteComponentProps<Props>) {
   }
 
   const addLabel = (label: Label) => {
-    setLabelList(labelList.concat(label))
+    setLabels(labels.concat(label))
   }
 
   const removeLabel = (label: Label) => {
-    setLabelList(labelList.filter((item) => item.id !== label.id))
+    setLabels(labels.filter((item) => item.id !== label.id))
   }
 
   return (
     <div className={styles.labelingView}>
-      <Header title={getImageAsync.data?.title || ""} />
+      <Header title={getImageState.data?.title || ""} />
       <div className={styles.row}>
-        <ToolBar btnList={toolBtnList} value={mode} onChange={(value) => setMode(value as Mode)} />
-        <ListBox labelList={labelList} onItemClick={selectItem} />
-        <LabelingBoard
-          imgUrl={getImageAsync.data?.url || ""}
-          mode={mode}
-          labelList={labelList}
-          setLabelList={setLabelList}
-          addLabel={addLabel}
-          // removeLabel={}
-        />
+        <ToolBar btns={toolBtns} value={mode} onChange={(value) => setMode(value as Mode)} />
+        <ListBox labels={labels} onItemClick={selectItem} />
+        <LabelingBoard imgUrl={getImageState.data?.url || ""} mode={mode} labels={labels} setLabels={setLabels} />
       </div>
     </div>
   )
