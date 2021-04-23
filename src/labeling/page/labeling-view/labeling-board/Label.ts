@@ -1,6 +1,16 @@
 import { generateUUID } from "../../../../common/utils/common"
 import { SvgRole } from "./LabelingCore"
-import labelNS from "./labeling-tool/labelNS"
+
+enum SvgTagName {
+  LINE = "line",
+  CIRCLE = "circle",
+  RECT = "rect",
+  TEXT = "text",
+  FOREIGNOBJECT = "foreignObject",
+  IMAGE = "image",
+  G = "g",
+  SPAN = "SPAN",
+}
 
 export class Label {
   private readonly _svgNs = "http://www.w3.org/2000/svg"
@@ -34,13 +44,13 @@ export class Label {
     "w-resize",
   ]
 
-  constructor(x = 0, y = 0, scale = 1) {
+  constructor(coordinate = { x: 0, y: 0 }, scale = 1) {
     this._id = generateUUID()
-    this._x = x
-    this._y = y
+    this._x = coordinate.x
+    this._y = coordinate.y
     this._scale = scale
     this._g = document.createElementNS(this._svgNs, "g") as SVGGElement
-    this._g.setAttribute("transform", `translate(${x} ${y}) scale(${scale}) rotate(0 0 0)`)
+    this._g.setAttribute("transform", `translate(${coordinate.x} ${coordinate.y}) scale(${scale}) rotate(0 0 0)`)
     this._g.id = this._id
     this._rect = document.createElementNS(this._svgNs, "rect") as SVGRectElement
     this._rect.setAttribute("width", this._width.toString())
@@ -151,8 +161,6 @@ export class Label {
 
   set color(color) {
     this._color = color
-    this._rect.setAttribute("fill", color)
-    this._rect.setAttribute("stroke", color)
   }
 
   setAttributes = () => {
@@ -162,6 +170,12 @@ export class Label {
     )
     this._rect.setAttribute("height", this._height.toString())
     this._rect.setAttribute("width", this._width.toString())
+    this._rect.setAttribute("fill", this._color)
+    this._rect.setAttribute("stroke", this._color)
+  }
+
+  setCursor = (cursor: string) => {
+    this._rect.style.cursor = cursor
   }
 
   private createHandlers = () => {
@@ -188,7 +202,7 @@ export class Label {
     circle.dataset.role = SvgRole.Rotator
     this._g.appendChild(circle)
 
-    const anchorPosXList = [
+    const anchorPosXs = [
       -7,
       halfOfWidth - 5,
       this._width - 3,
@@ -198,7 +212,7 @@ export class Label {
       -7,
       -7,
     ]
-    const anchorPosYList = [
+    const anchorPosYs = [
       -7,
       -7,
       -7,
@@ -210,8 +224,8 @@ export class Label {
     ]
     for (let i = 0; i < 8; i++) {
       const anchor = document.createElementNS(this._svgNs, "rect")
-      anchor.setAttribute("x", anchorPosXList[i].toString())
-      anchor.setAttribute("y", anchorPosYList[i].toString())
+      anchor.setAttribute("x", anchorPosXs[i].toString())
+      anchor.setAttribute("y", anchorPosYs[i].toString())
       anchor.setAttribute("cursor", this._HANDLER_CURSOR_LIST[i])
       anchor.setAttribute("width", "10")
       anchor.setAttribute("height", "10")
@@ -224,60 +238,49 @@ export class Label {
       this._g.appendChild(anchor)
     }
 
-    // let nameLen = 0
-    // if (label.dataset.name) {
-    //   nameLen = label.dataset.name.length
-    //   nameLen *= 5
-    // }
-    //
-    // const infoBox = document.createElementNS(this._svgNs, "rect")
-    // infoBox.setAttribute("x", width + 23)
-    // infoBox.setAttribute("y", height + 5)
-    // infoBox.setAttribute("rx", 5)
-    // infoBox.setAttribute("ry", 5)
-    // infoBox.setAttribute("width", 70 + nameLen)
-    // if (!label.dataset.name) {
-    //   infoBox.setAttribute("height", 36)
-    // } else {
-    //   infoBox.setAttribute("height", 50)
-    // }
-    // infoBox.setAttribute("fill", "white")
-    // infoBox.setAttribute("filter", "url(#f1)")
+    const infoBox = document.createElementNS(this._svgNs, "rect")
+    infoBox.setAttribute("x", `${this._width + 23}`)
+    infoBox.setAttribute("y", `${this._height + 5}`)
+    infoBox.setAttribute("rx", "5")
+    infoBox.setAttribute("ry", "5")
+    infoBox.setAttribute("width", `${70 + this._name.length * 5}`)
+    infoBox.setAttribute("height", this._name === "" ? "36" : "50")
+    infoBox.setAttribute("fill", "white")
+    infoBox.setAttribute("filter", "url(#f1)")
     // infoBox.classList.add("infoBox")
-    // label.appendChild(infoBox)
-    //
-    // const infoTxt = document.createElementNS(this._svgNs, "text")
-    // infoTxt.setAttribute("y", height + 5)
-    //
-    // const tspan0 = document.createElementNS(this._svgNs, "tspan")
-    // tspan0.setAttribute("x", width + 30)
-    // tspan0.setAttribute("dy", 15)
-    // tspan0.setAttribute("font-size", 11)
-    // tspan0.setAttribute("font-weight", 600)
-    // tspan0.setAttribute("cursor", "default")
-    //
-    // const tspan1 = document.createElementNS(this._svgNs, "tspan")
-    // tspan1.setAttribute("x", width + 30)
-    // tspan1.setAttribute("dy", 15)
-    // tspan1.setAttribute("font-size", 10)
-    // tspan1.setAttribute("cursor", "default")
-    // tspan1.setAttribute("draggable", "false")
-    //
-    // const tspan2 = document.createElementNS(this._svgNs, "tspan")
-    // tspan2.setAttribute("x", width + 30)
-    // tspan2.setAttribute("dy", 14)
-    // tspan2.setAttribute("font-size", 10)
-    // tspan2.setAttribute("cursor", "default")
-    //
-    // tspan0.innerHTML = label.dataset.name
-    // tspan1.innerHTML = `W ${width}`
-    // tspan2.innerHTML = `H ${height}`
-    //
-    // infoTxt.appendChild(tspan0)
-    // infoTxt.appendChild(tspan1)
-    // infoTxt.appendChild(tspan2)
-    //
-    // label.appendChild(infoTxt)
+    this._g.appendChild(infoBox)
+
+    const infoTxt = document.createElementNS(this._svgNs, "text")
+    infoTxt.setAttribute("y", `${this._height + 5}`)
+
+    const tspan0 = document.createElementNS(this._svgNs, "tspan")
+    tspan0.setAttribute("x", `${this._width + 30}`)
+    tspan0.setAttribute("dy", "15")
+    tspan0.setAttribute("font-size", "11")
+    tspan0.setAttribute("font-weight", "600")
+    tspan0.setAttribute("cursor", "default")
+
+    const tspan1 = document.createElementNS(this._svgNs, "tspan")
+    tspan1.setAttribute("x", `${this._width + 30}`)
+    tspan1.setAttribute("dy", "15")
+    tspan1.setAttribute("font-size", "10")
+    tspan1.setAttribute("cursor", "default")
+    tspan1.setAttribute("draggable", "false")
+
+    const tspan2 = document.createElementNS(this._svgNs, "tspan")
+    tspan2.setAttribute("x", `${this._width + 30}`)
+    tspan2.setAttribute("dy", "14")
+    tspan2.setAttribute("font-size", "10")
+    tspan2.setAttribute("cursor", "default")
+
+    tspan0.innerHTML = this._name
+    tspan1.innerHTML = `W ${this._width}`
+    tspan2.innerHTML = `H ${this._height}`
+
+    infoTxt.appendChild(tspan0)
+    infoTxt.appendChild(tspan1)
+    infoTxt.appendChild(tspan2)
+    this._g.appendChild(infoTxt)
   }
 
   private removeHandlers = () => {
@@ -291,41 +294,83 @@ export class Label {
     const height = this._height
     const halfOfWidth = width * 0.5
     const halfOfHeight = height * 0.5
-    const anchorPosXList = [-7, halfOfWidth - 5, width - 3, width - 3, width - 3, halfOfWidth - 5, -7, -7]
-    const anchorPosYList = [-7, -7, -7, halfOfHeight - 5, height - 3, height - 3, height - 3, halfOfHeight - 5]
+    const anchorPosXs = [-7, halfOfWidth - 5, width - 3, width - 3, width - 3, halfOfWidth - 5, -7, -7]
+    const anchorPosYs = [-7, -7, -7, halfOfHeight - 5, height - 3, height - 3, height - 3, halfOfHeight - 5]
     let i = 0
     let anchor = this._rect.nextElementSibling
     while (anchor) {
       switch (anchor.tagName) {
-        case labelNS.tagNm.RECT:
+        case SvgTagName.RECT:
           if (anchor.classList.contains("infoBox")) {
             anchor.setAttribute("x", (width + 23).toString())
             anchor.setAttribute("y", (height + 5).toString())
           } else {
-            anchor.setAttribute("x", anchorPosXList[i].toString())
-            anchor.setAttribute("y", anchorPosYList[i].toString())
+            anchor.setAttribute("x", anchorPosXs[i].toString())
+            anchor.setAttribute("y", anchorPosYs[i].toString())
             i++
           }
           break
-        case labelNS.tagNm.LINE:
+        case SvgTagName.LINE:
           anchor.setAttribute("x1", halfOfWidth.toString())
           anchor.setAttribute("x2", halfOfWidth.toString())
           break
-        case labelNS.tagNm.CIRCLE:
+        case SvgTagName.CIRCLE:
           anchor.setAttribute("cx", halfOfWidth.toString())
           break
-        case labelNS.tagNm.TEXT:
+        case SvgTagName.TEXT:
           anchor.setAttribute("y", (height + 5).toString())
           const children = anchor.children
           for (let i = 0; i < children.length; i++) {
             children[i].setAttribute("x", (width + 30).toString())
           }
           break
-        case labelNS.tagNm.FOREIGNOBJECT:
+        case SvgTagName.FOREIGNOBJECT:
           anchor.setAttribute("x", (width + 20).toString())
           break
       }
       anchor = anchor.nextElementSibling
     }
+  }
+
+  createInputBox = () => {
+    const inputWrapper = document.createElementNS(this._svgNs, "foreignObject")
+    inputWrapper.setAttribute("x", `${this._width + 20}`)
+    inputWrapper.setAttribute("y", "0")
+    inputWrapper.setAttribute("width", "145")
+    inputWrapper.setAttribute("height", "30")
+
+    const input = document.createElement("input")
+    input.setAttribute("type", "text")
+    input.setAttribute("placeholder", "Input Class name")
+    input.setAttribute("value", this._name)
+    input.addEventListener("keydown", (evt) => {
+      evt.stopPropagation()
+      if (evt.code === "Enter") {
+        this._name = (evt.target as HTMLInputElement).value
+        this._g.removeChild(inputWrapper)
+      }
+    })
+    inputWrapper.appendChild(input)
+    this._g.appendChild(inputWrapper)
+  }
+
+  copyLabel = (label: Label) => {
+    this._x = label.x
+    this._y = label.y
+    this._rotateX = label.x * 0.5
+    this._rotateY = label.y * 0.5
+    this._width = label.width
+    this._height = label.height
+    this._color = label.color
+    this._scale = label.scale
+    this._selected = label.selected
+    if (label.selected) {
+      this.createHandlers()
+    } else {
+      this.removeHandlers()
+    }
+    this._degree = label.degree
+    this._name = label.name
+    return this
   }
 }
