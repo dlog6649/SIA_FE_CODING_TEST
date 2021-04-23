@@ -49,8 +49,8 @@ type Props = {
   className?: string
   imgUrl?: string
   mode: Mode
-  labelList: Label[]
-  setLabelList: (labelList: Label[]) => void
+  labels: Label[]
+  setLabels: (labels: Label[]) => void
 }
 
 export default function LabelBoard(p: Props) {
@@ -66,8 +66,8 @@ export default function LabelBoard(p: Props) {
     if (!svgRef.current) return
     labelingCoreRef.current = new LabelingCore(
       svgRef.current,
-      p.labelList,
-      p.setLabelList,
+      p.labels,
+      p.setLabels,
       p.imgUrl || "",
       setZoom,
       setContextMenuState,
@@ -102,8 +102,8 @@ export default function LabelBoard(p: Props) {
 
   useEffect(() => {
     if (!labelingCoreRef.current) return
-    labelingCoreRef.current.labelList = p.labelList
-  }, [p.labelList])
+    labelingCoreRef.current.labels = p.labels
+  }, [p.labels])
 
   const onSvgContextMenu = (evt: React.MouseEvent) => {
     evt.preventDefault()
@@ -115,7 +115,7 @@ export default function LabelBoard(p: Props) {
   const showContextMenu = () => setIsContextMenuVisible(true)
   const hideContextMenu = () => setIsContextMenuVisible(false)
 
-  const menuItemList: MenuItem[] = [
+  const menuItems: MenuItem[] = [
     {
       name: Menu.Edit,
       shortCut: "F2",
@@ -179,7 +179,7 @@ export default function LabelBoard(p: Props) {
           hideContextMenu={hideContextMenu}
           coordinate={contextMenuCoordinate}
           contextMenuRef={contextMenuRef}
-          menuItemList={menuItemList}
+          menuItems={menuItems}
         />
       )}
     </main>
