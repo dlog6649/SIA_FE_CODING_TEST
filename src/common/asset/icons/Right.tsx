@@ -11,9 +11,9 @@ export function Right(props: React.HTMLProps<HTMLSpanElement>) {
         fill={"none"}
         viewBox={"0 0 24 24"}
         stroke={"currentColor"}
-        stroke-width={"2"}
-        stroke-linecap={"round"}
-        stroke-linejoin={"round"}
+        strokeWidth={"2"}
+        strokeLinecap={"round"}
+        strokeLinejoin={"round"}
       >
         <polyline points="9 18 15 12 9 6" />
       </svg>
