@@ -1,18 +1,19 @@
+import "./Button.scss"
+
 import React from "react"
-import styles from "./Button.module.scss"
 import cn from "classnames"
 
-type Props = {
+type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
   className?: string
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
   icon?: React.ReactNode
-  type?: "ghost"
+  btnStyle?: "ghost"
   children?: any
 }
 
 export default function Button(p: Props) {
   return (
-    <button className={cn(styles.button, p.className)} type={"button"} data-type={p.type} onClick={p.onClick}>
+    <button className={cn("button__Xc2iD", p.className, p.btnStyle)} type={"button"} onClick={p.onClick}>
       {p.icon}
       {p.children}
     </button>
