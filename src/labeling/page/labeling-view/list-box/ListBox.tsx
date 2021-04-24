@@ -21,7 +21,7 @@ export default function ListBox(p: Props) {
         className={cn(styles.toggle, isOpen && styles.open)}
         icon={isOpen ? <Left /> : <Right />}
         onClick={() => setOpen(!isOpen)}
-        type={"ghost"}
+        btnStyle={"ghost"}
       />
       {isOpen && (
         <>

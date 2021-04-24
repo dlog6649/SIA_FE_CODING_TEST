@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import styles from "./LabelingHome.module.scss"
 import * as routes from "../../../routes"
@@ -9,16 +9,11 @@ import { useRootState } from "../../../common/hooks/useRootState"
 
 export default function LabelingHome() {
   const { loading, data, error } = useRootState((state) => state.labelingReducer.api.getImages)
-  const history = useHistory()
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(getImages())
   }, [dispatch])
-
-  const linkToLabelingDetail = (id: number) => () => {
-    history.push(routes.buildLabelingViewPath(id))
-  }
 
   return (
     <main className={styles.labelingHome}>
@@ -32,12 +27,9 @@ export default function LabelingHome() {
           <h2>{"No Data"}</h2>
         ) : (
           data.map((img: Image) => (
-            <Card
-              thumbnailUrl={img.thumbnailUrl}
-              text={img.title}
-              onClick={linkToLabelingDetail(img.id)}
-              key={img.id}
-            />
+            <Link className={styles.imgCard} to={routes.buildLabelingViewPath(img.id)} key={img.id}>
+              <Card thumbnailUrl={img.thumbnailUrl} text={img.title} />
+            </Link>
           ))
         )}
       </div>

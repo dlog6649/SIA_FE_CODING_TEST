@@ -5,6 +5,7 @@ import ContextMenu, { MenuItem } from "./context-menu/ContextMenu"
 import { LabelingCore, SvgRole } from "./LabelingCore"
 import { Mode } from "../LabelingView"
 import { Label } from "./Label"
+import { SvgImage } from "./SvgImage"
 
 export type Coordinate = {
   x: number
@@ -64,14 +65,7 @@ export default function LabelBoard(p: Props) {
 
   useEffect(() => {
     if (!svgRef.current) return
-    labelingCoreRef.current = new LabelingCore(
-      svgRef.current,
-      p.labels,
-      p.setLabels,
-      p.imgUrl || "",
-      setZoom,
-      setContextMenuState,
-    )
+    labelingCoreRef.current = new LabelingCore(svgRef.current, p.labels, p.setLabels, setZoom, setContextMenuState)
     const onDocumentClick = (evt: MouseEvent) => {
       if (evt.target === null) return
       if (!contextMenuRef.current?.contains(evt.target as HTMLElement)) {
@@ -89,6 +83,12 @@ export default function LabelBoard(p: Props) {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (p.imgUrl === undefined || svgRef.current === null) return
+    const svgImage = new SvgImage(p.imgUrl)
+    svgRef.current.appendChild(svgImage.image)
+  }, [p.imgUrl])
 
   useEffect(() => {
     if (!labelingCoreRef.current) return
@@ -154,7 +154,7 @@ export default function LabelBoard(p: Props) {
   ]
 
   return (
-    <main className={styles.labelBoard}>
+    <div className={styles.labelBoard}>
       <svg
         onContextMenu={onSvgContextMenu}
         width={"100%"}
@@ -182,6 +182,6 @@ export default function LabelBoard(p: Props) {
           menuItems={menuItems}
         />
       )}
-    </main>
+    </div>
   )
 }

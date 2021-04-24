@@ -16,13 +16,12 @@ type Props = {
   coordinate: Coordinate
   hideContextMenu: () => void
   contextMenuRef: React.RefObject<HTMLDivElement>
-  menuItemList: MenuItem[]
+  menuItems: MenuItem[]
 }
 
 export default function ContextMenu(p: Props) {
   const onMenuItemClick = (disabled: boolean, onClick?: any) => () => {
     if (disabled) return
-    console.log(onClick)
     if (typeof onClick === "function") onClick()
     p.hideContextMenu()
   }
@@ -35,16 +34,16 @@ export default function ContextMenu(p: Props) {
       onContextMenu={(evt) => evt.preventDefault()}
       ref={p.contextMenuRef}
     >
-      {p.menuItemList.map(
-        (menuItem) =>
-          menuItem.visible && (
+      {p.menuItems.map(
+        (it) =>
+          it.visible && (
             <div
-              className={cn(styles.item, menuItem.disabled && styles.disabled)}
-              onClick={onMenuItemClick(menuItem.disabled, menuItem.onClick)}
-              key={menuItem.name}
+              className={cn(styles.item, it.disabled && styles.disabled)}
+              onClick={onMenuItemClick(it.disabled, it.onClick)}
+              key={it.name}
             >
-              <span className={styles.name}>{menuItem.name}</span>
-              <span className={styles.shortcut}>{menuItem.shortCut}</span>
+              <span className={styles.name}>{it.name}</span>
+              <span className={styles.shortcut}>{it.shortCut}</span>
             </div>
           ),
       )}

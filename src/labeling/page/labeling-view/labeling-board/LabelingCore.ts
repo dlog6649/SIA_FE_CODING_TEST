@@ -1,7 +1,6 @@
 import { Mode } from "../LabelingView"
 import { Label } from "./Label"
 import { ContextMenuState, Coordinate } from "./LabelingBoard"
-import { SvgImage } from "./SvgImage"
 
 export enum SvgRole {
   Svg = "Svg",
@@ -55,7 +54,6 @@ export class LabelingCore {
     svg: SVGSVGElement,
     labels: Label[],
     setLabels: (labels: Label[]) => void,
-    imgUrl: string,
     setZoom: (zoom: number) => void,
     setContextMenuState: (ctxMenuState: ContextMenuState) => void,
   ) {
@@ -70,14 +68,10 @@ export class LabelingCore {
     this._setLabels = setLabels
     this._setZoom = setZoom
     this._setContextMenuState = setContextMenuState
-
-    const svgImage = new SvgImage(imgUrl)
-    this._svg.appendChild(svgImage.image)
   }
 
   onDocumentKeyDown = (evt: KeyboardEvent) => {
     const { code } = evt
-    console.log(code)
     if (code === "Space") {
       this._isPushingSpacebar = true
     }
@@ -105,20 +99,30 @@ export class LabelingCore {
     }
   }
 
-  onEditMenuClick = () => this.editLabels()
+  onEditMenuClick = () => {
+    this.editLabels()
+  }
 
-  editLabels = () => this._labels.filter((label) => label.selected).forEach((label) => label.createInputBox())
+  editLabels = () => {
+    this._labels.filter((label) => label.selected).forEach((label) => label.createInputBox())
+  }
 
-  onCutMenuClick = () => this.cutLabels()
+  onCutMenuClick = () => {
+    this.cutLabels()
+  }
 
   cutLabels = () => {
     this.copyLabels()
     this.deleteLabels()
   }
 
-  onCopyMenuClick = () => this.copyLabels()
+  onCopyMenuClick = () => {
+    this.copyLabels()
+  }
 
-  onPasteMenuClick = () => this.pasteLabelsOnMousePosition()
+  onPasteMenuClick = () => {
+    this.pasteLabelsOnMousePosition()
+  }
 
   pasteLabels = () => {
     const COPIED_LABEL_POSITION_DISTANCE = 10
@@ -198,8 +202,6 @@ export class LabelingCore {
   }
 
   onSvgMouseDown = (evt: MouseEvent) => {
-    console.log(this._mode)
-
     if (this._isPushingSpacebar) {
       this._isDragging = true
       // initImgForDrag(evt)
@@ -237,7 +239,6 @@ export class LabelingCore {
           this._startCoordinate.y = evt.offsetY
         }
       } else {
-        console.log(role)
         if (role === SvgRole.Svg) {
           this._setLabels(
             this._labels.map((label) => {
@@ -343,8 +344,6 @@ export class LabelingCore {
 
       const target = evt.target as SVGElement
       const { role } = target.dataset
-      console.log(role, SvgRole.LabelBody)
-      console.log(evt.target)
 
       const MOUSE_RIGHT_BUTTON = 2
       if (this._mode === Mode.Selection && evt.button === MOUSE_RIGHT_BUTTON) {
@@ -465,7 +464,6 @@ export class LabelingCore {
     const p_y =
       (this._selectedLabel.ppCoordinate.x - cp_x) * sin_mt + (this._selectedLabel.ppCoordinate.y - cp_y) * cos_mt + cp_y
 
-    console.log(this._resizerCursor)
     if (this._resizerCursor === _HANDLER_CURSOR_LIST[1] || this._resizerCursor === _HANDLER_CURSOR_LIST[5]) {
       w = this._selectedLabel.width
       h = p_y - q_y
@@ -500,8 +498,6 @@ export class LabelingCore {
     w = parseFloat(w.toFixed(2))
     h = parseFloat(h.toFixed(2))
 
-    console.log(this._selectedLabel.label.width, w)
-    console.log(this._selectedLabel.label.height, h)
     this._selectedLabel.label.x = x
     this._selectedLabel.label.y = y
     this._selectedLabel.label.width = w

@@ -93,12 +93,12 @@ export default function LabelingView({ match: { params } }: RouteComponentProps<
 
   return (
     <div className={styles.labelingView}>
-      <Header title={getImageState.data?.title || ""} />
-      <div className={styles.row}>
+      <Header title={getImageState.data?.title} />
+      <main className={styles.row}>
         <ToolBar btns={toolBtns} value={mode} onChange={(value) => setMode(value as Mode)} />
         <ListBox labels={labels} onItemClick={selectItem} />
-        <LabelingBoard imgUrl={getImageState.data?.url || ""} mode={mode} labels={labels} setLabels={setLabels} />
-      </div>
+        <LabelingBoard imgUrl={getImageState.data?.url} mode={mode} labels={labels} setLabels={setLabels} />
+      </main>
     </div>
   )
 }

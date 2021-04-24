@@ -305,8 +305,8 @@ export class Label {
             anchor.setAttribute("x", (width + 23).toString())
             anchor.setAttribute("y", (height + 5).toString())
           } else {
-            anchor.setAttribute("x", anchorPosXs[i].toString())
-            anchor.setAttribute("y", anchorPosYs[i].toString())
+            anchor.setAttribute("x", anchorPosXs[i]?.toString())
+            anchor.setAttribute("y", anchorPosYs[i]?.toString())
             i++
           }
           break
