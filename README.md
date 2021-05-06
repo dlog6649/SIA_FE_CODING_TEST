@@ -36,5 +36,3 @@ yarn test
 ## Demo Page
 
 - https://hbim.netlify.com/
-
-* 현재 JSONplaceholder의 응답속도가 매우 느려지는 현상이 발생하고있습니다. 영상 목록이 뜨기까지 한참 기다려야 될 수도 있습니다.
