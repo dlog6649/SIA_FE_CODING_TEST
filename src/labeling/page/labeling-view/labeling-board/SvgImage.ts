@@ -19,6 +19,21 @@ export class SvgImage {
   get image() {
     return this._image
   }
+
+  set imageUrl(it: string) {
+    this._image.setAttribute("href", it)
+  }
+
+  set scale(it: number) {
+    this._scale = it
+  }
+
+  setAttributes = () => {
+    this._image.setAttribute(
+      "transform",
+      `translate(${this._coordinate.x} ${this._coordinate.y}) scale(${this._scale})`,
+    )
+  }
 }
 
 // TODO: create svg element creator class and extends it by image, foreignObject, rect, polygon, etc.

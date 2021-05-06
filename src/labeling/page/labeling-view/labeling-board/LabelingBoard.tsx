@@ -63,6 +63,7 @@ export default function LabelBoard(p: Props) {
   const labelingCoreRef = useRef<LabelingCore>()
   const svgRef = useRef<SVGSVGElement>(null)
   const contextMenuRef = useRef<HTMLDivElement>(null)
+  const svgImgRef = useRef<SvgImage>(new SvgImage())
 
   useEffect(() => {
     if (!svgRef.current) return
@@ -89,13 +90,15 @@ export default function LabelBoard(p: Props) {
 
   useEffect(() => {
     if (p.imgUrl === undefined || svgRef.current === null) return
-    const svgImage = new SvgImage(p.imgUrl)
-    svgRef.current.appendChild(svgImage.image)
+    svgImgRef.current.imageUrl = p.imgUrl
+    svgRef.current.appendChild(svgImgRef.current.image)
   }, [p.imgUrl])
 
   useEffect(() => {
     if (!labelingCoreRef.current) return
     labelingCoreRef.current.zoom = zoom
+    svgImgRef.current.scale = zoom
+    svgImgRef.current.setAttributes()
   }, [zoom])
 
   useEffect(() => {
