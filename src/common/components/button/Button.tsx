@@ -3,7 +3,7 @@ import "./Button.scss"
 import React from "react"
 import cn from "classnames"
 
-type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
+type Props = {
   className?: string
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
   icon?: React.ReactNode

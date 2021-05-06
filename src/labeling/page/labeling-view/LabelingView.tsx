@@ -45,7 +45,7 @@ type Params = {
 
 export default function LabelingView({ match: { params } }: RouteComponentProps<Params>) {
   const [mode, setMode] = useState<Mode>(Mode.Creation)
-  const [labels, setLabels] = useState<Label[]>(initLabels)
+  const [labels, setLabels] = useState<Label[]>([])
   const getImageState = useRootState((state) => state.labelingReducer.api.getImage)
   const dispatch = useDispatch()
 

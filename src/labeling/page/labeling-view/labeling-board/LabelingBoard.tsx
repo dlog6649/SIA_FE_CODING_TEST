@@ -6,6 +6,7 @@ import { LabelingCore, SvgRole } from "./LabelingCore"
 import { Mode } from "../LabelingView"
 import { Label } from "./Label"
 import { SvgImage } from "./SvgImage"
+import { pauseEvent } from "../../../../common/utils/common"
 
 export type Coordinate = {
   x: number
@@ -75,8 +76,10 @@ export default function LabelBoard(p: Props) {
     document.addEventListener("click", onDocumentClick)
     document.addEventListener("keydown", labelingCoreRef.current.onDocumentKeyDown)
     document.addEventListener("keyup", labelingCoreRef.current.onDocumentKeyUp)
+    document.addEventListener("mousemove", pauseEvent)
     return () => {
       document.removeEventListener("click", onDocumentClick)
+      document.removeEventListener("mousemove", pauseEvent)
       if (labelingCoreRef.current !== undefined) {
         document.removeEventListener("keydown", labelingCoreRef.current.onDocumentKeyDown)
         document.removeEventListener("keyup", labelingCoreRef.current.onDocumentKeyUp)

@@ -2,7 +2,7 @@ import React from "react"
 import cn from "classnames"
 import styles from "./Card.module.scss"
 
-type Props = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+type Props = {
   className?: string
   onClick?: any
   thumbnailUrl?: string

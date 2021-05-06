@@ -30,19 +30,10 @@ export class Label {
   private _selected = false
 
   //   9
-  // 0 1 2
-  // 7 8 3
-  // 6 5 4
-  private readonly _HANDLER_CURSOR_LIST = [
-    "nw-resize",
-    "n-resize",
-    "ne-resize",
-    "e-resize",
-    "se-resize",
-    "s-resize",
-    "sw-resize",
-    "w-resize",
-  ]
+  // 0   1
+  //   8
+  // 3   2
+  private readonly _HANDLER_CURSOR_LIST = ["nw-resize", "ne-resize", "se-resize", "sw-resize"]
 
   constructor(coordinate = { x: 0, y: 0 }, scale = 1) {
     this._id = generateUUID()
@@ -202,27 +193,9 @@ export class Label {
     circle.dataset.role = SvgRole.Rotator
     this._g.appendChild(circle)
 
-    const anchorPosXs = [
-      -7,
-      halfOfWidth - 5,
-      this._width - 3,
-      this._width - 3,
-      this._width - 3,
-      halfOfWidth - 5,
-      -7,
-      -7,
-    ]
-    const anchorPosYs = [
-      -7,
-      -7,
-      -7,
-      halfOfHeight - 5,
-      this._height - 3,
-      this._height - 3,
-      this._height - 3,
-      halfOfHeight - 5,
-    ]
-    for (let i = 0; i < 8; i++) {
+    const anchorPosXs = [-7, this._width - 3, this._width - 3, -7]
+    const anchorPosYs = [-7, -7, this._height - 3, this._height - 3]
+    for (let i = 0; i < 4; i++) {
       const anchor = document.createElementNS(this._svgNs, "rect")
       anchor.setAttribute("x", anchorPosXs[i].toString())
       anchor.setAttribute("y", anchorPosYs[i].toString())
@@ -247,7 +220,7 @@ export class Label {
     infoBox.setAttribute("height", this._name === "" ? "36" : "50")
     infoBox.setAttribute("fill", "white")
     infoBox.setAttribute("filter", "url(#f1)")
-    // infoBox.classList.add("infoBox")
+    infoBox.classList.add("infoBox")
     this._g.appendChild(infoBox)
 
     const infoTxt = document.createElementNS(this._svgNs, "text")
@@ -293,9 +266,8 @@ export class Label {
     const width = this._width
     const height = this._height
     const halfOfWidth = width * 0.5
-    const halfOfHeight = height * 0.5
-    const anchorPosXs = [-7, halfOfWidth - 5, width - 3, width - 3, width - 3, halfOfWidth - 5, -7, -7]
-    const anchorPosYs = [-7, -7, -7, halfOfHeight - 5, height - 3, height - 3, height - 3, halfOfHeight - 5]
+    const anchorPosXs = [-7, width - 3, width - 3, -7]
+    const anchorPosYs = [-7, -7, height - 3, height - 3]
     let i = 0
     let anchor = this._rect.nextElementSibling
     while (anchor) {

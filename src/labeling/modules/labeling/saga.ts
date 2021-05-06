@@ -4,12 +4,21 @@ import axios from "axios"
 import { PayloadAction } from "@reduxjs/toolkit"
 import { GET_IMAGE, GET_IMAGES } from "./index"
 
-// CORS 프록시 URL
-// const proxyurl = "https://cors-anywhere.herokuapp.com/"
-
 export function* labelingSaga() {
-  yield taker(takeLatest, GET_IMAGES, () => axios.get("https://jsonplaceholder.typicode.com/photos"))
+  yield taker(takeLatest, GET_IMAGES, () =>
+    axios.get(`https://jsonplaceholder.typicode.com/photos`, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+      },
+    }),
+  )
   yield taker(takeLatest, GET_IMAGE, (action: PayloadAction<string>) =>
-    axios.get(`https://jsonplaceholder.typicode.com/photos/${action.payload}`),
+    axios.get(`https://jsonplaceholder.typicode.com/photos/${action.payload}`, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+      },
+    }),
   )
 }

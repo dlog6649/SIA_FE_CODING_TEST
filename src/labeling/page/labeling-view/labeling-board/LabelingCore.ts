@@ -204,7 +204,6 @@ export class LabelingCore {
   onSvgMouseDown = (evt: MouseEvent) => {
     if (this._isPushingSpacebar) {
       this._isDragging = true
-      // initImgForDrag(evt)
     } else if (this._mode === Mode.Creation) {
       const LEFT_BUTTON = 0
       if (evt.button !== LEFT_BUTTON) return
@@ -286,10 +285,10 @@ export class LabelingCore {
           const c0_y = y + rotateY * scale
           const rightSide = x + width
           const bottomSide = y + height
-          const q0_x_arr = [x, c0_x, rightSide, rightSide, rightSide, c0_x, x, x]
-          const q0_y_arr = [y, y, y, c0_y, bottomSide, bottomSide, bottomSide, c0_y]
-          const p0_x_arr = [rightSide, c0_x, x, x, x, c0_x, rightSide, rightSide]
-          const p0_y_arr = [bottomSide, bottomSide, bottomSide, c0_y, y, y, y, c0_y]
+          const q0_x_arr = [x, rightSide, rightSide, x]
+          const q0_y_arr = [y, y, bottomSide, bottomSide]
+          const p0_x_arr = [rightSide, x, x, rightSide]
+          const p0_y_arr = [bottomSide, bottomSide, y, y]
           const q0_x = q0_x_arr[sequence]
           const q0_y = q0_y_arr[sequence]
           const p0_x = p0_x_arr[sequence]
@@ -429,6 +428,11 @@ export class LabelingCore {
     this._curLabel.degree = degree
     this._curLabel.setAttributes()
   }
+
+  rotate = (x: number, y: number, cx: number, cy: number, angle: number): Coordinate => ({
+    x: (x - cx) * Math.cos(angle) - (y - cy) * Math.sin(angle) + cx,
+    y: (x - cx) * Math.sin(angle) + (y - cy) * Math.cos(angle) + cy,
+  })
 
   resizeLabel = (evt: MouseEvent) => {
     const endX = evt.offsetX

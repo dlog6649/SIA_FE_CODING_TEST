@@ -17,7 +17,7 @@ type Props = {
 }
 
 export default function ToolBar(p: Props) {
-  const [value, setValue] = useState<string>(p.defaultValue || p.btns[0]?.value)
+  const [value, setValue] = useState<string>(p.defaultValue || p.btns[0]?.value || "")
 
   useEffect(() => {
     if (!p.value) return
