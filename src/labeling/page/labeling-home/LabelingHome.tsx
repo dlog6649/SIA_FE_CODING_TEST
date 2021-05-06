@@ -13,7 +13,7 @@ export default function LabelingHome() {
 
   useEffect(() => {
     dispatch(getImages())
-  }, [])
+  }, [dispatch])
 
   return (
     <main className={styles.labelingHome}>

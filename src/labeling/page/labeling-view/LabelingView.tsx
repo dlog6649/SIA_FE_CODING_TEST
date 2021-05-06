@@ -28,17 +28,6 @@ const toolBtns: ToolBtn[] = [
   { value: Mode.Creation, icon: <Square /> },
 ]
 
-const initLabels: Label[] = [...Array(1)].map((t, i) => {
-  const label = new Label()
-  label.name = "Class"
-  label.x = 200
-  label.y = 100
-  label.width = 100
-  label.height = 300
-  label.selected = i % 2 === 0
-  return label
-})
-
 type Params = {
   id: string
 }
@@ -51,7 +40,7 @@ export default function LabelingView({ match: { params } }: RouteComponentProps<
 
   useEffect(() => {
     dispatch(getImage(params.id))
-  }, [params.id])
+  }, [dispatch, params.id])
 
   useEffect(() => {
     if (mode === Mode.Creation) {
@@ -81,14 +70,6 @@ export default function LabelingView({ match: { params } }: RouteComponentProps<
         }),
       )
     }
-  }
-
-  const addLabel = (label: Label) => {
-    setLabels(labels.concat(label))
-  }
-
-  const removeLabel = (label: Label) => {
-    setLabels(labels.filter((item) => item.id !== label.id))
   }
 
   return (

@@ -171,7 +171,6 @@ export class Label {
 
   private createHandlers = () => {
     const halfOfWidth = this._width * 0.5
-    const halfOfHeight = this._height * 0.5
 
     const line = document.createElementNS(this._svgNs, "line")
     line.setAttribute("x1", halfOfWidth.toString())

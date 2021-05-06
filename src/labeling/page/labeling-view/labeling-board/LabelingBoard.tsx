@@ -66,7 +66,7 @@ export default function LabelBoard(p: Props) {
 
   useEffect(() => {
     if (!svgRef.current) return
-    labelingCoreRef.current = new LabelingCore(svgRef.current, p.labels, p.setLabels, setZoom, setContextMenuState)
+    labelingCoreRef.current = new LabelingCore(svgRef.current, [], p.setLabels, setZoom, setContextMenuState)
     const onDocumentClick = (evt: MouseEvent) => {
       if (evt.target === null) return
       if (!contextMenuRef.current?.contains(evt.target as HTMLElement)) {
@@ -85,7 +85,7 @@ export default function LabelBoard(p: Props) {
         document.removeEventListener("keyup", labelingCoreRef.current.onDocumentKeyUp)
       }
     }
-  }, [])
+  }, [p.setLabels])
 
   useEffect(() => {
     if (p.imgUrl === undefined || svgRef.current === null) return
