@@ -14,7 +14,7 @@ const GET_IMAGE_SUCCESS = `${GET_IMAGE}/${AsyncSuffix.Success}`
 const GET_IMAGE_FAILURE = `${GET_IMAGE}/${AsyncSuffix.Failure}`
 export const getImage = createAction<string>(GET_IMAGE)
 
-const initState: LabelingState = {
+export const initState: LabelingState = {
   api: {
     getImages: initAsyncState,
     getImage: initAsyncState,

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LabelingHome 테스트 시작 썸네일을 클릭 시 해당 정보가 디스패치돼야 한다. 1`] = `
+<body>
+  <div>
+    <main
+      class="labelingHome"
+    >
+      <h1
+        class="title"
+      >
+        Labeling Home
+      </h1>
+      <div
+        class="cardItemBox"
+      >
+        <h2>
+          No Data
+        </h2>
+      </div>
+    </main>
+    ,
+  </div>
+</body>
+`;

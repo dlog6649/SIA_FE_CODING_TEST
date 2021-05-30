@@ -1,6 +1,7 @@
 import { Mode } from "../LabelingView"
 import { Label } from "./Label"
-import { ContextMenuState, Coordinate } from "./LabelingBoard"
+import { ContextMenuState } from "./LabelingBoard"
+import { Coordinate } from "./types"
 
 export enum SvgRole {
   Svg = "Svg",

@@ -7,11 +7,7 @@ import { Mode } from "../LabelingView"
 import { Label } from "./Label"
 import { SvgImage } from "./SvgImage"
 import { pauseEvent } from "../../../../common/utils/common"
-
-export type Coordinate = {
-  x: number
-  y: number
-}
+import { Coordinate } from "./types"
 
 export type MenuItemState = {
   visible: boolean

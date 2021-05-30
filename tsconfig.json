@@ -23,7 +23,6 @@
   },
   "include": [
     "src",
-    "test/AnnotatorAnnotatingLabel.test.tsx"
   ],
   "exclude": [
     "src/stories",

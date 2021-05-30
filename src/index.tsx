@@ -8,14 +8,14 @@ import { labelingReducer, labelingSaga } from "./labeling/modules/labeling"
 import { all } from "redux-saga/effects"
 import createSagaMiddleWare from "redux-saga"
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   labelingReducer,
 })
 export type RootState = ReturnType<typeof rootReducer>
 
 const saga = createSagaMiddleWare()
 
-const store = configureStore({
+export const store = configureStore({
   reducer: rootReducer,
   middleware: getDefaultMiddleware().concat(saga),
 })

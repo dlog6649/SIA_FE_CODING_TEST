@@ -1,4 +1,4 @@
-import { Coordinate } from "./LabelingBoard"
+import { Coordinate } from "./types"
 
 export class SvgImage {
   private readonly _svgNs = "http://www.w3.org/2000/svg"

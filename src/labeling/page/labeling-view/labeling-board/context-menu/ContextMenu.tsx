@@ -1,7 +1,7 @@
 import React from "react"
 import styles from "./ContextMenu.module.scss"
 import cn from "classnames"
-import { Coordinate } from "../LabelingBoard"
+import { Coordinate } from "../types"
 
 export type MenuItem = {
   name: string
