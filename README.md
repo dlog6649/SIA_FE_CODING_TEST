@@ -7,11 +7,11 @@ UI 라이브러리로는 React를 사용했습니다.
 
 ## 개발환경
 
-- Node.js 10.15.3
-- yarn 1.22.4
-- React 16.13.0
-- Visual Studio Code 1.43.2
-- Chrome 80.0.3987.149
+- vite v4.3.3
+- node.js v18.14.0
+- yarn v1.22.19
+- react v16.13.0
+- visual studio code
 
 ## 개발 환경 실행 
 
@@ -19,7 +19,7 @@ UI 라이브러리로는 React를 사용했습니다.
 $ git clone git@github.com:dlog6649/labeling-tool.git
 $ cd labeling-tool
 $ yarn install
-$ yarn start
+$ yarn dev
 ```
 
 ## 테스트
