@@ -9,7 +9,7 @@ UI 라이브러리로는 React를 사용했습니다.
 
 - vite v4.3.3
 - node.js v18.14.0
-- yarn v1.22.19
+- pnpm v8.3.1
 - react v16.13.0
 - visual studio code
 
@@ -18,14 +18,20 @@ UI 라이브러리로는 React를 사용했습니다.
 ```bash
 $ git clone git@github.com:dlog6649/labeling-tool.git
 $ cd labeling-tool
-$ yarn install
-$ yarn dev
+$ pnpm i
+$ pnpm dev
 ```
 
 ## 테스트
 
 ```bash
-yarn test
+pnpm test
+```
+
+## 빌드
+
+```bash
+pnpm build
 ```
 
 ## Sample Image

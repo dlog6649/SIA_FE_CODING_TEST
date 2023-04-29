@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "homepage": ".",
-  "packageManager": "yarn@1.22.19",
+  "packageManager": "pnpm@8.3.1",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -43,6 +43,7 @@
     "@storybook/addon-links": "^6.0.13",
     "@storybook/addons": "^6.0.13",
     "@storybook/react": "^6.0.13",
+    "@types/react-router": "^5.1.18",
     "@types/redux-logger": "^3.0.8",
     "@types/redux-mock-store": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^3.9.0",
