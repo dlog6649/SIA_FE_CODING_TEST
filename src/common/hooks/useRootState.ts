@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"
-import { RootState } from "../../index"
+import { RootState } from "../../main"
 
 type StateSelector<T> = (state: RootState) => T
 type EqualityFn<T> = (left: T, right: T) => boolean

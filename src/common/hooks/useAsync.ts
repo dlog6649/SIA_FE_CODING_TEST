@@ -57,7 +57,7 @@ function useAsync<D, E, F extends PromiseFn<D>>(promiseFn: F) {
   async function run(...params: Parameters<F>) {
     dispatch({ type: "LOADING" })
     try {
-      const data = await promiseFn(...params)
+      const data = await promiseFn(params)
       dispatch({
         type: "SUCCESS",
         data,

@@ -290,10 +290,10 @@ export class LabelingCore {
           const q0_y_arr = [y, y, bottomSide, bottomSide]
           const p0_x_arr = [rightSide, x, x, rightSide]
           const p0_y_arr = [bottomSide, bottomSide, y, y]
-          const q0_x = q0_x_arr[sequence]
-          const q0_y = q0_y_arr[sequence]
-          const p0_x = p0_x_arr[sequence]
-          const p0_y = p0_y_arr[sequence]
+          const q0_x = q0_x_arr[Number(sequence)]
+          const q0_y = q0_y_arr[Number(sequence)]
+          const p0_x = p0_x_arr[Number(sequence)]
+          const p0_y = p0_y_arr[Number(sequence)]
           const qp0_x = (q0_x - c0_x) * cos_t - (q0_y - c0_y) * sin_t + c0_x
           const qp0_y = (q0_x - c0_x) * sin_t + (q0_y - c0_y) * cos_t + c0_y
           const pp_x = (p0_x - c0_x) * cos_t - (p0_y - c0_y) * sin_t + c0_x
