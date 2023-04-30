@@ -6,11 +6,10 @@ This project is a labeling tool that operates in a web browser environment. Reac
 
 ## Environment
 
-- vite v4.3.3
-- node.js v18.14.0
-- pnpm v8.3.1
-- react v16.13.0
-- visual studio code
+- react v18
+- vite v4
+- pnpm v8
+- node.js v18
 
 ## Scripts
 
