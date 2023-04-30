@@ -7,7 +7,11 @@ This project is a labeling tool that operates in a web browser environment. Reac
 ## Environment
 
 - react v18
+- typescript v5
 - vite v4
+- vitest v0.30
+- react-query v4
+- sass
 - pnpm v8
 - node.js v18
 
