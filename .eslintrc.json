@@ -23,7 +23,7 @@
     "react/prop-types": "off",
     "react/display-name": "off",
     "react-hooks/rules-of-hooks": "error",
-    "no-console": "warn",
+    "no-console": "error",
     "prefer-const": "error",
     "import/order": [
       "warn",
