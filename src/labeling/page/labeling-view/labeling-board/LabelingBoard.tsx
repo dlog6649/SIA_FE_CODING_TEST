@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react"
-import styles from "./LabelingBoard.module.scss"
-import ZoomSlider from "./zoom-slider/ZoomSlider"
-import ContextMenu, { MenuItem } from "./context-menu/ContextMenu"
-import { LabelingCore, SvgRole } from "./LabelingCore"
-import { Mode } from "../LabelingView"
+
 import { Label } from "./Label"
+import styles from "./LabelingBoard.module.scss"
+import { LabelingCore, SvgRole } from "./LabelingCore"
 import { SvgImage } from "./SvgImage"
-import { pauseEvent } from "../../../../common/utils/common"
+import ContextMenu, { MenuItem } from "./context-menu/ContextMenu"
 import { Coordinate } from "./types"
+import ZoomSlider from "./zoom-slider/ZoomSlider"
+import { pauseEvent } from "../../../../common/utils/common"
+import { Mode } from "../LabelingView"
 
 export type MenuItemState = {
   visible: boolean

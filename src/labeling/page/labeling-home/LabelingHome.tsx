@@ -1,28 +1,23 @@
-import React, { useEffect } from "react"
+import { useImagesQuery } from "@src/labeling/modules/labeling/queries"
+import React from "react"
 import { Link } from "react-router-dom"
-import { useDispatch } from "react-redux"
+
 import styles from "./LabelingHome.module.scss"
-import * as routes from "../../../routes"
-import { getImages, Image } from "../../modules/labeling"
 import Card from "../../../common/components/card/Card"
-import { useRootState } from "../../../common/hooks/useRootState"
+import * as routes from "../../../routes"
+import type { Image } from "../../modules/labeling/types"
 
 export default function LabelingHome() {
-  const { loading, data, error } = useRootState((state) => state.labelingReducer.api.getImages)
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(getImages())
-  }, [])
+  const { isFetching, isError, data } = useImagesQuery()
 
   return (
     <main className={styles.labelingHome}>
       <h1 className={styles.title}>{"Labeling Home"}</h1>
       <div className={styles.cardItemBox}>
-        {loading ? (
+        {isFetching ? (
           <h2>{"Loading..."}</h2>
-        ) : error ? (
-          <h2>{error.toString()}</h2>
+        ) : isError ? (
+          <h2>{"Error occurred when fetching images"}</h2>
         ) : !data?.length ? (
           <h2>{"No Data"}</h2>
         ) : (

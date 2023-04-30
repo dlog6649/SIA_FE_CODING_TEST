@@ -1,12 +1,11 @@
+import cn from "classnames"
 import React from "react"
-import { useHistory } from "react-router-dom"
-
-import * as routes from "../../../../routes"
-import Button from "../../../../common/components/button/Button"
+import { useNavigate } from "react-router"
 
 import styles from "./Header.module.scss"
-import { ArrowLeft, ArrowRight, Home } from "../../../../common/asset/icons"
-import cn from "classnames"
+import { Home } from "../../../../common/asset/icons"
+import Button from "../../../../common/components/button/Button"
+import * as routes from "../../../../routes"
 
 type Props = {
   className?: string
@@ -14,15 +13,12 @@ type Props = {
 }
 
 export default function Header(p: Props) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const title = p.title || ""
 
   return (
     <header className={cn(styles.header, p.className)}>
-      <Button icon={<Home />} onClick={() => history.push(routes.LABELING_HOME_PATH)} btnStyle={"ghost"} />
-      <hr />
-      <Button icon={<ArrowLeft />} onClick={() => history.goBack()} btnStyle={"ghost"} />
-      <Button icon={<ArrowRight />} onClick={() => history.goForward()} btnStyle={"ghost"} />
+      <Button icon={<Home />} onClick={() => navigate(routes.LABELING_HOME_PATH)} btnStyle={"ghost"} />
       <hr />
       <h1 title={title}>{title}</h1>
     </header>

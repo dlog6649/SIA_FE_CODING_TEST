@@ -1,15 +1,14 @@
+import { useImageQuery } from "@src/labeling/modules/labeling/queries"
 import React, { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
-import Header from "./header/Header"
-import ToolBar, { ToolBtn } from "./tool-bar/ToolBar"
-import ListBox from "./list-box/ListBox"
-import LabelingBoard from "./labeling-board/LabelingBoard"
+import { useParams } from "react-router"
+
 import styles from "./LabelingView.module.scss"
-import { RouteComponentProps } from "react-router"
-import { getImage } from "../../modules/labeling"
-import { CursorDefault, Square } from "../../../common/asset/icons"
+import Header from "./header/Header"
 import { Label } from "./labeling-board/Label"
-import { useRootState } from "../../../common/hooks/useRootState"
+import LabelingBoard from "./labeling-board/LabelingBoard"
+import ListBox from "./list-box/ListBox"
+import ToolBar, { ToolBtn } from "./tool-bar/ToolBar"
+import { CursorDefault, Square } from "../../../common/asset/icons"
 
 /**
  * TODO: canvas로 변경
@@ -32,15 +31,11 @@ type Params = {
   id: string
 }
 
-export default function LabelingView({ match: { params } }: RouteComponentProps<Params>) {
-  const [mode, setMode] = useState<Mode>(Mode.Creation)
+export default function LabelingView() {
+  const { id } = useParams<Params>()
+  const [mode, setMode] = useState(Mode.Creation)
   const [labels, setLabels] = useState<Label[]>([])
-  const getImageState = useRootState((state) => state.labelingReducer.api.getImage)
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(getImage(params.id))
-  }, [dispatch, params.id])
+  const { data } = useImageQuery(Number(id))
 
   useEffect(() => {
     if (mode === Mode.Creation) {
@@ -74,11 +69,11 @@ export default function LabelingView({ match: { params } }: RouteComponentProps<
 
   return (
     <div className={styles.labelingView}>
-      <Header title={getImageState.data?.title} />
+      <Header title={data?.title} />
       <main className={styles.row}>
         <ToolBar btns={toolBtns} value={mode} onChange={(value) => setMode(value as Mode)} />
         <ListBox labels={labels} onItemClick={selectItem} />
-        <LabelingBoard imgUrl={getImageState.data?.url} mode={mode} labels={labels} setLabels={setLabels} />
+        <LabelingBoard imgUrl={data?.url} mode={mode} labels={labels} setLabels={setLabels} />
       </main>
     </div>
   )

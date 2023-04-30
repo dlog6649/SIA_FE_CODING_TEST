@@ -1,21 +1,23 @@
 import React from "react"
-import { Route, Switch } from "react-router"
-import { BrowserRouter } from "react-router-dom"
-import * as routes from "./routes"
+import { Route, Routes } from "react-router"
 
+import styles from "./App.module.scss"
 import "./common/styles/color.scss"
 import "./common/styles/common.scss"
-import styles from "./App.module.scss"
-import Labeling from "./labeling/page/Labeling"
+import LabelingHome from "./labeling/page/labeling-home/LabelingHome"
+import LabelingView from "./labeling/page/labeling-view/LabelingView"
+import * as routes from "./routes"
 
 export default function App() {
   return (
     <div className={styles.app}>
-      <BrowserRouter>
-        <Switch>
-          <Route path={routes.LABELING_HOME_PATH} component={Labeling} />
-        </Switch>
-      </BrowserRouter>
+      <Routes>
+        <Route path={routes.LABELING_HOME_PATH}>
+          <Route index element={<LabelingHome />} />
+          <Route path={":id"} index element={<LabelingView />} />
+        </Route>
+        <Route path={"*"} element={<div>{"Page Not Found"}</div>} />
+      </Routes>
     </div>
   )
 }

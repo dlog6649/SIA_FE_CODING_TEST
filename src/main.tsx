@@ -1,32 +1,24 @@
-import React from "react"
-import ReactDOM from "react-dom"
-import { Provider } from "react-redux"
-import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import React, { Suspense } from "react"
+import ReactDOM from "react-dom/client"
+import { BrowserRouter } from "react-router-dom"
+
 import App from "./App"
-import { labelingReducer, labelingSaga } from "./labeling/modules/labeling"
-import { all } from "redux-saga/effects"
-import createSagaMiddleWare from "redux-saga"
 
-const rootReducer = combineReducers({
-  labelingReducer,
-})
-export type RootState = ReturnType<typeof rootReducer>
-
-const saga = createSagaMiddleWare()
-
-const store = configureStore({
-  reducer: rootReducer,
-  middleware: getDefaultMiddleware().concat(saga),
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+    },
+  },
 })
 
-function* rootSaga() {
-  yield all([labelingSaga()])
-}
-saga.run(rootSaga)
-
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById("root"),
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <Suspense fallback={<div>Loading...</div>}>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </QueryClientProvider>
+  </Suspense>,
 )
