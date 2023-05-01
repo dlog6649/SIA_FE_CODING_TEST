@@ -1,5 +1,5 @@
 import Button from "@src/components/button/Button"
-import * as routes from "@src/routes"
+import Paths from "@src/shared/Paths"
 import cn from "classnames"
 import React from "react"
 import { useNavigate } from "react-router"
@@ -19,7 +19,7 @@ export default function Header(p: Props) {
     <header className={cn(styles.header, p.className)}>
       <Button
         icon={<span className={"i-outline:home text-28px"} />}
-        onClick={() => navigate(routes.LABELING_HOME_PATH)}
+        onClick={() => navigate(Paths.root)}
         btnStyle={"ghost"}
       />
       <hr />

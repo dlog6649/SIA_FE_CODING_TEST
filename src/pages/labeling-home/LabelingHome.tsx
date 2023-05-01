@@ -1,7 +1,7 @@
 import Card from "@src/components/card/Card"
 import { useImagesQuery } from "@src/domains/image/queries"
 import type { Image } from "@src/domains/image/types"
-import * as routes from "@src/routes"
+import Paths from "@src/shared/Paths"
 import React from "react"
 import { Link } from "react-router-dom"
 
@@ -22,7 +22,7 @@ export default function LabelingHome() {
           <h2>{"No Data"}</h2>
         ) : (
           data.map((img: Image) => (
-            <Link className={styles.imgCard} to={routes.buildLabelingViewPath(img.id)} key={img.id}>
+            <Link className={styles.imgCard} to={Paths.buildLabelingBoardNav(img.id)} key={img.id}>
               <Card thumbnailUrl={img.thumbnailUrl} text={img.title} />
             </Link>
           ))
