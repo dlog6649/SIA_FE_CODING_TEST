@@ -18,7 +18,7 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["react", "react-hooks", "@typescript-eslint", "import"],
+  "plugins": ["react", "react-hooks", "@typescript-eslint", "import", "react-refresh"],
   "rules": {
     "react/prop-types": "off",
     "react/display-name": "off",
@@ -33,7 +33,8 @@
         "alphabetize": { "order": "asc" }
       }
     ],
-    "prettier/prettier": ["error", { "endOfLine": "auto" }]
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "react-refresh/only-export-components": "warn"
   },
   "settings": {
     "react": {
