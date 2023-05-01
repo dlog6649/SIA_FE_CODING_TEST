@@ -3,7 +3,6 @@ import React from "react"
 import { useNavigate } from "react-router"
 
 import styles from "./Header.module.scss"
-import { Home } from "../../../../common/asset/icons"
 import Button from "../../../../common/components/button/Button"
 import * as routes from "../../../../routes"
 
@@ -18,7 +17,11 @@ export default function Header(p: Props) {
 
   return (
     <header className={cn(styles.header, p.className)}>
-      <Button icon={<Home />} onClick={() => navigate(routes.LABELING_HOME_PATH)} btnStyle={"ghost"} />
+      <Button
+        icon={<span className={"i-outline:home text-28px"} />}
+        onClick={() => navigate(routes.LABELING_HOME_PATH)}
+        btnStyle={"ghost"}
+      />
       <hr />
       <h1 title={title}>{title}</h1>
     </header>
