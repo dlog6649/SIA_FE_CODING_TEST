@@ -1,0 +1,24 @@
+:root {}
+
+body {
+  margin: 0;
+}
+
+#root {
+  height: 100vh;
+}
+
+*, :after, :before {
+  box-sizing: border-box;
+}
+
+p, figure, dl, dt, dd, time, section, aside, header, nav, footer, main, div, ul, ol, li, span, hr, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {}
+
+li, ol {
+  list-style: none;
+}
