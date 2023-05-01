@@ -1,6 +1,7 @@
-import React from "react"
-import { Minus, Plus } from "../../../../../common/asset/icons"
+import { Minus, Plus } from "@src/common/asset/icons"
 import cn from "classnames"
+import React from "react"
+
 import styles from "./ZoomSlider.module.scss"
 
 type Props = {

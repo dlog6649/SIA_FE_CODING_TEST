@@ -1,7 +1,7 @@
 import "./Button.scss"
 
-import React from "react"
 import cn from "classnames"
+import React from "react"
 
 type Props = {
   className?: string

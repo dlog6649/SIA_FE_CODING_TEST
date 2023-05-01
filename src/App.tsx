@@ -1,8 +1,8 @@
 import React from "react"
 import { Route, Routes } from "react-router"
 
-import LabelingHome from "./labeling/page/labeling-home/LabelingHome"
-import LabelingView from "./labeling/page/labeling-view/LabelingView"
+import LabelingHome from "./pages/labeling-home/LabelingHome"
+import LabelingView from "./pages/labeling-view/LabelingView"
 import * as routes from "./routes"
 
 export default function App() {

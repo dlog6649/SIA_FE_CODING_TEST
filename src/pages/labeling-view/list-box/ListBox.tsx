@@ -1,9 +1,9 @@
+import cn from "classnames"
 import React, { useState } from "react"
 
-import cn from "classnames"
 import styles from "./ListBox.module.scss"
-import { Left, Right } from "../../../../common/asset/icons"
-import Button from "../../../../common/components/button/Button"
+import { Left, Right } from "../../../common/asset/icons"
+import Button from "../../../components/button/Button"
 import { Label } from "../labeling-board/Label"
 
 type Props = {

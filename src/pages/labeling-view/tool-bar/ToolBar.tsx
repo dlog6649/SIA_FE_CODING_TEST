@@ -2,7 +2,7 @@ import cn from "classnames"
 import React, { useEffect, useState } from "react"
 
 import styles from "./ToolBar.module.scss"
-import Button from "../../../../common/components/button/Button"
+import Button from "../../../components/button/Button"
 
 export type ToolBtn = {
   value: string

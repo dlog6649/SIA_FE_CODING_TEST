@@ -1,11 +1,11 @@
-import { useImagesQuery } from "@src/labeling/modules/labeling/queries"
+import Card from "@src/components/card/Card"
+import { useImagesQuery } from "@src/domains/image/queries"
+import type { Image } from "@src/domains/image/types"
+import * as routes from "@src/routes"
 import React from "react"
 import { Link } from "react-router-dom"
 
 import styles from "./LabelingHome.module.scss"
-import Card from "../../../common/components/card/Card"
-import * as routes from "../../../routes"
-import type { Image } from "../../modules/labeling/types"
 
 export default function LabelingHome() {
   const { isFetching, isError, data } = useImagesQuery()

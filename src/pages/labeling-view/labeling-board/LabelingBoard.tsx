@@ -1,3 +1,4 @@
+import { pauseEvent } from "@src/shared/utils"
 import React, { useEffect, useRef, useState } from "react"
 
 import { Label } from "./Label"
@@ -7,7 +8,6 @@ import { SvgImage } from "./SvgImage"
 import ContextMenu, { MenuItem } from "./context-menu/ContextMenu"
 import { Coordinate } from "./types"
 import ZoomSlider from "./zoom-slider/ZoomSlider"
-import { pauseEvent } from "../../../../common/utils/common"
 import { Mode } from "../LabelingView"
 
 export type MenuItemState = {

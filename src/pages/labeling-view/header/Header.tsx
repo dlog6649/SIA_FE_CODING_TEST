@@ -1,10 +1,10 @@
+import Button from "@src/components/button/Button"
+import * as routes from "@src/routes"
 import cn from "classnames"
 import React from "react"
 import { useNavigate } from "react-router"
 
 import styles from "./Header.module.scss"
-import Button from "../../../../common/components/button/Button"
-import * as routes from "../../../../routes"
 
 type Props = {
   className?: string

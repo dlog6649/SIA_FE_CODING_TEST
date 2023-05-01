@@ -1,4 +1,5 @@
-import { generateUUID } from "../../../../common/utils/common"
+import { nanoid } from "nanoid"
+
 import { SvgRole } from "./LabelingCore"
 
 enum SvgTagName {
@@ -36,7 +37,7 @@ export class Label {
   private readonly _HANDLER_CURSOR_LIST = ["nw-resize", "ne-resize", "se-resize", "sw-resize"]
 
   constructor(coordinate = { x: 0, y: 0 }, scale = 1) {
-    this._id = generateUUID()
+    this._id = nanoid()
     this._x = coordinate.x
     this._y = coordinate.y
     this._scale = scale

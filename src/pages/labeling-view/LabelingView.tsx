@@ -1,4 +1,5 @@
-import { useImageQuery } from "@src/labeling/modules/labeling/queries"
+import { CursorDefault, Square } from "@src/common/asset/icons"
+import { useImageQuery } from "@src/domains/image/queries"
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router"
 
@@ -8,7 +9,6 @@ import { Label } from "./labeling-board/Label"
 import LabelingBoard from "./labeling-board/LabelingBoard"
 import ListBox from "./list-box/ListBox"
 import ToolBar, { ToolBtn } from "./tool-bar/ToolBar"
-import { CursorDefault, Square } from "../../../common/asset/icons"
 
 /**
  * TODO: canvas로 변경
