@@ -1,5 +1,3 @@
-@import "../../styles/common.scss";
-
 .card {
   display: grid;
   grid-template-rows: 150px 30px;
@@ -18,6 +16,5 @@
     color: #2e2e2e;
     font-size: 0.9rem;
     font-weight: bold;
-    @include one-line-ellipsis;
   }
 }

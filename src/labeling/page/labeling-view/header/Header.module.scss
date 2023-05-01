@@ -1,5 +1,3 @@
-@import "../../../../common/styles/common.scss";
-
 .header {
   display: flex;
   flex-flow: row nowrap;
@@ -9,11 +7,6 @@
 
   > button {
     height: 100%;
-  }
-
-  > h1 {
-    @include one-line-ellipsis;
-    color: var(--main-color);
   }
 
   > hr {

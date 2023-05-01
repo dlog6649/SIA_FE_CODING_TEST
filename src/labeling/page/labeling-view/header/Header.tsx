@@ -23,7 +23,9 @@ export default function Header(p: Props) {
         btnStyle={"ghost"}
       />
       <hr />
-      <h1 title={title}>{title}</h1>
+      <h1 className={"ellipsis"} title={title}>
+        {title}
+      </h1>
     </header>
   )
 }
