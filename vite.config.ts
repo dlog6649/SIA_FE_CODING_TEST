@@ -8,7 +8,6 @@ import { defineConfig } from "vite"
 export default defineConfig({
   server: {
     port: 5173,
-    open: true,
   },
   plugins: [react(), unoCSS()],
   resolve: {
