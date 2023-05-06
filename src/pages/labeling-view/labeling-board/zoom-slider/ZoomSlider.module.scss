@@ -6,20 +6,6 @@
   background-color: white;
   box-shadow: 0 0 3px 1.5px #e0e0e0;
 
-  > span[role=img] {
-    position: absolute;
-    left: 10px;
-    font-size: 16px;
-
-    &.plus {
-      top: 10px;
-    }
-
-    &.minus {
-      bottom: 10px;
-    }
-  }
-
   > input[type=range] {
     position: absolute;
     top: 134px;

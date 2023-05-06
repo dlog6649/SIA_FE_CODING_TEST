@@ -2,7 +2,6 @@ import cn from "classnames"
 import React, { useState } from "react"
 
 import styles from "./ListBox.module.scss"
-import { Left, Right } from "../../../common/asset/icons"
 import Button from "../../../components/button/Button"
 import { Label } from "../labeling-board/Label"
 
@@ -19,7 +18,7 @@ export default function ListBox(p: Props) {
     <aside className={cn(styles.listBox, p.className)}>
       <Button
         className={cn(styles.toggle, isOpen && styles.open)}
-        icon={isOpen ? <Left /> : <Right />}
+        icon={isOpen ? <span className={"i-outline:arrow-left"} /> : <span className={"i-outline:arrow-right"} />}
         onClick={() => setOpen(!isOpen)}
         btnStyle={"ghost"}
       />

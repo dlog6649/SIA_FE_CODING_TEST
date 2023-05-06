@@ -1,4 +1,3 @@
-import { CursorDefault, Square } from "@src/common/asset/icons"
 import { useImageQuery } from "@src/domains/image/queries"
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router"
@@ -22,9 +21,9 @@ export enum Mode {
 const toolBtns: ToolBtn[] = [
   {
     value: Mode.Selection,
-    icon: <CursorDefault />,
+    icon: <span className={"i-outline:cursor text-2.25rem"} />,
   },
-  { value: Mode.Creation, icon: <Square /> },
+  { value: Mode.Creation, icon: <span className={"i-outline:square text-2rem"} /> },
 ]
 
 type Params = {

@@ -1,4 +1,3 @@
-import { Minus, Plus } from "@src/common/asset/icons"
 import cn from "classnames"
 import React from "react"
 
@@ -13,7 +12,7 @@ type Props = {
 export default function ZoomSlider(p: Props) {
   return (
     <div className={cn(styles.zoomSlider, p.className)}>
-      <Plus className={styles.plus} />
+      <span className={"i-outline:plus absolute left-1rem top-1rem"} />
       <input
         type={"range"}
         data-testid={"testScaler"}
@@ -27,7 +26,7 @@ export default function ZoomSlider(p: Props) {
           #d5d4d3 0%, #d5d4d3 100%)`,
         }}
       />
-      <Minus className={styles.minus} />
+      <span className={"i-outline:minus absolute left-1rem bottom-1rem"} />
     </div>
   )
 }
