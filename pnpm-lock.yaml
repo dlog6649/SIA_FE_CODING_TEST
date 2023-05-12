@@ -16,9 +16,6 @@ dependencies:
   axios:
     specifier: 1.4.0
     version: 1.4.0
-  classnames:
-    specifier: 2.3.2
-    version: 2.3.2
   nanoid:
     specifier: 4.0.2
     version: 4.0.2
@@ -1393,10 +1390,6 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
-
-  /classnames@2.3.2:
-    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
-    dev: false
 
   /color-convert@1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
