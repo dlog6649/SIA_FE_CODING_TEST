@@ -8,7 +8,7 @@ import { Link } from "react-router-dom"
 import styles from "./LabelingHome.module.scss"
 
 export default function LabelingHome() {
-  const { isFetching, isError, data } = useImagesQuery()
+  const { isFetching, isError, data: images } = useImagesQuery()
 
   return (
     <main className={styles.labelingHome}>
@@ -18,11 +18,11 @@ export default function LabelingHome() {
           <h2>{"Loading..."}</h2>
         ) : isError ? (
           <h2>{"Error occurred when fetching images"}</h2>
-        ) : !data?.length ? (
+        ) : !images?.length ? (
           <h2>{"No Data"}</h2>
         ) : (
-          data.map((img: Image) => (
-            <Link className={styles.imgCard} to={Paths.buildLabelingBoardNav(img.id)} key={img.id}>
+          images.map((img: Image) => (
+            <Link key={img.id} className={styles.imgCard} to={Paths.buildLabelingBoardNav(img.id)}>
               <Card thumbnailUrl={img.thumbnailUrl} text={img.title} />
             </Link>
           ))

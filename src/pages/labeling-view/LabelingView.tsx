@@ -34,7 +34,7 @@ export default function LabelingView() {
   const { id } = useParams<Params>()
   const [mode, setMode] = useState(Mode.Creation)
   const [labels, setLabels] = useState<Label[]>([])
-  const { data } = useImageQuery(Number(id))
+  const { data: image } = useImageQuery(Number(id))
 
   useEffect(() => {
     if (mode === Mode.Creation) {
@@ -68,11 +68,11 @@ export default function LabelingView() {
 
   return (
     <div className={styles.labelingView}>
-      <Header title={data?.title} />
+      <Header title={image?.title} />
       <main className={styles.row}>
         <ToolBar btns={toolBtns} value={mode} onChange={(value) => setMode(value as Mode)} />
         <ListBox labels={labels} onItemClick={selectItem} />
-        <LabelingBoard imgUrl={data?.url} mode={mode} labels={labels} setLabels={setLabels} />
+        <LabelingBoard imgUrl={image?.url} mode={mode} labels={labels} setLabels={setLabels} />
       </main>
     </div>
   )
