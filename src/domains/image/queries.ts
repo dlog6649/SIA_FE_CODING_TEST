@@ -10,6 +10,7 @@ export const useImagesQuery = () => {
   return useQuery(keys.list(), getImages, {
     staleTime: 3 * MINUTE,
     cacheTime: 5 * MINUTE,
+    select: (images) => images.slice(0, 20),
   })
 }
 
