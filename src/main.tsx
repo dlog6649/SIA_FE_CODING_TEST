@@ -2,11 +2,13 @@ import "uno.css"
 import "./main.css"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import React, { Suspense } from "react"
+import React from "react"
 import ReactDOM from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
 
 import App from "./App"
+import RootErrorBoundary from "./components/error-boundary/RootErrorBoundary"
+import RootSuspense from "./components/suspense/RootSuspense"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,11 +19,13 @@ const queryClient = new QueryClient({
 })
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <Suspense fallback={<div>Loading...</div>}>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </QueryClientProvider>
-  </Suspense>,
+  <RootErrorBoundary>
+    <RootSuspense>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </RootSuspense>
+  </RootErrorBoundary>,
 )
