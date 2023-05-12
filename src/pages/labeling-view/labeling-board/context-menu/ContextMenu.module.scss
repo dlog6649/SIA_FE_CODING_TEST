@@ -1,13 +1,13 @@
 .labelContextmenu {
   position: absolute;
-  width: 230px;
+  width: 23rem;
   cursor: default;
   border-radius: 5px;
   background-color: #fbfbfb;
   box-shadow: 1px 1px 5px 0 #b5b5b5;
 
   > .item {
-    padding: 10px 15px;
+    padding: 1rem 1.5rem;
 
     &.disabled {
       color: #b8bdc7;
@@ -26,13 +26,13 @@
     }
 
     > .name {
-      font-size: 0.91rem;
+      font-size: 1.4rem;
     }
 
     > .shortcut {
       float: right;
-      padding-top: 5px;
-      font-size: 0.7rem;
+      padding-top: 0.5rem;
+      font-size: 1rem;
       color: #717d9e;
     }
   }

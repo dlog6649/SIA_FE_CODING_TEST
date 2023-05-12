@@ -1,17 +1,17 @@
 .zoomSlider {
   position: absolute;
-  width: 36px;
-  height: 170px;
+  width: 3.6rem;
+  height: 17rem;
   border-radius: 6px;
   background-color: white;
   box-shadow: 0 0 3px 1.5px #e0e0e0;
 
   > input[type=range] {
     position: absolute;
-    top: 134px;
-    left: 16px;
-    width: 104px;
-    height: 3px;
+    top: 13.4rem;
+    left: 1.6rem;
+    width: 10.4rem;
+    height: 0.3rem;
     transform: rotate(-90deg);
     transform-origin: left;
     cursor: pointer;
@@ -20,8 +20,8 @@
 
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 3px;
-      height: 15px;
+      width: 0.3rem;
+      height: 1.5rem;
       background: #131644;
       border-radius: 10px;
     }

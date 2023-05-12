@@ -5,8 +5,8 @@
   > button.toggle {
     position: absolute;
     top: 0;
-    width: 32px;
-    height: 32px;
+    width: 3.2rem;
+    height: 3.2rem;
     border-right: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
     background-color: white;
@@ -22,18 +22,18 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
-    height: 32px;
+    height: 3.2rem;
     border-right: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
 
     > h4 {
-      margin-left: 16px;
+      margin-left: 1.6rem;
       color: #727FA3;
     }
 
     > button.closer {
-      width: 32px;
-      height: 32px;
+      width: 3.2rem;
+      height: 3.2rem;
     }
   }
 
@@ -42,8 +42,8 @@
     flex-flow: column nowrap;
     border-right: 1px solid lightgray;
     overflow-y: auto;
-    height: calc(100vh - 90px);
-    width: 320px;
+    height: calc(100vh - 9rem);
+    width: 3.2rem;
 
     &::-webkit-scrollbar {
       width: 6px;
@@ -60,10 +60,10 @@
     }
 
     > li {
-      padding: 20px 24px;
+      padding: 2rem 2.4rem;
       word-break: break-word;
       font-weight: bold;
-      font-size: 17px;
+      font-size: 1.7rem;
       cursor: pointer;
       border-bottom: 1px solid lightgray;
 
@@ -76,7 +76,7 @@
       }
 
       > .coordinate {
-        margin-top: 4px;
+        margin-top: 0.4rem;
         color: #727FA3;
       }
     }

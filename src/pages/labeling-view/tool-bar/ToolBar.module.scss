@@ -3,23 +3,23 @@
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  width: 56px;
+  width: 5.6rem;
   border-right: 1px solid lightgray;
 
   > button {
-    width: 40px;
-    height: 40px;
+    width: 4rem;
+    height: 4rem;
     border-radius: 8px;
     border: none;
     padding: 0;
     background-color: transparent;
 
     &:nth-child(1) {
-      font-size: 32px;
+      font-size: 3.2rem;
     }
 
     &:nth-child(2) {
-      font-size: 14px;
+      font-size: 1.4rem;
     }
 
     &.active {
@@ -28,6 +28,6 @@
   }
 
   > * {
-    margin-top: 8px;
+    margin-top: 0.8rem;
   }
 }
