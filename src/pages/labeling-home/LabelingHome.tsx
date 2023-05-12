@@ -1,4 +1,5 @@
 import Card from "@src/components/card/Card"
+import Loading from "@src/components/loading/Loading"
 import { useImagesQuery } from "@src/domains/image/queries"
 import type { Image } from "@src/domains/image/types"
 import Paths from "@src/shared/Paths"
@@ -15,7 +16,7 @@ export default function LabelingHome() {
       <h1 className={styles.title}>{"Labeling Home"}</h1>
       <div className={styles.cardItemBox}>
         {isFetching ? (
-          <h2>{"Loading..."}</h2>
+          <Loading className={"absolute top-30% left-50%"} />
         ) : isError ? (
           <h2>{"Error occurred when fetching images"}</h2>
         ) : !images?.length ? (
