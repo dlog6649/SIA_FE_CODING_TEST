@@ -1,4 +1,4 @@
-import cn from "classnames"
+import { cn } from "@src/shared/utils"
 import React from "react"
 
 import styles from "./ZoomSlider.module.scss"

@@ -1,6 +1,7 @@
+import { cn } from "@src/shared/utils"
 import React from "react"
+
 import styles from "./ContextMenu.module.scss"
-import cn from "classnames"
 import { Coordinate } from "../types"
 
 export type MenuItem = {

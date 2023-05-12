@@ -1,6 +1,6 @@
 import Button from "@src/components/button/Button"
 import Paths from "@src/shared/Paths"
-import cn from "classnames"
+import { cn } from "@src/shared/utils"
 import React from "react"
 import { useNavigate } from "react-router"
 
