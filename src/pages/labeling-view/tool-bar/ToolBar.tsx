@@ -2,7 +2,7 @@ import { cn } from "@src/shared/utils"
 import React, { useEffect, useState } from "react"
 
 import styles from "./ToolBar.module.scss"
-import Button from "../../../components/button/Button"
+import Button from "../../../components/button"
 
 export type ToolBtn = {
   value: string

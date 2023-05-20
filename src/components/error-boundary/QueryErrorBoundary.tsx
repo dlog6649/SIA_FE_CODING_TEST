@@ -3,7 +3,7 @@ import { useQueryErrorResetBoundary } from "@tanstack/react-query"
 import React, { PropsWithChildren } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
-import Button from "../button/Button"
+import Button from "../button"
 
 interface Props extends PropsWithChildren {
   className?: string

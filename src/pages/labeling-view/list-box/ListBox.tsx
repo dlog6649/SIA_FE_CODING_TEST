@@ -2,7 +2,7 @@ import { cn } from "@src/shared/utils"
 import React, { useState } from "react"
 
 import styles from "./ListBox.module.scss"
-import Button from "../../../components/button/Button"
+import Button from "../../../components/button"
 import { Label } from "../labeling-board/Label"
 
 type Props = {
@@ -20,7 +20,7 @@ export default function ListBox(p: Props) {
         className={cn(styles.toggle, isOpen && styles.open)}
         icon={isOpen ? <span className={"i-outline:arrow-left"} /> : <span className={"i-outline:arrow-right"} />}
         onClick={() => setOpen(!isOpen)}
-        btnStyle={"ghost"}
+        buttonStyle={"ghost"}
       />
       {isOpen && (
         <>

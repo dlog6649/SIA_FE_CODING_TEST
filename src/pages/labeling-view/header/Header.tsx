@@ -1,4 +1,4 @@
-import Button from "@src/components/button/Button"
+import Button from "@src/components/button"
 import Paths from "@src/shared/Paths"
 import { cn } from "@src/shared/utils"
 import React from "react"
@@ -20,7 +20,7 @@ export default function Header(p: Props) {
       <Button
         icon={<span className={"i-outline:home text-28px"} />}
         onClick={() => navigate(Paths.root)}
-        btnStyle={"ghost"}
+        buttonStyle={"ghost"}
       />
       <hr />
       <h1 className={"ellipsis"} title={title}>
