@@ -1,21 +1,20 @@
-import "./Button.scss"
-
 import { cn } from "@src/shared/utils"
-import React from "react"
+import React, { ReactNode, PropsWithChildren } from "react"
 
-type Props = {
+import styles from "./Button.module.scss"
+
+interface Props extends PropsWithChildren {
   className?: string
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-  icon?: React.ReactNode
-  btnStyle?: "ghost"
-  children?: any
+  icon?: ReactNode
+  buttonStyle?: "ghost"
 }
 
-export default function Button(p: Props) {
+export default function Button({ className, onClick, icon, buttonStyle, children }: Props) {
   return (
-    <button className={cn("button__Xc2iD", p.className, p.btnStyle)} type={"button"} onClick={p.onClick}>
-      {p.icon}
-      {p.children}
+    <button className={cn(styles.Button, className, buttonStyle)} type={"button"} onClick={onClick}>
+      {icon}
+      {children}
     </button>
   )
 }
