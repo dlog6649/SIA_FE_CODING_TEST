@@ -16,12 +16,9 @@ export default function ListBox(p: Props) {
 
   return (
     <aside className={cn(styles.listBox, p.className)}>
-      <Button
-        className={cn(styles.toggle, isOpen && styles.open)}
-        icon={isOpen ? <span className={"i-outline:arrow-left"} /> : <span className={"i-outline:arrow-right"} />}
-        onClick={() => setOpen(!isOpen)}
-        buttonStyle={"ghost"}
-      />
+      <Button.Icon className={cn(styles.toggle, isOpen && styles.open)} onClick={() => setOpen(!isOpen)}>
+        {isOpen ? <span className={"i-outline:arrow-left"} /> : <span className={"i-outline:arrow-right"} />}
+      </Button.Icon>
       {isOpen && (
         <>
           <section>

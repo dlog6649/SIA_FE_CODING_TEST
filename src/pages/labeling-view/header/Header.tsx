@@ -1,29 +1,21 @@
 import Button from "@src/components/button"
 import Paths from "@src/shared/Paths"
-import { cn } from "@src/shared/utils"
 import React from "react"
 import { useNavigate } from "react-router"
 
-import styles from "./Header.module.scss"
-
 type Props = {
-  className?: string
   title?: string
 }
 
-export default function Header(p: Props) {
+export default function Header({ title = "" }: Props) {
   const navigate = useNavigate()
-  const title = p.title || ""
 
   return (
-    <header className={cn(styles.header, p.className)}>
-      <Button
-        icon={<span className={"i-outline:home text-28px"} />}
-        onClick={() => navigate(Paths.root)}
-        buttonStyle={"ghost"}
-      />
-      <hr />
-      <h1 className={"ellipsis"} title={title}>
+    <header className={"flex items-center h-6rem border-none border-b-1px border-b-solid border-b-[lightgray]"}>
+      <Button.Icon className={"w-5.6rem h-full"} onClick={() => navigate(Paths.root)}>
+        <span className={"i-outline:arrow-left text-28px"} />
+      </Button.Icon>
+      <h1 className={"ml-1rem ellipsis"} title={title}>
         {title}
       </h1>
     </header>
