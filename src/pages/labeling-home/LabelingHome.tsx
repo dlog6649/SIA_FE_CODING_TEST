@@ -1,34 +1,19 @@
-import Card from "@src/components/card/Card"
 import Loading from "@src/components/loading/Loading"
-import { useImagesQuery } from "@src/domains/image/queries"
-import type { Image } from "@src/domains/image/types"
-import Paths from "@src/shared/Paths"
-import React from "react"
-import { Link } from "react-router-dom"
+import React, { Suspense } from "react"
+import { ErrorBoundary } from "react-error-boundary"
 
 import styles from "./LabelingHome.module.scss"
+import ThumbnailCards from "./ThumbnailCards"
 
 export default function LabelingHome() {
-  const { isFetching, isError, data: images } = useImagesQuery()
-
   return (
     <main className={styles.labelingHome}>
       <h1 className={styles.title}>{"Labeling Home"}</h1>
-      <div className={styles.cardItemBox}>
-        {isFetching ? (
-          <Loading className={"absolute top-30% left-50%"} />
-        ) : isError ? (
-          <h2>{"Error occurred when fetching images"}</h2>
-        ) : !images?.length ? (
-          <h2>{"No Data"}</h2>
-        ) : (
-          images.map((img: Image) => (
-            <Link key={img.id} className={styles.imgCard} to={Paths.buildLabelingBoardNav(img.id)}>
-              <Card thumbnailUrl={img.thumbnailUrl} text={img.title} />
-            </Link>
-          ))
-        )}
-      </div>
+      <ErrorBoundary fallback={<h2>{"Error occurred when fetching images"}</h2>}>
+        <Suspense fallback={<Loading className={"absolute top-30% left-50%"} />}>
+          <ThumbnailCards />
+        </Suspense>
+      </ErrorBoundary>
     </main>
   )
 }
