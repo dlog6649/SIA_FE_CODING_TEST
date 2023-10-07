@@ -77,7 +77,7 @@ devDependencies:
     version: 5.0.4
   unocss:
     specifier: 0.51.8
-    version: 0.51.8(postcss@8.4.23)(vite@4.3.3)
+    version: 0.51.8(postcss@8.4.31)(vite@4.3.3)
   vite:
     specifier: 4.3.3
     version: 4.3.3(@types/node@18.16.3)(sass@1.62.1)
@@ -968,7 +968,7 @@ packages:
       sirv: 2.0.3
     dev: true
 
-  /@unocss/postcss@0.51.8(postcss@8.4.23):
+  /@unocss/postcss@0.51.8(postcss@8.4.31):
     resolution: {integrity: sha512-IWwxGDfd/pqQMBjp1PKplQIeD6uwUs1qxUkJZXIf/BlGE+dMkjIw6Mp72FwYqkMn71hnjU2CMRTbX7RzkKxkmQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -979,7 +979,7 @@ packages:
       css-tree: 2.3.1
       fast-glob: 3.2.12
       magic-string: 0.30.0
-      postcss: 8.4.23
+      postcss: 8.4.31
     dev: true
 
   /@unocss/preset-attributify@0.51.8:
@@ -2813,8 +2813,8 @@ packages:
       pathe: 1.1.0
     dev: true
 
-  /postcss@8.4.23:
-    resolution: {integrity: sha512-bQ3qMcpF6A/YjR55xtoTr0jGOlnPOKAIMdOWiv0EIT6HVPEaJiJB4NLljSbiHoC2RX7DN5Uvjtpbg1NPdwv1oA==}
+  /postcss@8.4.31:
+    resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.6
@@ -3298,7 +3298,7 @@ packages:
       jiti: 1.18.2
     dev: true
 
-  /unocss@0.51.8(postcss@8.4.23)(vite@4.3.3):
+  /unocss@0.51.8(postcss@8.4.31)(vite@4.3.3):
     resolution: {integrity: sha512-uty78ilhQ/HxvjIDLRZ0J6Kb6fSfTKv0afyP7iWQmqoG/qTBR33ambnuTmi2Dt5GzCxAY6tyCaWjK/FZ7mfEYg==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -3311,7 +3311,7 @@ packages:
       '@unocss/cli': 0.51.8
       '@unocss/core': 0.51.8
       '@unocss/extractor-arbitrary-variants': 0.51.8
-      '@unocss/postcss': 0.51.8(postcss@8.4.23)
+      '@unocss/postcss': 0.51.8(postcss@8.4.31)
       '@unocss/preset-attributify': 0.51.8
       '@unocss/preset-icons': 0.51.8
       '@unocss/preset-mini': 0.51.8
@@ -3407,7 +3407,7 @@ packages:
     dependencies:
       '@types/node': 18.16.3
       esbuild: 0.17.18
-      postcss: 8.4.23
+      postcss: 8.4.31
       rollup: 3.21.0
       sass: 1.62.1
     optionalDependencies:
